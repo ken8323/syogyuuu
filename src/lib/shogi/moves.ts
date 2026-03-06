@@ -1,4 +1,5 @@
-import type { MoveDirection, MovePattern, PieceType, Player, PromotedPieceType } from './types'
+import type { Board, CapturedPieces, MoveDirection, MovePattern, PieceType, Player, Position, PromotedPieceType } from './types'
+import { findKing, getPieceAt, removePieceAt, setPieceAt } from './board'
 
 // ============================================================
 // 方向定数（先手基準）
@@ -116,4 +117,168 @@ export function getMovePattern(pieceType: PieceType | PromotedPieceType): MovePa
 export function applyPlayerDirection(dir: MoveDirection, player: Player): MoveDirection {
   if (player === 'sente') return dir
   return { dRow: -dir.dRow, dCol: -dir.dCol }
+}
+
+// ============================================================
+// 合法手生成
+// ============================================================
+
+// 座標が盤内（0-8）かどうかを判定する
+function isInBounds(pos: Position): boolean {
+  return pos.row >= 0 && pos.row <= 8 && pos.col >= 0 && pos.col <= 8
+}
+
+// 行き所のない駒かどうかを判定する（指定位置に移動すると行き所がなくなるか）
+function isNowhereToGo(pieceType: PieceType | PromotedPieceType, player: Player, pos: Position): boolean {
+  if (player === 'sente') {
+    if ((pieceType === 'pawn' || pieceType === 'lance') && pos.row === 0) return true
+    if (pieceType === 'knight' && (pos.row === 0 || pos.row === 1)) return true
+  } else {
+    if ((pieceType === 'pawn' || pieceType === 'lance') && pos.row === 8) return true
+    if (pieceType === 'knight' && (pos.row === 7 || pos.row === 8)) return true
+  }
+  return false
+}
+
+// 指定プレイヤーの王に王手がかかっているか判定する
+export function isInCheck(board: Board, player: Player): boolean {
+  const kingPos = findKing(board, player)
+  if (!kingPos) return false
+
+  const opponent: Player = player === 'sente' ? 'gote' : 'sente'
+
+  // 相手の全駒の移動候補に自玉の位置が含まれるか確認
+  for (let row = 0; row < 9; row++) {
+    for (let col = 0; col < 9; col++) {
+      const piece = board[row][col]
+      if (!piece || piece.owner !== opponent) continue
+
+      const candidates = generateMoveCandidates(board, { row, col })
+      if (candidates.some(p => p.row === kingPos.row && p.col === kingPos.col)) {
+        return true
+      }
+    }
+  }
+  return false
+}
+
+// 駒の移動パターンから移動候補を生成する（盤外・味方駒・経路チェック済み）
+export function generateMoveCandidates(board: Board, pos: Position): Position[] {
+  const piece = getPieceAt(board, pos)
+  if (!piece) return []
+
+  const pattern = getMovePattern(piece.type)
+  const candidates: Position[] = []
+
+  // ステップ移動（1マス）
+  for (const dir of pattern.steps) {
+    const applied = applyPlayerDirection(dir, piece.owner)
+    const target: Position = { row: pos.row + applied.dRow, col: pos.col + applied.dCol }
+    if (!isInBounds(target)) continue
+    const targetPiece = getPieceAt(board, target)
+    if (targetPiece?.owner === piece.owner) continue // 味方駒
+    candidates.push(target)
+  }
+
+  // スライド移動（何マスでも）
+  for (const dir of pattern.slides) {
+    const applied = applyPlayerDirection(dir, piece.owner)
+    let current: Position = { row: pos.row + applied.dRow, col: pos.col + applied.dCol }
+    while (isInBounds(current)) {
+      const targetPiece = getPieceAt(board, current)
+      if (targetPiece?.owner === piece.owner) break // 味方駒でブロック
+      candidates.push(current)
+      if (targetPiece) break // 敵駒を取ったら停止
+      current = { row: current.row + applied.dRow, col: current.col + applied.dCol }
+    }
+  }
+
+  return candidates
+}
+
+// 盤上の駒の完全な合法手リストを返す
+export function getLegalMoves(
+  board: Board,
+  pos: Position,
+  _capturedPieces: CapturedPieces,
+  currentPlayer: Player,
+): Position[] {
+  const piece = getPieceAt(board, pos)
+  if (!piece || piece.owner !== currentPlayer) return []
+
+  const candidates = generateMoveCandidates(board, pos)
+
+  return candidates.filter(target => {
+    // 行き所のない駒チェック
+    if (isNowhereToGo(piece.type, currentPlayer, target)) return false
+
+    // 王手放置チェック: 仮に移動した盤面で自玉に王手がかかるか
+    const next = setPieceAt(removePieceAt(board, pos), target, piece)
+    if (isInCheck(next, currentPlayer)) return false
+
+    return true
+  })
+}
+
+// 持ち駒を打てるマスの候補を生成する（駒がないマスのみ）
+export function generateDropCandidates(board: Board): Position[] {
+  const candidates: Position[] = []
+  for (let row = 0; row < 9; row++) {
+    for (let col = 0; col < 9; col++) {
+      if (!getPieceAt(board, { row, col })) {
+        candidates.push({ row, col })
+      }
+    }
+  }
+  return candidates
+}
+
+// 持ち駒の合法打ち先リストを返す
+export function getLegalDrops(
+  board: Board,
+  player: Player,
+  pieceType: PieceType,
+  _capturedPieces: CapturedPieces,
+): Position[] {
+  const opponent: Player = player === 'sente' ? 'gote' : 'sente'
+  const candidates = generateDropCandidates(board)
+
+  return candidates.filter(target => {
+    // 行き所のない駒チェック
+    if (isNowhereToGo(pieceType, player, target)) return false
+
+    // 二歩チェック: 同じ筋に未成の歩がすでにあるか
+    if (pieceType === 'pawn') {
+      for (let row = 0; row < 9; row++) {
+        const p = getPieceAt(board, { row, col: target.col })
+        if (p?.type === 'pawn' && p.owner === player) return false
+      }
+    }
+
+    // 打ち歩詰めチェック: 歩を打って相手の王が詰みになるか
+    if (pieceType === 'pawn') {
+      const droppedPiece = { type: pieceType, owner: player }
+      const next = setPieceAt(board, target, droppedPiece)
+
+      // 相手の合法手がゼロなら打ち歩詰め（突き歩詰めはOKなので盤上の歩は除外）
+      const opponentHasEscape = Array.from({ length: 9 }, (_, row) =>
+        Array.from({ length: 9 }, (_, col) => ({ row, col }))
+      ).flat().some(opPos => {
+        const opPiece = getPieceAt(next, opPos)
+        if (!opPiece || opPiece.owner !== opponent) return false
+        // 相手の合法手を生成（王手放置チェック付き）
+        const opMoves = getLegalMoves(next, opPos, _capturedPieces, opponent)
+        return opMoves.length > 0
+      })
+
+      if (!opponentHasEscape) return false
+    }
+
+    // 王手放置チェック: 打った後に自玉に王手がかかるか
+    const droppedPiece = { type: pieceType, owner: player }
+    const next = setPieceAt(board, target, droppedPiece)
+    if (isInCheck(next, player)) return false
+
+    return true
+  })
 }
