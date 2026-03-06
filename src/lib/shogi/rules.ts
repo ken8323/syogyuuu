@@ -1,5 +1,5 @@
 import type { Board, CapturedPieces, Piece, PieceType, Player, Position, PromotedPieceType } from './types'
-import { getPieceAt } from './board'
+import { findKing, getPieceAt, setPieceAt } from './board'
 import { generateMoveCandidates, getLegalDrops, getLegalMoves, isInCheck } from './moves'
 
 // ============================================================
@@ -31,8 +31,7 @@ export function hasNoEscape(
   return false
 }
 
-// 打ち歩詰め判定: 歩を打って相手が詰みになるか（持ち駒打ち含む脱出手を確認）
-// isInCheck で王手確認後に呼ぶこと（王手でない場合は詰みにならないため不要）
+// 打ち歩詰め判定: pos に歩を打った結果、相手が詰みになるか（持ち駒打ち含む脱出手を確認）
 export function isUchifuzume(
   board: Board,
   player: Player,
@@ -40,8 +39,9 @@ export function isUchifuzume(
   capturedPieces: CapturedPieces,
 ): boolean {
   const opponent: Player = player === 'sente' ? 'gote' : 'sente'
-  // 歩を仮に配置した盤面で相手が詰みかどうか
-  return isCheckmate(board, capturedPieces, opponent)
+  // pos に歩を配置した仮盤面で相手が詰みかどうかを判定する
+  const next = setPieceAt(board, pos, { type: 'pawn', owner: player })
+  return isCheckmate(next, capturedPieces, opponent)
 }
 
 // ============================================================
@@ -53,7 +53,7 @@ export { isInCheck }
 
 // 王手をかけている相手駒のリストを返す
 export function getCheckingPieces(board: Board, player: Player): Position[] {
-  const kingPos = findKingPos(board, player)
+  const kingPos = findKing(board, player)
   if (!kingPos) return []
 
   const opponent: Player = player === 'sente' ? 'gote' : 'sente'
@@ -92,17 +92,6 @@ export function isCheckmate(
     if (getLegalDrops(board, player, pt, capturedPieces).length > 0) return false
   }
   return true
-}
-
-// 内部ヘルパー: 王の位置を返す
-function findKingPos(board: Board, player: Player): Position | null {
-  for (let row = 0; row < 9; row++) {
-    for (let col = 0; col < 9; col++) {
-      const piece = board[row][col]
-      if (piece?.type === 'king' && piece.owner === player) return { row, col }
-    }
-  }
-  return null
 }
 
 // ============================================================
