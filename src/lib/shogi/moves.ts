@@ -220,6 +220,42 @@ export function getLegalMoves(
   })
 }
 
+// 打ち歩詰め判定用: 指定プレイヤーが脱出できるか（盤上の手 + 持ち駒打ちを確認）
+// getLegalDrops の打ち歩詰めチェックから呼ばれるため、
+// 持ち駒打ちの判定では打ち歩詰め再チェックを行わず無限ループを防ぐ
+function canEscape(board: Board, player: Player, capturedPieces: CapturedPieces): boolean {
+  // 盤上の手で脱出できるか
+  for (let row = 0; row < 9; row++) {
+    for (let col = 0; col < 9; col++) {
+      const piece = board[row][col]
+      if (!piece || piece.owner !== player) continue
+      if (getLegalMoves(board, { row, col }, capturedPieces, player).length > 0) return true
+    }
+  }
+
+  // 持ち駒打ちで脱出できるか（打ち歩詰め再チェックは省略）
+  const pieceTypes = Object.keys(capturedPieces[player]) as PieceType[]
+  const emptyCandidates = generateDropCandidates(board)
+  for (const pt of pieceTypes) {
+    for (const target of emptyCandidates) {
+      if (isNowhereToGo(pt, player, target)) continue
+      // 二歩チェック
+      if (pt === 'pawn') {
+        let nifu = false
+        for (let r = 0; r < 9; r++) {
+          const p = getPieceAt(board, { row: r, col: target.col })
+          if (p?.type === 'pawn' && p.owner === player) { nifu = true; break }
+        }
+        if (nifu) continue
+      }
+      // 王手放置チェック
+      const next = setPieceAt(board, target, { type: pt, owner: player })
+      if (!isInCheck(next, player)) return true
+    }
+  }
+  return false
+}
+
 // 持ち駒を打てるマスの候補を生成する（駒がないマスのみ）
 export function generateDropCandidates(board: Board): Position[] {
   const candidates: Position[] = []
@@ -238,7 +274,7 @@ export function getLegalDrops(
   board: Board,
   player: Player,
   pieceType: PieceType,
-  _capturedPieces: CapturedPieces,
+  capturedPieces: CapturedPieces,
 ): Position[] {
   const opponent: Player = player === 'sente' ? 'gote' : 'sente'
   const candidates = generateDropCandidates(board)
@@ -255,28 +291,14 @@ export function getLegalDrops(
       }
     }
 
-    // 打ち歩詰めチェック: 歩を打って相手の王が詰みになるか
-    if (pieceType === 'pawn') {
-      const droppedPiece = { type: pieceType, owner: player }
-      const next = setPieceAt(board, target, droppedPiece)
-
-      // 相手の合法手がゼロなら打ち歩詰め（突き歩詰めはOKなので盤上の歩は除外）
-      const opponentHasEscape = Array.from({ length: 9 }, (_, row) =>
-        Array.from({ length: 9 }, (_, col) => ({ row, col }))
-      ).flat().some(opPos => {
-        const opPiece = getPieceAt(next, opPos)
-        if (!opPiece || opPiece.owner !== opponent) return false
-        // 相手の合法手を生成（王手放置チェック付き）
-        const opMoves = getLegalMoves(next, opPos, _capturedPieces, opponent)
-        return opMoves.length > 0
-      })
-
-      if (!opponentHasEscape) return false
-    }
-
-    // 王手放置チェック: 打った後に自玉に王手がかかるか
     const droppedPiece = { type: pieceType, owner: player }
     const next = setPieceAt(board, target, droppedPiece)
+
+    // 打ち歩詰めチェック: 歩を打って相手が一切脱出できなくなるか
+    // 盤上の手だけでなく持ち駒打ちによる脱出も考慮する
+    if (pieceType === 'pawn' && !canEscape(next, opponent, capturedPieces)) return false
+
+    // 王手放置チェック: 打った後に自玉に王手がかかるか
     if (isInCheck(next, player)) return false
 
     return true
