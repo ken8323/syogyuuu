@@ -143,7 +143,7 @@ export function addCapturedPiece(
 // 持ち駒から駒を1枚使用した新しい持ち駒を返す（イミュータブル）
 // 前提条件: captured[player][pieceType] >= 1 であること
 // 合法手判定で持ち駒の存在チェックを経てから呼ぶこと
-export function useCapturedPiece(
+export function consumeCapturedPiece(
   captured: CapturedPieces,
   player: Player,
   pieceType: PieceType,
