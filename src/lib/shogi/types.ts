@@ -130,7 +130,11 @@ export interface MovePattern {
 // board[row][col] (0-indexed)
 // row=0 が一段目（後手陣）、row=8 が九段目（先手陣）
 // col=0 が9筋、col=8 が1筋
-export const INITIAL_BOARD: Board = [
+//
+// export せず、createInitialBoard() 経由で毎回独立したコピーを返す。
+// 直接エクスポートすると呼び出し側が参照を共有してしまい、
+// 盤面データが汚染されるリスクがある。
+const INITIAL_BOARD_DATA: Board = [
   // 一段目（後手）
   [
     { type: 'lance', owner: 'gote' },
@@ -190,3 +194,8 @@ export const INITIAL_BOARD: Board = [
     { type: 'lance', owner: 'sente' },
   ],
 ]
+
+// 毎回ディープコピーを返すことで、呼び出し側が盤面データを汚染しない
+export function createInitialBoard(): Board {
+  return structuredClone(INITIAL_BOARD_DATA)
+}
