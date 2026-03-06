@@ -184,8 +184,6 @@ export function redoMove(state: GameState): GameState {
   let capturedPieces: CapturedPieces = state.capturedPieces
 
   if (move.type === 'move') {
-    const captured = getPieceAt(board, move.to)
-
     // 成りの場合は成駒に変換
     const movedPieceType = move.promoted
       ? (getPromotedType(move.piece.type as PieceType) ?? move.piece.type)
@@ -195,10 +193,11 @@ export function redoMove(state: GameState): GameState {
     board = removePieceAt(board, move.from)
     board = setPieceAt(board, move.to, movedPiece)
 
-    if (captured) {
-      const demotedType = captured.type.startsWith('promoted_')
-        ? getDemotedType(captured.type as PromotedPieceType)
-        : (captured.type as PieceType)
+    // 履歴に保存済みの取られた駒を使う（再取得より信頼性が高い）
+    if (move.captured) {
+      const demotedType = move.captured.type.startsWith('promoted_')
+        ? getDemotedType(move.captured.type as PromotedPieceType)
+        : (move.captured.type as PieceType)
       capturedPieces = addCapturedPiece(capturedPieces, move.piece.owner, demotedType)
     }
   } else {
