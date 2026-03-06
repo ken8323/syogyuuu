@@ -1,4 +1,4 @@
-import type { MoveDirection, MovePattern, Piece, PieceType, Player, PromotedPieceType } from './types'
+import type { MoveDirection, MovePattern, PieceType, Player, PromotedPieceType } from './types'
 
 // ============================================================
 // 方向定数（先手基準）
@@ -8,12 +8,14 @@ import type { MoveDirection, MovePattern, Piece, PieceType, Player, PromotedPiec
 
 const FORWARD: MoveDirection = { dRow: -1, dCol: 0 }
 const BACKWARD: MoveDirection = { dRow: +1, dCol: 0 }
-const LEFT: MoveDirection = { dRow: 0, dCol: -1 }
-const RIGHT: MoveDirection = { dRow: 0, dCol: +1 }
-const FORWARD_LEFT: MoveDirection = { dRow: -1, dCol: -1 }
-const FORWARD_RIGHT: MoveDirection = { dRow: -1, dCol: +1 }
-const BACKWARD_LEFT: MoveDirection = { dRow: +1, dCol: -1 }
-const BACKWARD_RIGHT: MoveDirection = { dRow: +1, dCol: +1 }
+// col=0 が9筋（右端）、col=8 が1筋（左端）なので、
+// 先手から見て右方向 = col減少（dCol: -1）、左方向 = col増加（dCol: +1）
+const RIGHT: MoveDirection = { dRow: 0, dCol: -1 }  // 9筋方向
+const LEFT: MoveDirection = { dRow: 0, dCol: +1 }   // 1筋方向
+const FORWARD_RIGHT: MoveDirection = { dRow: -1, dCol: -1 }
+const FORWARD_LEFT: MoveDirection = { dRow: -1, dCol: +1 }
+const BACKWARD_RIGHT: MoveDirection = { dRow: +1, dCol: -1 }
+const BACKWARD_LEFT: MoveDirection = { dRow: +1, dCol: +1 }
 
 // ============================================================
 // 移動パターン定数
@@ -104,9 +106,9 @@ export const MOVE_PATTERNS: Record<PieceType | PromotedPieceType, MovePattern> =
 // ユーティリティ関数
 // ============================================================
 
-// 駒から移動パターンを取得する
-export function getMovePattern(piece: Piece): MovePattern {
-  return MOVE_PATTERNS[piece.type]
+// 駒種から移動パターンを取得する
+export function getMovePattern(pieceType: PieceType | PromotedPieceType): MovePattern {
+  return MOVE_PATTERNS[pieceType]
 }
 
 // 後手の場合に dRow・dCol を反転して返す
