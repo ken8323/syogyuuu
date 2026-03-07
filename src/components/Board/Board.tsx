@@ -3,6 +3,7 @@
 import type { Board as BoardType, Move, Player, Position } from '@/lib/shogi/types'
 import { Square } from './Square'
 import { Piece } from '@/components/Piece'
+import { MoveArrows } from './MoveArrows'
 
 // ============================================================
 // 定数
@@ -119,6 +120,7 @@ export function Board({
                     isOpponent={piece.owner !== currentPlayer}
                   />
                 )}
+                {isSelected && piece && <MoveArrows piece={piece} />}
               </Square>
             )
           })}
