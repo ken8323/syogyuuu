@@ -2,6 +2,7 @@
 
 import { Board } from '@/components/Board'
 import { CapturedPieces } from '@/components/CapturedPieces'
+import { ControlBar } from '@/components/Controls'
 import { useGameStore } from '@/stores/gameStore'
 import type { Player, Position, PieceType } from '@/lib/shogi/types'
 import { getPieceAt } from '@/lib/shogi/board'
@@ -15,6 +16,9 @@ export default function Home() {
     deselectPiece,
     movePiece,
     dropPiece,
+    undo,
+    redo,
+    toggleMenu,
   } = useGameStore()
   const {
     board,
@@ -30,6 +34,9 @@ export default function Home() {
   const opponent: Player = currentPlayer === 'sente' ? 'gote' : 'sente'
   const lastMove =
     moveHistory.currentIndex >= 0 ? moveHistory.moves[moveHistory.currentIndex] : null
+
+  const canUndo = moveHistory.currentIndex >= 0 && phase === 'idle'
+  const canRedo = moveHistory.currentIndex < moveHistory.moves.length - 1 && phase === 'idle'
 
   const handleSquareClick = (pos: Position) => {
     if (phase === 'idle' || phase === 'piece_selected') {
@@ -102,11 +109,19 @@ export default function Home() {
             onSelect={handleCapturedSelect}
           />
         </div>
-      </div>
 
-      <p className="text-sm font-medium text-amber-800">
-        手番: {currentPlayer === 'sente' ? '先手（青）' : '後手（赤）'} / phase: {phase}
-      </p>
+        {/* 操作バー */}
+        <div className="h-[8svh]">
+          <ControlBar
+            currentPlayer={currentPlayer}
+            canUndo={canUndo}
+            canRedo={canRedo}
+            onUndo={undo}
+            onRedo={redo}
+            onMenu={toggleMenu}
+          />
+        </div>
+      </div>
     </main>
   )
 }
