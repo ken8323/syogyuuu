@@ -1,31 +1,14 @@
 'use client'
 
-import type { Board as BoardType, Move, Piece, Player, Position } from '@/lib/shogi/types'
+import type { Board as BoardType, Move, Player, Position } from '@/lib/shogi/types'
 import { Square } from './Square'
+import { Piece } from '@/components/Piece'
 
 // ============================================================
 // 定数
 // ============================================================
 
 const DAN_LABELS = ['一', '二', '三', '四', '五', '六', '七', '八', '九']
-
-/** #10 で Piece コンポーネントに置き換えるまでの暫定ラベル */
-const PIECE_LABEL: Record<string, string> = {
-  king: '王',
-  rook: '飛',
-  bishop: '角',
-  gold: '金',
-  silver: '銀',
-  knight: '桂',
-  lance: '香',
-  pawn: '歩',
-  promoted_rook: '竜',
-  promoted_bishop: '馬',
-  promoted_silver: '全',
-  promoted_knight: '圭',
-  promoted_lance: '杏',
-  promoted_pawn: 'と',
-}
 
 // ============================================================
 // ヘルパー関数
@@ -129,7 +112,13 @@ export function Board({
                 isLastMoveTo={isLastMoveTo}
                 onClick={() => onSquareClick(internalPos)}
               >
-                {piece && <PiecePlaceholder piece={piece} currentPlayer={currentPlayer} />}
+                {piece && (
+                  <Piece
+                    piece={piece}
+                    isSelected={isSelected}
+                    isOpponent={piece.owner !== currentPlayer}
+                  />
+                )}
               </Square>
             )
           })}
@@ -151,27 +140,3 @@ export function Board({
   )
 }
 
-// ============================================================
-// 暫定駒表示（#10 の Piece コンポーネントに置き換え予定）
-// ============================================================
-
-function PiecePlaceholder({
-  piece,
-  currentPlayer,
-}: {
-  piece: Piece
-  currentPlayer: Player
-}) {
-  const isOpponent = piece.owner !== currentPlayer
-  return (
-    <span
-      className={[
-        'text-[0.65rem] font-bold leading-none',
-        isOpponent ? 'rotate-180' : '',
-        piece.owner === 'sente' ? 'text-blue-900' : 'text-red-900',
-      ].join(' ')}
-    >
-      {PIECE_LABEL[piece.type] ?? piece.type}
-    </span>
-  )
-}
