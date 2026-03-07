@@ -26,6 +26,7 @@ export function createInitialGameState(): GameState {
     moveHistory: { moves: [], currentIndex: -1 },
     isCheck: false,
     winner: null,
+    gameOverReason: null,
   }
 }
 
