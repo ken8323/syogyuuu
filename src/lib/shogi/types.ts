@@ -104,6 +104,8 @@ export interface GameState {
 export interface UIState {
   isMenuOpen: boolean
   isAnimating: boolean
+  /** 強制成りトースト通知用（表示後に clearForcedPromotion() で null に戻す） */
+  forcedPromotionPiece: PieceType | null
 }
 
 // ============================================================

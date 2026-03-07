@@ -3,13 +3,15 @@
 import { Board } from '@/components/Board'
 import { CapturedPieces } from '@/components/CapturedPieces'
 import { ControlBar } from '@/components/Controls'
+import { PromotionDialog, ForcedPromotionToast } from '@/components/Dialogs'
 import { useGameStore } from '@/stores/gameStore'
-import type { Player, Position, PieceType } from '@/lib/shogi/types'
+import type { BoardMove, Player, Position, PieceType } from '@/lib/shogi/types'
 import { getPieceAt } from '@/lib/shogi/board'
 
 export default function Home() {
   const {
     gameState,
+    ui,
     startNewGame,
     selectPiece,
     selectCapturedPiece,
@@ -18,7 +20,9 @@ export default function Home() {
     dropPiece,
     undo,
     redo,
+    promote,
     toggleMenu,
+    clearForcedPromotion,
   } = useGameStore()
   const {
     board,
@@ -37,6 +41,12 @@ export default function Home() {
 
   const canUndo = moveHistory.currentIndex >= 0 && phase === 'idle'
   const canRedo = moveHistory.currentIndex < moveHistory.moves.length - 1 && phase === 'idle'
+
+  // 成りダイアログ: promotion_check フェーズ時に最後の手の駒種を取得
+  const promotionPieceType: PieceType | null =
+    phase === 'promotion_check' && lastMove?.type === 'move'
+      ? (lastMove as BoardMove).piece.type as PieceType
+      : null
 
   const handleSquareClick = (pos: Position) => {
     if (phase === 'idle' || phase === 'piece_selected') {
@@ -58,7 +68,6 @@ export default function Home() {
 
   const handleCapturedSelect = (pieceType: PieceType) => {
     if (phase !== 'idle' && phase !== 'captured_selected') return
-    // 同じ持ち駒を再タップで解除
     if (selectedCaptured === pieceType) {
       deselectPiece()
     } else {
@@ -67,7 +76,20 @@ export default function Home() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center gap-2 bg-stone-100 p-4">
+    <main className="relative flex min-h-screen flex-col items-center justify-center gap-2 bg-stone-100 p-4">
+      {/* 成りダイアログ */}
+      <PromotionDialog
+        isOpen={phase === 'promotion_check'}
+        pieceType={promotionPieceType}
+        onPromote={promote}
+      />
+
+      {/* 強制成りトースト（store の ui.forcedPromotionPiece を参照） */}
+      <ForcedPromotionToast
+        pieceType={ui.forcedPromotionPiece}
+        onDismiss={clearForcedPromotion}
+      />
+
       <h1 className="text-2xl font-bold text-amber-900">しょうぎゅー！</h1>
 
       <button
