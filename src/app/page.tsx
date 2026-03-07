@@ -4,6 +4,7 @@ import { Board } from '@/components/Board'
 import { CapturedPieces } from '@/components/CapturedPieces'
 import { ControlBar } from '@/components/Controls'
 import { PromotionDialog, ForcedPromotionToast } from '@/components/Dialogs'
+import { CheckBanner } from '@/components/Notifications'
 import { useGameStore } from '@/stores/gameStore'
 import type { BoardMove, Player, Position, PieceType } from '@/lib/shogi/types'
 import { getPieceAt } from '@/lib/shogi/board'
@@ -23,6 +24,7 @@ export default function Home() {
     promote,
     toggleMenu,
     clearForcedPromotion,
+    completeCheckNotify,
   } = useGameStore()
   const {
     board,
@@ -84,6 +86,12 @@ export default function Home() {
         isOpen={phase === 'promotion_check'}
         pieceType={promotionPieceType}
         onPromote={promote}
+      />
+
+      {/* 王手通知バナー */}
+      <CheckBanner
+        isVisible={phase === 'check_notify'}
+        onDismiss={completeCheckNotify}
       />
 
       {/* 強制成りトースト（store の ui.forcedPromotionPiece を参照） */}
