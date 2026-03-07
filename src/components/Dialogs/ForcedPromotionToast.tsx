@@ -4,6 +4,8 @@ import { useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import type { PieceType } from '@/lib/shogi/types'
 
+// 強制成りが発生しうるのは歩・香・桂のみ（行き所のない駒ルール）
+// 銀・角・飛は任意成りのみのため、このマップに含まれない
 const FORCED_PROMOTION_MESSAGES: Partial<Record<PieceType, string>> = {
   pawn:   'ひよこがニワトリになったよ！🐔',
   lance:  'イノシシがパワーアップしたよ！🐗✨',

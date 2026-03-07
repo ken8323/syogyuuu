@@ -43,6 +43,8 @@ export default function Home() {
   const canRedo = moveHistory.currentIndex < moveHistory.moves.length - 1 && phase === 'idle'
 
   // 成りダイアログ: promotion_check フェーズ時に最後の手の駒種を取得
+  // mustPromote/canPromote は成駒に対して false を返すため、
+  // promotion_check フェーズ中の piece.type は必ず PieceType（非成駒）
   const promotionPieceType: PieceType | null =
     phase === 'promotion_check' && lastMove?.type === 'move'
       ? (lastMove as BoardMove).piece.type as PieceType
