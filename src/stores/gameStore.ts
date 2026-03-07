@@ -32,6 +32,7 @@ interface GameStore {
   toggleMenu: () => void
   completeTurnSwitch: () => void
   completeCheckNotify: () => void
+  clearForcedPromotion: () => void
 }
 
 // ============================================================
@@ -41,6 +42,7 @@ interface GameStore {
 const INITIAL_UI_STATE: UIState = {
   isMenuOpen: false,
   isAnimating: false,
+  forcedPromotionPiece: null,
 }
 
 // ============================================================
@@ -169,12 +171,13 @@ export const useGameStore = create<GameStore>()(
         if (mustPromote(piece, to)) {
           // 強制成り: 成りで実行して手番交代へ
           const nextState = executeMove(gameState, from, to, true)
-          set({
+          set(state => ({
             gameState: {
               ...nextState,
               phase: 'turn_switching',
             },
-          })
+            ui: { ...state.ui, forcedPromotionPiece: piece.type as PieceType },
+          }))
           return
         }
 
@@ -394,6 +397,12 @@ export const useGameStore = create<GameStore>()(
             ...state.ui,
             isMenuOpen: !state.ui.isMenuOpen,
           },
+        }))
+      },
+
+      clearForcedPromotion: () => {
+        set(state => ({
+          ui: { ...state.ui, forcedPromotionPiece: null },
         }))
       },
     }),
