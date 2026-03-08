@@ -39,8 +39,11 @@ export function GameOverDialog({ isOpen, winner, gameOverReason, onRematch, onQu
             {CONFETTI_COLORS.flatMap((color, ci) =>
               Array.from({ length: 4 }, (_, i) => {
                 const key = ci * 4 + i
+                // 素数を使って均等に分散させた横位置（0〜99%）
                 const left = `${((key * 37 + 11) % 100)}%`
+                // 紙吹雪が一斉に落ちないよう時間差をつける（0〜1.19秒）
                 const delay = (key * 0.13) % 1.2
+                // 落下速度を少しランダムに変化させる（1.8〜3.0秒）
                 const duration = 1.8 + (key % 5) * 0.3
                 return (
                   <motion.div
