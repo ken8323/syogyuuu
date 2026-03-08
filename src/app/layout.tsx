@@ -1,10 +1,12 @@
 import type { Metadata, Viewport } from 'next'
-import { Geist } from 'next/font/google'
+import { Zen_Maru_Gothic } from 'next/font/google'
 import './globals.css'
 
-const geistSans = Geist({
-  variable: '--font-geist-sans',
+// 子ども向け丸ゴシック（日本語対応）
+const zenMaruGothic = Zen_Maru_Gothic({
+  weight: ['400', '700', '900'],
   subsets: ['latin'],
+  display: 'swap',
 })
 
 export const metadata: Metadata = {
@@ -27,7 +29,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ja">
-      <body className={`${geistSans.variable} antialiased`}>{children}</body>
+      <body className={`${zenMaruGothic.className} antialiased`}>{children}</body>
     </html>
   )
 }
