@@ -59,10 +59,10 @@ describe('香車 (lance) の移動', () => {
     board[0][4] = { type: 'king', owner: 'gote' }
     const captured = createInitialCapturedPieces()
     const moves = getLegalMoves(board, { row: 6, col: 0 }, captured, 'sente')
-    // row5, row4, row3, row2, row1 に移動可能（row0は行き所なし）
-    expect(moves.length).toBe(5)
+    // row5, row4, row3, row2, row1, row0 に移動可能（row0は強制成り）
+    expect(moves.length).toBe(6)
     expect(moves.some(m => m.row === 5 && m.col === 0)).toBe(true)
-    expect(moves.some(m => m.row === 1 && m.col === 0)).toBe(true)
+    expect(moves.some(m => m.row === 0 && m.col === 0)).toBe(true)
   })
 
   it('先手の香車は途中に味方駒があるとブロックされる', () => {
