@@ -42,7 +42,7 @@
 | CAPTURED_SELECTED | 持ち駒が選択されている。打てるマスハイライト表示中 |
 | MOVING | 駒の移動アニメーション中 |
 | PROMOTION_CHECK | 成り判定。ダイアログ表示 or 自動成り |
-| TURN_SWITCHING | 手番交代中。盤面回転アニメーション |
+| TURN_SWITCHING | 手番交代中（盤面は固定のまま即座に遷移） |
 | CHECK_NOTIFY | 王手通知表示中 |
 | CHECKMATE | 詰み。勝敗ダイアログ表示 |
 
@@ -69,7 +69,7 @@
 | PROMOTION_CHECK | 強制成り | TURN_SWITCHING | 自動で成り → 手番交代開始 |
 | PROMOTION_CHECK | 「なる」選択 | TURN_SWITCHING | 成駒に変更 → 手番交代開始 |
 | PROMOTION_CHECK | 「ならない」選択 | TURN_SWITCHING | そのまま → 手番交代開始 |
-| TURN_SWITCHING | 回転完了 | CHECK_NOTIFY or IDLE | 王手判定 |
+| TURN_SWITCHING | 手番交代完了 | CHECK_NOTIFY or IDLE | 王手判定 |
 | CHECK_NOTIFY | 通知表示完了 | IDLE or CHECKMATE | 詰み判定。合法手ありなら IDLE |
 | CHECKMATE | 「もういっかい」 | IDLE | 盤面リセット |
 | CHECKMATE | 「おわる」 | (TITLE) | タイトル画面へ |
@@ -78,13 +78,10 @@
 
 | 現在の状態 | イベント | 次の状態 | 処理内容 |
 |-----------|---------|---------|---------|
-| IDLE | 「もどる」タップ | IDLE | 手の履歴から1手戻す。盤面の座標変換を切り替え |
-| IDLE | 「すすむ」タップ | IDLE | 戻した手を再実行。盤面の座標変換を切り替え |
+| IDLE | 「もどる」タップ | IDLE | 手の履歴から1手戻す。盤面状態を復元 |
+| IDLE | 「すすむ」タップ | IDLE | 戻した手を再実行。盤面状態を更新 |
 
-#### 連続 Undo/Redo 時の回転方針
-- 「もどる」「すすむ」を連続で押した場合、1手ごとに座標変換の切り替え（fade アニメーション）が発生する
-- 連続操作時はアニメーション時間を短縮（0.3秒）して操作のテンポを維持する
-- アニメーション中に追加の「もどる」「すすむ」が押された場合は、アニメーションをスキップして即座に反映する
+※ 盤面は常に先手視点固定のため、Undo/Redo 時の回転処理は不要。
 
 ### 2.3 メニューフロー
 
@@ -119,10 +116,9 @@ MoveHistory {
 | もどる | currentIndex-- 。盤面を moves[currentIndex] の状態に戻す | currentIndex >= 0 |
 | すすむ | currentIndex++ 。moves[currentIndex] の手を再実行 | currentIndex < moves.length - 1 |
 
-### 3.3 盤面回転との連動
-- 「もどる」実行時: 1手前の手番側が画面下になるように回転
-- 「すすむ」実行時: 再実行後の手番側が画面下になるように回転
-- 回転アニメーションは通常の手番交代と同じ（0.8秒）
+### 3.3 盤面表示との連動
+- 盤面は常に先手視点固定のため、Undo/Redo による盤面の回転処理は不要
+- 手番の切り替え（currentPlayer の変更）と盤面状態の復元のみ行う
 
 ---
 

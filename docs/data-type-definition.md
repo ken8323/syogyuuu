@@ -87,11 +87,8 @@ function fromSujiDan(suji: number, dan: number): Position {
   return { col: 9 - suji, row: dan - 1 }
 }
 
-// 表示用座標変換（手番に応じて描画座標を反転）
-function toDisplayPosition(pos: Position, currentPlayer: Player): Position {
-  if (currentPlayer === 'sente') return pos
-  return { col: 8 - pos.col, row: 8 - pos.row }
-}
+// ※ 盤面は常に先手視点固定のため、表示用座標変換は不要
+// displayRow = row, displayCol = col で常に描画する
 ```
 
 ### 2.5 持ち駒（CapturedPieces）
@@ -157,6 +154,7 @@ interface GameState {
   moveHistory: MoveHistory           // 手の履歴
   isCheck: boolean                   // 王手がかかっているか
   winner: Player | null              // 勝者（対局中は null）
+  gameOverReason: 'checkmate' | 'resign' | null  // 終了理由
 }
 ```
 
@@ -169,7 +167,7 @@ type GamePhase =
   | 'captured_selected'  // 持ち駒選択中
   | 'moving'             // 移動アニメーション中
   | 'promotion_check'    // 成り判定中
-  | 'turn_switching'     // 手番交代（回転）中
+  | 'turn_switching'     // 手番交代中
   | 'check_notify'       // 王手通知中
   | 'checkmate'          // 詰み（対局終了）
 ```
@@ -379,6 +377,7 @@ interface GameStore {
   redo: () => void
   resign: () => void
   resetGame: () => void
+  goToTitle: () => void                  // タイトル画面へ戻る
   toggleMenu: () => void                 // メニューの開閉
 
   // 内部アクション
@@ -392,8 +391,9 @@ interface GameStore {
 ```typescript
 // GameState に含めず、ストアの別フィールドとして管理
 interface UIState {
-  isMenuOpen: boolean        // メニューダイアログの開閉
-  isAnimating: boolean       // アニメーション中フラグ（操作無効化に使用）
+  isMenuOpen: boolean                    // メニューダイアログの開閉
+  isAnimating: boolean                   // アニメーション中フラグ（操作無効化に使用）
+  forcedPromotionPiece: PieceType | null // 強制成りトースト表示用の駒種
 }
 ```
 
