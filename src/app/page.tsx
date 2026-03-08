@@ -112,7 +112,7 @@ export default function Home() {
   }
 
   return (
-    <main className="relative flex min-h-screen flex-col items-center justify-center gap-2 bg-amber-50 p-4">
+    <main className="relative flex h-dvh flex-col items-center justify-center gap-2 overflow-hidden bg-amber-50 p-4">
       {/* メニューダイアログ */}
       <MenuDialog
         isOpen={ui.isMenuOpen}
