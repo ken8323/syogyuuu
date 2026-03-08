@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect } from 'react'
 import { Board } from '@/components/Board'
 import { CapturedPieces } from '@/components/CapturedPieces'
 import { ControlBar } from '@/components/Controls'
@@ -31,6 +32,7 @@ export default function Home() {
     resetGame,
     goToTitle,
     resign,
+    completeTurnSwitch,
   } = useGameStore()
   const {
     board,
@@ -44,6 +46,14 @@ export default function Home() {
     winner,
     gameOverReason,
   } = gameState
+
+  // turn_switching フェーズ完了を自動でトリガー
+  // (#19 手番交代アニメーション実装後はアニメーション完了コールバックに置き換える)
+  useEffect(() => {
+    if (phase === 'turn_switching') {
+      completeTurnSwitch()
+    }
+  }, [phase, completeTurnSwitch])
 
   // 保存データの有無: 手の履歴が1手以上あれば続きがある
   const hasSavedGame = gameState.moveHistory.moves.length > 0
