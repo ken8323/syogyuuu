@@ -27,6 +27,7 @@ export default function Home() {
     redo,
     promote,
     toggleMenu,
+    toggleMute,
     clearForcedPromotion,
     completeCheckNotify,
     resetGame,
@@ -188,9 +189,11 @@ export default function Home() {
             currentPlayer={currentPlayer}
             canUndo={canUndo}
             canRedo={canRedo}
+            isMuted={ui.isMuted}
             onUndo={undo}
             onRedo={redo}
             onMenu={toggleMenu}
+            onToggleMute={toggleMute}
           />
         </div>
       </div>

@@ -107,6 +107,8 @@ export interface UIState {
   isAnimating: boolean
   /** 強制成りトースト通知用（表示後に clearForcedPromotion() で null に戻す） */
   forcedPromotionPiece: PieceType | null
+  /** 効果音ミュート */
+  isMuted: boolean
 }
 
 // ============================================================
