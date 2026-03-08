@@ -150,13 +150,13 @@ export default function Home() {
       />
 
       <div className="flex w-[min(65svh,90svw)] flex-col gap-1">
-        {/* 相手の持ち駒エリア（上） */}
+        {/* 後手の持ち駒エリア（上・固定） */}
         <div className="h-[12svh]">
           <CapturedPieces
             capturedPieces={capturedPieces}
-            owner={opponent}
+            owner="gote"
             selectedCaptured={selectedCaptured}
-            isOwnerTurn={false}
+            isOwnerTurn={currentPlayer === 'gote' && (phase === 'idle' || phase === 'captured_selected')}
             onSelect={handleCapturedSelect}
           />
         </div>
@@ -171,13 +171,13 @@ export default function Home() {
           onSquareClick={handleSquareClick}
         />
 
-        {/* 自分の持ち駒エリア（下） */}
+        {/* 先手の持ち駒エリア（下・固定） */}
         <div className="h-[12svh]">
           <CapturedPieces
             capturedPieces={capturedPieces}
-            owner={currentPlayer}
+            owner="sente"
             selectedCaptured={selectedCaptured}
-            isOwnerTurn={phase === 'idle' || phase === 'captured_selected'}
+            isOwnerTurn={currentPlayer === 'sente' && (phase === 'idle' || phase === 'captured_selected')}
             onSelect={handleCapturedSelect}
           />
         </div>
