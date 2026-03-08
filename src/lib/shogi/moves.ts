@@ -209,9 +209,6 @@ export function getLegalMoves(
   const candidates = generateMoveCandidates(board, pos)
 
   return candidates.filter(target => {
-    // 行き所のない駒チェック
-    if (isNowhereToGo(piece.type, currentPlayer, target)) return false
-
     // 王手放置チェック: 仮に移動した盤面で自玉に王手がかかるか
     const next = setPieceAt(removePieceAt(board, pos), target, piece)
     if (isInCheck(next, currentPlayer)) return false
