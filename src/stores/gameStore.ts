@@ -66,11 +66,11 @@ export const useGameStore = create<GameStore>()(
       // ============================================================
 
       startNewGame: () => {
-        set({
+        set(state => ({
           appState: 'playing',
           gameState: createInitialGameState(),
-          ui: INITIAL_UI_STATE,
-        })
+          ui: { ...INITIAL_UI_STATE, isMuted: state.ui.isMuted },
+        }))
       },
 
       resumeGame: () => {
@@ -85,7 +85,7 @@ export const useGameStore = create<GameStore>()(
             selectedCaptured: null,
             legalMoves: [],
           },
-          ui: INITIAL_UI_STATE,
+          ui: { ...INITIAL_UI_STATE, isMuted: state.ui.isMuted },
         }))
       },
 
@@ -399,19 +399,19 @@ export const useGameStore = create<GameStore>()(
       },
 
       goToTitle: () => {
-        set({
+        set(state => ({
           appState: 'title',
           gameState: createInitialGameState(),
-          ui: INITIAL_UI_STATE,
-        })
+          ui: { ...INITIAL_UI_STATE, isMuted: state.ui.isMuted },
+        }))
       },
 
       resetGame: () => {
-        set({
+        set(state => ({
           appState: 'playing',
           gameState: createInitialGameState(),
-          ui: INITIAL_UI_STATE,
-        })
+          ui: { ...INITIAL_UI_STATE, isMuted: state.ui.isMuted },
+        }))
       },
 
       // ============================================================
