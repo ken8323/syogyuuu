@@ -24,7 +24,7 @@ export const PIECE_CONFIG: Record<PieceType | PromotedPieceType, PieceConfig> = 
   lance:  { AnimalComponent: Boar,     hiragana: 'きょう' },
   pawn:   { AnimalComponent: Chick,    hiragana: 'ふ'     },
   // 成駒
-  promoted_rook:   { AnimalComponent: Hawk,    hiragana: 'りゅう' },
+  promoted_rook:   { AnimalComponent: Hawk,    hiragana: 'りゅうおう' },
   promoted_bishop: { AnimalComponent: Owl,     hiragana: 'りゅうま' },
   promoted_silver: { AnimalComponent: Wolf,    hiragana: 'なぎん' },
   promoted_knight: { AnimalComponent: Rabbit,  hiragana: 'なけい' },
