@@ -6,18 +6,22 @@ interface ControlBarProps {
   currentPlayer: Player
   canUndo: boolean
   canRedo: boolean
+  isMuted: boolean
   onUndo: () => void
   onRedo: () => void
   onMenu: () => void
+  onToggleMute: () => void
 }
 
 export function ControlBar({
   currentPlayer,
   canUndo,
   canRedo,
+  isMuted,
   onUndo,
   onRedo,
   onMenu,
+  onToggleMute,
 }: ControlBarProps) {
   const isSente = currentPlayer === 'sente'
 
@@ -63,6 +67,15 @@ export function ControlBar({
         aria-label="すすむ"
       >
         すすむ ▶
+      </button>
+
+      {/* ミュートボタン */}
+      <button
+        className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg bg-stone-200 px-3 text-sm font-bold text-stone-700 hover:bg-stone-300"
+        onClick={onToggleMute}
+        aria-label={isMuted ? 'ミュート解除' : 'ミュート'}
+      >
+        {isMuted ? '🔇' : '🔊'}
       </button>
 
       {/* メニューボタン */}

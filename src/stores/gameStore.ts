@@ -5,6 +5,7 @@ import { getLegalMoves, getLegalDrops, isInCheck } from '../lib/shogi/moves'
 import { isCheckmate, canPromote, mustPromote } from '../lib/shogi/rules'
 import { executeMove, executeDrop, undoMove, redoMove, createInitialGameState } from '../lib/shogi/game'
 import { getPieceAt } from '../lib/shogi/board'
+import { playSound, soundEngine } from '../lib/sound/soundEngine'
 
 // ============================================================
 // ストアの型定義
@@ -31,6 +32,7 @@ interface GameStore {
   resetGame: () => void
   goToTitle: () => void
   toggleMenu: () => void
+  toggleMute: () => void
   completeTurnSwitch: () => void
   completeCheckNotify: () => void
   clearForcedPromotion: () => void
@@ -44,6 +46,7 @@ const INITIAL_UI_STATE: UIState = {
   isMenuOpen: false,
   isAnimating: false,
   forcedPromotionPiece: null,
+  isMuted: false,
 }
 
 // ============================================================
@@ -102,6 +105,7 @@ export const useGameStore = create<GameStore>()(
 
         const legalMoves = getLegalMoves(board, position, capturedPieces, currentPlayer)
 
+        playSound('select')
         set(state => ({
           gameState: {
             ...state.gameState,
@@ -126,6 +130,7 @@ export const useGameStore = create<GameStore>()(
 
         const legalMoves = getLegalDrops(board, currentPlayer, pieceType, capturedPieces)
 
+        playSound('select')
         set(state => ({
           gameState: {
             ...state.gameState,
@@ -172,6 +177,7 @@ export const useGameStore = create<GameStore>()(
         if (mustPromote(piece, to)) {
           // 強制成り: 成りで実行して手番交代へ
           const nextState = executeMove(gameState, from, to, true)
+          playSound('forced_promote')
           set(state => ({
             gameState: {
               ...nextState,
@@ -181,6 +187,10 @@ export const useGameStore = create<GameStore>()(
           }))
           return
         }
+
+        // 捕獲の有無で音を分ける
+        const captured = getPieceAt(board, to)
+        playSound(captured ? 'capture' : 'place')
 
         // 任意成りチェック
         if (canPromote(piece, from, to)) {
@@ -220,6 +230,7 @@ export const useGameStore = create<GameStore>()(
         if (!isLegal) return
 
         const nextState = executeDrop(gameState, selectedCaptured, to)
+        playSound('drop')
         set({
           gameState: {
             ...nextState,
@@ -246,6 +257,7 @@ export const useGameStore = create<GameStore>()(
           if (!lastMove || lastMove.type !== 'move') return
 
           const reExecuted = executeMove(undone, lastMove.from, lastMove.to, true)
+          playSound('promote')
           set({
             gameState: {
               ...reExecuted,
@@ -276,6 +288,7 @@ export const useGameStore = create<GameStore>()(
         // currentPlayer は executeMove/executeDrop で既に切り替わっている
         if (isCheckmate(board, capturedPieces, currentPlayer)) {
           const opponent: Player = currentPlayer === 'sente' ? 'gote' : 'sente'
+          playSound('victory')
           set(state => ({
             appState: 'game_over',
             gameState: {
@@ -287,6 +300,7 @@ export const useGameStore = create<GameStore>()(
             },
           }))
         } else if (isInCheck(board, currentPlayer)) {
+          playSound('check')
           set(state => ({
             gameState: {
               ...state.gameState,
@@ -333,6 +347,7 @@ export const useGameStore = create<GameStore>()(
         if (moveHistory.currentIndex < 0) return
 
         const nextState = undoMove(gameState)
+        playSound('undo')
         set({
           gameState: {
             ...nextState,
@@ -350,6 +365,7 @@ export const useGameStore = create<GameStore>()(
         if (moveHistory.currentIndex >= moveHistory.moves.length - 1) return
 
         const nextState = redoMove(gameState)
+        playSound('redo')
         set({
           gameState: {
             ...nextState,
@@ -416,6 +432,15 @@ export const useGameStore = create<GameStore>()(
           ui: { ...state.ui, forcedPromotionPiece: null },
         }))
       },
+
+      toggleMute: () => {
+        const { ui } = get()
+        const nextMuted = !ui.isMuted
+        soundEngine.setMuted(nextMuted)
+        set(state => ({
+          ui: { ...state.ui, isMuted: nextMuted },
+        }))
+      },
     }),
 
     // ============================================================
@@ -430,9 +455,17 @@ export const useGameStore = create<GameStore>()(
           currentPlayer: state.gameState.currentPlayer,
           moveHistory: state.gameState.moveHistory,
         },
+        ui: {
+          isMuted: state.ui.isMuted,
+        },
       }),
       merge: (persistedState, currentState) => {
-        const persisted = persistedState as { gameState: Pick<GameState, 'board' | 'capturedPieces' | 'currentPlayer' | 'moveHistory'> }
+        const persisted = persistedState as {
+          gameState: Pick<GameState, 'board' | 'capturedPieces' | 'currentPlayer' | 'moveHistory'>
+          ui?: { isMuted?: boolean }
+        }
+        const isMuted = persisted.ui?.isMuted ?? false
+        soundEngine.setMuted(isMuted)
         return {
           ...currentState,
           gameState: {
@@ -449,6 +482,10 @@ export const useGameStore = create<GameStore>()(
             isCheck: false,
             winner: null,
             gameOverReason: null,
+          },
+          ui: {
+            ...currentState.ui,
+            isMuted,
           },
         }
       },
