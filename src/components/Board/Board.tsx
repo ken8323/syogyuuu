@@ -112,11 +112,13 @@ export function Board({
                 onClick={() => onSquareClick(internalPos)}
               >
                 {piece && (
-                  <Piece
-                    piece={piece}
-                    isSelected={isSelected}
-                    isOpponent={piece.owner === 'gote'}
-                  />
+                  <div className="absolute inset-[3px]">
+                    <Piece
+                      piece={piece}
+                      isSelected={isSelected}
+                      isOpponent={piece.owner === 'gote'}
+                    />
+                  </div>
                 )}
                 {isSelected && piece && <MoveArrows piece={piece} />}
               </Square>

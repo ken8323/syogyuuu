@@ -9,6 +9,9 @@ import { PIECE_CONFIG, isPromotedType } from './pieceConfig'
 const SENTE_COLORS: AnimalColors = { primary: '#3B82F6', dark: '#1E40AF' }
 const GOTE_COLORS: AnimalColors = { primary: '#EF4444', dark: '#991B1B' }
 
+// 将棋駒の五角形（上部が尖った形）
+const PIECE_CLIP_PATH = 'polygon(50% 0%, 100% 22%, 100% 100%, 0% 100%, 0% 22%)'
+
 interface PieceProps {
   piece: PieceType
   /** 選択中: 光彩 + バウンスアニメーション */
@@ -25,26 +28,28 @@ export function Piece({ piece, isSelected = false, isOpponent = false }: PiecePr
 
   const { AnimalComponent, hiragana } = config
 
-  // 成駒: 金色枠 / 通常: 先後の色枠
-  const ringClass = promoted
-    ? 'ring-2 ring-yellow-400'
-    : isSente
-      ? 'ring-1 ring-blue-300'
-      : 'ring-1 ring-red-300'
-
   // 背景色
   const bgClass = isSente ? 'bg-blue-50' : 'bg-red-50'
 
+  // clip-path 使用時は ring が効かないため drop-shadow で枠線を表現
+  const borderShadow = promoted
+    ? 'drop-shadow(0 0 2px #F59E0B) drop-shadow(0 0 2px #F59E0B)'
+    : isSente
+      ? 'drop-shadow(0 0 1.5px #93C5FD)'
+      : 'drop-shadow(0 0 1.5px #FCA5A5)'
+
+  const filterStyle = isSelected
+    ? `${borderShadow} drop-shadow(0 0 6px rgba(251,191,36,0.95))`
+    : borderShadow
+
   return (
     <motion.div
-      className={`flex h-full w-full flex-col items-center justify-center rounded-sm ${ringClass} ${bgClass}`}
+      className={`flex h-full w-full flex-col items-center justify-center ${bgClass}`}
       style={{
-        // 後手の駒は上下反転
+        clipPath: PIECE_CLIP_PATH,
         rotate: isOpponent ? 180 : 0,
-        // 選択中: 金色の光彩
-        filter: isSelected ? 'drop-shadow(0 0 5px rgba(251,191,36,0.95))' : 'none',
+        filter: filterStyle,
       }}
-      // 選択中: 上下バウンスアニメーション
       animate={{ y: isSelected ? [0, -4, 0] : 0 }}
       transition={
         isSelected
