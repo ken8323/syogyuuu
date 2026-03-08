@@ -5,15 +5,18 @@ import { CapturedPieces } from '@/components/CapturedPieces'
 import { ControlBar } from '@/components/Controls'
 import { PromotionDialog, ForcedPromotionToast, GameOverDialog, MenuDialog } from '@/components/Dialogs'
 import { CheckBanner } from '@/components/Notifications'
+import { TitleScreen } from '@/components/TitleScreen'
 import { useGameStore } from '@/stores/gameStore'
 import type { BoardMove, Player, Position, PieceType } from '@/lib/shogi/types'
 import { getPieceAt } from '@/lib/shogi/board'
 
 export default function Home() {
   const {
+    appState,
     gameState,
     ui,
     startNewGame,
+    resumeGame,
     selectPiece,
     selectCapturedPiece,
     deselectPiece,
@@ -41,6 +44,20 @@ export default function Home() {
     winner,
     gameOverReason,
   } = gameState
+
+  // 保存データの有無: 手の履歴が1手以上あれば続きがある
+  const hasSavedGame = gameState.moveHistory.moves.length > 0
+
+  // タイトル画面
+  if (appState === 'title') {
+    return (
+      <TitleScreen
+        hasSavedGame={hasSavedGame}
+        onStartNew={startNewGame}
+        onResume={resumeGame}
+      />
+    )
+  }
 
   const opponent: Player = currentPlayer === 'sente' ? 'gote' : 'sente'
   const lastMove =
@@ -85,7 +102,7 @@ export default function Home() {
   }
 
   return (
-    <main className="relative flex min-h-screen flex-col items-center justify-center gap-2 bg-stone-100 p-4">
+    <main className="relative flex min-h-screen flex-col items-center justify-center gap-2 bg-amber-50 p-4">
       {/* メニューダイアログ */}
       <MenuDialog
         isOpen={ui.isMenuOpen}
@@ -121,15 +138,6 @@ export default function Home() {
         pieceType={ui.forcedPromotionPiece}
         onDismiss={clearForcedPromotion}
       />
-
-      <h1 className="text-2xl font-bold text-amber-900">しょうぎゅー！</h1>
-
-      <button
-        className="rounded-lg bg-amber-700 px-6 py-2 font-semibold text-white hover:bg-amber-800"
-        onClick={startNewGame}
-      >
-        あそぶ！
-      </button>
 
       <div className="flex w-[min(65svh,90svw)] flex-col gap-1">
         {/* 相手の持ち駒エリア（上） */}
