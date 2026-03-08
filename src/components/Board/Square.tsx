@@ -21,14 +21,26 @@ export function Square({
   isLastMoveTo,
   onClick,
 }: SquareProps) {
-  let bgClass = 'bg-amber-200'
-  if (isSelected) bgClass = 'bg-sky-300'
-  else if (isLastMoveTo) bgClass = 'bg-yellow-300'
-  else if (isLastMoveFrom) bgClass = 'bg-yellow-200'
+  // 木目テクスチャ: 斜めグラデーションで板目を表現
+  const woodGrain = [
+    'linear-gradient(105deg, transparent 40%, rgba(139,90,43,0.07) 40%, rgba(139,90,43,0.07) 42%, transparent 42%)',
+    'linear-gradient(105deg, transparent 60%, rgba(139,90,43,0.05) 60%, rgba(139,90,43,0.05) 61%, transparent 61%)',
+    'linear-gradient(to bottom, rgba(255,220,150,0.3) 0%, transparent 60%)',
+  ].join(', ')
+
+  let bgColor = ''
+  if (isSelected) bgColor = '#7dd3fc'
+  else if (isLastMoveTo) bgColor = '#fde047'
+  else if (isLastMoveFrom) bgColor = '#fef08a'
+
+  const bgStyle = bgColor
+    ? { backgroundColor: bgColor }
+    : { backgroundImage: `${woodGrain}, linear-gradient(to bottom right, #d4a843, #c49132)`, backgroundColor: '#d4a843' }
 
   return (
     <div
-      className={`relative flex aspect-square items-center justify-center border-r border-b border-amber-900/50 cursor-pointer select-none ${bgClass}`}
+      className="relative flex aspect-square items-center justify-center border-r border-b border-amber-900/50 cursor-pointer select-none"
+      style={bgStyle}
       onClick={onClick}
     >
       {/* 取れる駒ハイライト（赤） */}
