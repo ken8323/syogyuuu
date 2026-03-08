@@ -115,7 +115,7 @@ export function Board({
                   <Piece
                     piece={piece}
                     isSelected={isSelected}
-                    isOpponent={piece.owner !== currentPlayer}
+                    isOpponent={piece.owner === 'gote'}
                   />
                 )}
                 {isSelected && piece && <MoveArrows piece={piece} />}
