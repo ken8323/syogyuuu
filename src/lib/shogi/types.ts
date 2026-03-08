@@ -99,6 +99,7 @@ export interface GameState {
   moveHistory: MoveHistory
   isCheck: boolean
   winner: Player | null
+  gameOverReason: 'checkmate' | 'resign' | null
 }
 
 export interface UIState {

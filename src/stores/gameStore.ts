@@ -29,6 +29,7 @@ interface GameStore {
   redo: () => void
   resign: () => void
   resetGame: () => void
+  goToTitle: () => void
   toggleMenu: () => void
   completeTurnSwitch: () => void
   completeCheckNotify: () => void
@@ -282,6 +283,7 @@ export const useGameStore = create<GameStore>()(
               phase: 'checkmate',
               winner: opponent,
               isCheck: true,
+              gameOverReason: 'checkmate',
             },
           }))
         } else if (isInCheck(board, currentPlayer)) {
@@ -371,12 +373,21 @@ export const useGameStore = create<GameStore>()(
             ...state.gameState,
             phase: 'checkmate',
             winner: opponent,
+            gameOverReason: 'resign',
           },
           ui: {
             ...state.ui,
             isMenuOpen: false,
           },
         }))
+      },
+
+      goToTitle: () => {
+        set({
+          appState: 'title',
+          gameState: createInitialGameState(),
+          ui: INITIAL_UI_STATE,
+        })
       },
 
       resetGame: () => {
@@ -437,6 +448,7 @@ export const useGameStore = create<GameStore>()(
             legalMoves: [],
             isCheck: false,
             winner: null,
+            gameOverReason: null,
           },
         }
       },

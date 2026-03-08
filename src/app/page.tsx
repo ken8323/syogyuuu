@@ -3,7 +3,7 @@
 import { Board } from '@/components/Board'
 import { CapturedPieces } from '@/components/CapturedPieces'
 import { ControlBar } from '@/components/Controls'
-import { PromotionDialog, ForcedPromotionToast } from '@/components/Dialogs'
+import { PromotionDialog, ForcedPromotionToast, GameOverDialog } from '@/components/Dialogs'
 import { CheckBanner } from '@/components/Notifications'
 import { useGameStore } from '@/stores/gameStore'
 import type { BoardMove, Player, Position, PieceType } from '@/lib/shogi/types'
@@ -25,6 +25,8 @@ export default function Home() {
     toggleMenu,
     clearForcedPromotion,
     completeCheckNotify,
+    resetGame,
+    goToTitle,
   } = useGameStore()
   const {
     board,
@@ -35,6 +37,8 @@ export default function Home() {
     moveHistory,
     phase,
     capturedPieces,
+    winner,
+    gameOverReason,
   } = gameState
 
   const opponent: Player = currentPlayer === 'sente' ? 'gote' : 'sente'
@@ -81,6 +85,15 @@ export default function Home() {
 
   return (
     <main className="relative flex min-h-screen flex-col items-center justify-center gap-2 bg-stone-100 p-4">
+      {/* 勝敗ダイアログ */}
+      <GameOverDialog
+        isOpen={phase === 'checkmate'}
+        winner={winner}
+        gameOverReason={gameOverReason}
+        onRematch={resetGame}
+        onQuit={goToTitle}
+      />
+
       {/* 成りダイアログ */}
       <PromotionDialog
         isOpen={phase === 'promotion_check'}
