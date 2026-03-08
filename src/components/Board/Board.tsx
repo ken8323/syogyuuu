@@ -17,22 +17,20 @@ const DAN_LABELS = ['一', '二', '三', '四', '五', '六', '七', '八', '九
 
 /**
  * 表示座標 → 内部座標
- * - 先手: そのまま
- * - 後手: row / col を反転（盤面が180度回転した視点）
+ * 盤面は常に先手視点で固定（向かい合って1台で遊ぶため回転しない）
  */
-function toInternalPos(displayRow: number, displayCol: number, currentPlayer: Player): Position {
-  if (currentPlayer === 'sente') return { row: displayRow, col: displayCol }
-  return { row: 8 - displayRow, col: 8 - displayCol }
+function toInternalPos(displayRow: number, displayCol: number): Position {
+  return { row: displayRow, col: displayCol }
 }
 
-/** 表示列インデックス → 筋ラベル（数字） */
-function colLabel(displayCol: number, currentPlayer: Player): number {
-  return currentPlayer === 'sente' ? 9 - displayCol : displayCol + 1
+/** 表示列インデックス → 筋ラベル（9〜1 固定） */
+function colLabel(displayCol: number): number {
+  return 9 - displayCol
 }
 
-/** 表示行インデックス → 段ラベル（漢字） */
-function rowLabel(displayRow: number, currentPlayer: Player): string {
-  return currentPlayer === 'sente' ? DAN_LABELS[displayRow] : DAN_LABELS[8 - displayRow]
+/** 表示行インデックス → 段ラベル（一〜九 固定） */
+function rowLabel(displayRow: number): string {
+  return DAN_LABELS[displayRow]
 }
 
 // ============================================================
@@ -75,7 +73,7 @@ export function Board({
             key={displayCol}
             className="flex-1 text-center text-xs font-medium text-amber-900"
           >
-            {colLabel(displayCol, currentPlayer)}
+            {colLabel(displayCol)}
           </div>
         ))}
       </div>
@@ -86,7 +84,7 @@ export function Board({
           {Array.from({ length: 81 }, (_, i) => {
             const displayRow = Math.floor(i / 9)
             const displayCol = i % 9
-            const internalPos = toInternalPos(displayRow, displayCol, currentPlayer)
+            const internalPos = toInternalPos(displayRow, displayCol)
             const posKey = `${internalPos.row},${internalPos.col}`
 
             const piece = board[internalPos.row][internalPos.col]
@@ -133,7 +131,7 @@ export function Board({
               key={displayRow}
               className="flex flex-1 items-center justify-center text-xs font-medium text-amber-900"
             >
-              {rowLabel(displayRow, currentPlayer)}
+              {rowLabel(displayRow)}
             </div>
           ))}
         </div>
