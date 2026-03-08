@@ -1,29 +1,35 @@
+import type { ComponentType } from 'react'
 import type { PieceType, PromotedPieceType } from '@/lib/shogi/types'
+import type { AnimalColors } from './animals'
+import { Lion, Hawk, Owl, Elephant, Wolf, Rabbit, Boar, Chick, Chicken } from './animals'
+
+interface AnimalProps extends AnimalColors {
+  isPromoted?: boolean
+}
 
 export interface PieceConfig {
-  /** 動物絵文字（SVG実装までのプレースホルダ） */
-  emoji: string
+  AnimalComponent: ComponentType<AnimalProps>
   /** 駒名のひらがな */
   hiragana: string
 }
 
 export const PIECE_CONFIG: Record<PieceType | PromotedPieceType, PieceConfig> = {
   // 通常駒
-  king:   { emoji: '🦁', hiragana: 'おう'   },
-  rook:   { emoji: '🦅', hiragana: 'ひしゃ' },
-  bishop: { emoji: '🦉', hiragana: 'かく'   },
-  gold:   { emoji: '🐘', hiragana: 'きん'   },
-  silver: { emoji: '🐺', hiragana: 'ぎん'   },
-  knight: { emoji: '🐰', hiragana: 'けいま' },
-  lance:  { emoji: '🐗', hiragana: 'きょう' },
-  pawn:   { emoji: '🐤', hiragana: 'ふ'     },
-  // 成駒（promoted_ prefix）
-  promoted_rook:   { emoji: '🦅', hiragana: 'りゅう' },
-  promoted_bishop: { emoji: '🦉', hiragana: 'うま'   },
-  promoted_silver: { emoji: '🐺', hiragana: 'なぎん' },
-  promoted_knight: { emoji: '🐰', hiragana: 'なけい' },
-  promoted_lance:  { emoji: '🐗', hiragana: 'なきょ' },
-  promoted_pawn:   { emoji: '🐔', hiragana: 'ときん' },
+  king:   { AnimalComponent: Lion,     hiragana: 'おう'   },
+  rook:   { AnimalComponent: Hawk,     hiragana: 'ひしゃ' },
+  bishop: { AnimalComponent: Owl,      hiragana: 'かく'   },
+  gold:   { AnimalComponent: Elephant, hiragana: 'きん'   },
+  silver: { AnimalComponent: Wolf,     hiragana: 'ぎん'   },
+  knight: { AnimalComponent: Rabbit,   hiragana: 'けいま' },
+  lance:  { AnimalComponent: Boar,     hiragana: 'きょう' },
+  pawn:   { AnimalComponent: Chick,    hiragana: 'ふ'     },
+  // 成駒
+  promoted_rook:   { AnimalComponent: Hawk,    hiragana: 'りゅう' },
+  promoted_bishop: { AnimalComponent: Owl,     hiragana: 'うま'   },
+  promoted_silver: { AnimalComponent: Wolf,    hiragana: 'なぎん' },
+  promoted_knight: { AnimalComponent: Rabbit,  hiragana: 'なけい' },
+  promoted_lance:  { AnimalComponent: Boar,    hiragana: 'なきょ' },
+  promoted_pawn:   { AnimalComponent: Chicken, hiragana: 'ときん' },
 }
 
 export function isPromotedType(type: PieceType | PromotedPieceType): boolean {

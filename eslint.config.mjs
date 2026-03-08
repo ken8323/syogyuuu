@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Serwist によるビルド生成物
+    "public/sw.js",
+    "public/sw.js.map",
   ]),
 ]);
 
