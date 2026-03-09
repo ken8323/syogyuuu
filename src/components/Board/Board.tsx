@@ -1,9 +1,11 @@
 'use client'
 
-import type { Board as BoardType, Move, Player, Position } from '@/lib/shogi/types'
+import { useRef } from 'react'
+import type { AnimatingMoveInfo, Board as BoardType, Move, Player, Position } from '@/lib/shogi/types'
 import { Square } from './Square'
 import { Piece } from '@/components/Piece'
 import { MoveArrows } from './MoveArrows'
+import { AnimatingPiece } from './AnimatingPiece'
 
 // ============================================================
 // 定数
@@ -44,6 +46,8 @@ interface BoardProps {
   legalMoves: Position[]
   lastMove: Move | null
   onSquareClick: (pos: Position) => void
+  animatingMove: AnimatingMoveInfo | null
+  onAnimationComplete: () => void
 }
 
 // ============================================================
@@ -57,7 +61,11 @@ export function Board({
   legalMoves,
   lastMove,
   onSquareClick,
+  animatingMove,
+  onAnimationComplete,
 }: BoardProps) {
+  const gridRef = useRef<HTMLDivElement>(null)
+
   // Set に変換しておくことでO(1)ルックアップを実現
   const legalMoveSet = new Set(legalMoves.map((p) => `${p.row},${p.col}`))
 
@@ -80,50 +88,67 @@ export function Board({
 
       <div className="flex">
         {/* 9x9 盤面グリッド */}
-        <div className="grid flex-1 grid-cols-9 border-l-2 border-t-2 border-amber-900">
-          {Array.from({ length: 81 }, (_, i) => {
-            const displayRow = Math.floor(i / 9)
-            const displayCol = i % 9
-            const internalPos = toInternalPos(displayRow, displayCol)
-            const posKey = `${internalPos.row},${internalPos.col}`
+        <div className="relative flex-1">
+          <div ref={gridRef} className="grid grid-cols-9 border-l-2 border-t-2 border-amber-900">
+            {Array.from({ length: 81 }, (_, i) => {
+              const displayRow = Math.floor(i / 9)
+              const displayCol = i % 9
+              const internalPos = toInternalPos(displayRow, displayCol)
+              const posKey = `${internalPos.row},${internalPos.col}`
 
-            const piece = board[internalPos.row][internalPos.col]
-            const isSelected =
-              selectedPosition?.row === internalPos.row &&
-              selectedPosition?.col === internalPos.col
-            const isLegalMove = legalMoveSet.has(posKey)
-            const isCapturable =
-              isLegalMove && piece !== null && piece.owner !== currentPlayer
-            const isLastMoveFrom =
-              lastMoveFrom?.row === internalPos.row &&
-              lastMoveFrom?.col === internalPos.col
-            const isLastMoveTo =
-              lastMoveTo?.row === internalPos.row &&
-              lastMoveTo?.col === internalPos.col
+              const piece = board[internalPos.row][internalPos.col]
+              const isSelected =
+                selectedPosition?.row === internalPos.row &&
+                selectedPosition?.col === internalPos.col
+              const isLegalMove = legalMoveSet.has(posKey)
+              const isCapturable =
+                isLegalMove && piece !== null && piece.owner !== currentPlayer
+              const isLastMoveFrom =
+                lastMoveFrom?.row === internalPos.row &&
+                lastMoveFrom?.col === internalPos.col
+              const isLastMoveTo =
+                lastMoveTo?.row === internalPos.row &&
+                lastMoveTo?.col === internalPos.col
 
-            return (
-              <Square
-                key={posKey}
-                isSelected={isSelected}
-                isLegalMove={isLegalMove}
-                isCapturable={isCapturable}
-                isLastMoveFrom={isLastMoveFrom}
-                isLastMoveTo={isLastMoveTo}
-                onClick={() => onSquareClick(internalPos)}
-              >
-                {piece && (
-                  <div className="absolute inset-[3px]">
-                    <Piece
-                      piece={piece}
-                      isSelected={isSelected}
-                      isOpponent={piece.owner === 'gote'}
-                    />
-                  </div>
-                )}
-                {isSelected && piece && <MoveArrows piece={piece} />}
-              </Square>
-            )
-          })}
+              // アニメーション中は移動先マスの駒を非表示（AnimatingPiece が代わりに表示）
+              const isAnimatingTarget =
+                animatingMove !== null &&
+                animatingMove.to.row === internalPos.row &&
+                animatingMove.to.col === internalPos.col
+
+              return (
+                <Square
+                  key={posKey}
+                  isSelected={isSelected}
+                  isLegalMove={isLegalMove}
+                  isCapturable={isCapturable}
+                  isLastMoveFrom={isLastMoveFrom}
+                  isLastMoveTo={isLastMoveTo}
+                  onClick={() => onSquareClick(internalPos)}
+                >
+                  {piece && !isAnimatingTarget && (
+                    <div className="absolute inset-[3px]">
+                      <Piece
+                        piece={piece}
+                        isSelected={isSelected}
+                        isOpponent={piece.owner === 'gote'}
+                      />
+                    </div>
+                  )}
+                  {isSelected && piece && <MoveArrows piece={piece} />}
+                </Square>
+              )
+            })}
+          </div>
+
+          {/* 移動アニメーション overlay */}
+          {animatingMove && (
+            <AnimatingPiece
+              animatingMove={animatingMove}
+              gridRef={gridRef}
+              onComplete={onAnimationComplete}
+            />
+          )}
         </div>
 
         {/* 段ラベル（一〜九 または 九〜一） */}

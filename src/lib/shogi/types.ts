@@ -102,6 +102,16 @@ export interface GameState {
   gameOverReason: 'checkmate' | 'resign' | null
 }
 
+export interface AnimatingMoveInfo {
+  piece: Piece
+  from: Position | null  // null = 持ち駒打ち
+  to: Position
+  captured: Piece | null
+  pendingPhase: 'turn_switching' | 'promotion_check'
+  promote: boolean
+  isForcedPromote: boolean
+}
+
 export interface UIState {
   isMenuOpen: boolean
   isAnimating: boolean
@@ -109,6 +119,8 @@ export interface UIState {
   forcedPromotionPiece: PieceType | null
   /** 効果音ミュート */
   isMuted: boolean
+  /** 移動アニメーション中の情報（null = アニメーションなし） */
+  animatingMove: AnimatingMoveInfo | null
 }
 
 // ============================================================
