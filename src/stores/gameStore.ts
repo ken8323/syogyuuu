@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import type { GameState, PieceType, Player, Position, UIState } from '../lib/shogi/types'
+import type { AnimatingMoveInfo, GameState, PieceType, Player, Position, UIState } from '../lib/shogi/types'
 import { getLegalMoves, getLegalDrops, isInCheck } from '../lib/shogi/moves'
 import { isCheckmate, canPromote, mustPromote } from '../lib/shogi/rules'
 import { executeMove, executeDrop, undoMove, redoMove, createInitialGameState } from '../lib/shogi/game'
@@ -36,6 +36,7 @@ interface GameStore {
   completeTurnSwitch: () => void
   completeCheckNotify: () => void
   clearForcedPromotion: () => void
+  completeMoveAnimation: () => void
 }
 
 // ============================================================
@@ -47,6 +48,7 @@ const INITIAL_UI_STATE: UIState = {
   isAnimating: false,
   forcedPromotionPiece: null,
   isMuted: false,
+  animatingMove: null,
 }
 
 // ============================================================
@@ -172,47 +174,41 @@ export const useGameStore = create<GameStore>()(
         if (!piece) return
 
         const from = selectedPosition
-
-        // 強制成りチェック
-        if (mustPromote(piece, to)) {
-          // 強制成り: 成りで実行して手番交代へ
-          const nextState = executeMove(gameState, from, to, true)
-          playSound('forced_promote')
-          set(state => ({
-            gameState: {
-              ...nextState,
-              phase: 'turn_switching',
-            },
-            ui: { ...state.ui, forcedPromotionPiece: piece.type as PieceType },
-          }))
-          return
-        }
-
-        // 捕獲の有無で音を分ける
         const captured = getPieceAt(board, to)
-        playSound(captured ? 'capture' : 'place')
 
-        // 任意成りチェック
-        if (canPromote(piece, from, to)) {
-          // 成り選択のためにまず非成りで手を実行して履歴に追加
-          const nextState = executeMove(gameState, from, to, false)
-          set({
-            gameState: {
-              ...nextState,
-              phase: 'promotion_check',
-            },
-          })
-          return
+        // 成り・手番遷移先を決定
+        let promote = false
+        let isForcedPromote = false
+        let pendingPhase: AnimatingMoveInfo['pendingPhase'] = 'turn_switching'
+
+        if (mustPromote(piece, to)) {
+          promote = true
+          isForcedPromote = true
+          pendingPhase = 'turn_switching'
+          playSound('forced_promote')
+        } else if (canPromote(piece, from, to)) {
+          promote = false
+          pendingPhase = 'promotion_check'
+          playSound(captured ? 'capture' : 'place')
+        } else {
+          promote = false
+          pendingPhase = 'turn_switching'
+          playSound(captured ? 'capture' : 'place')
         }
 
-        // 成りなし: 手番交代へ
-        const nextState = executeMove(gameState, from, to, false)
-        set({
+        // 移動を実行（盤面を即時更新）
+        const nextState = executeMove(gameState, from, to, promote)
+
+        set(state => ({
           gameState: {
             ...nextState,
-            phase: 'turn_switching',
+            phase: 'moving',
           },
-        })
+          ui: {
+            ...state.ui,
+            animatingMove: { piece, from, to, captured, pendingPhase, promote, isForcedPromote },
+          },
+        }))
       },
 
       // ============================================================
@@ -221,7 +217,7 @@ export const useGameStore = create<GameStore>()(
 
       dropPiece: (to: Position) => {
         const { gameState } = get()
-        const { phase, selectedCaptured, legalMoves } = gameState
+        const { phase, selectedCaptured, legalMoves, currentPlayer } = gameState
 
         if (phase !== 'captured_selected' || !selectedCaptured) return
 
@@ -231,12 +227,25 @@ export const useGameStore = create<GameStore>()(
 
         const nextState = executeDrop(gameState, selectedCaptured, to)
         playSound('drop')
-        set({
+
+        set(state => ({
           gameState: {
             ...nextState,
-            phase: 'turn_switching',
+            phase: 'moving',
           },
-        })
+          ui: {
+            ...state.ui,
+            animatingMove: {
+              piece: { type: selectedCaptured, owner: currentPlayer },
+              from: null,
+              to,
+              captured: null,
+              pendingPhase: 'turn_switching',
+              promote: false,
+              isForcedPromote: false,
+            },
+          },
+        }))
       },
 
       // ============================================================
@@ -439,6 +448,29 @@ export const useGameStore = create<GameStore>()(
         soundEngine.setMuted(nextMuted)
         set(state => ({
           ui: { ...state.ui, isMuted: nextMuted },
+        }))
+      },
+
+      // ============================================================
+      // 移動アニメーション完了
+      // ============================================================
+
+      completeMoveAnimation: () => {
+        const { ui } = get()
+        if (!ui.animatingMove) return
+
+        const { pendingPhase, isForcedPromote, piece } = ui.animatingMove
+
+        set(state => ({
+          gameState: {
+            ...state.gameState,
+            phase: pendingPhase,
+          },
+          ui: {
+            ...state.ui,
+            animatingMove: null,
+            ...(isForcedPromote ? { forcedPromotionPiece: piece.type as PieceType } : {}),
+          },
         }))
       },
     }),

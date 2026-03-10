@@ -8,7 +8,7 @@ import { PromotionDialog, ForcedPromotionToast, GameOverDialog, MenuDialog } fro
 import { CheckBanner } from '@/components/Notifications'
 import { TitleScreen } from '@/components/TitleScreen'
 import { useGameStore } from '@/stores/gameStore'
-import type { BoardMove, Player, Position, PieceType } from '@/lib/shogi/types'
+import type { BoardMove, Position, PieceType } from '@/lib/shogi/types'
 import { getPieceAt } from '@/lib/shogi/board'
 
 export default function Home() {
@@ -34,6 +34,7 @@ export default function Home() {
     goToTitle,
     resign,
     completeTurnSwitch,
+    completeMoveAnimation,
   } = useGameStore()
   const {
     board,
@@ -70,7 +71,6 @@ export default function Home() {
     )
   }
 
-  const opponent: Player = currentPlayer === 'sente' ? 'gote' : 'sente'
   const lastMove =
     moveHistory.currentIndex >= 0 ? moveHistory.moves[moveHistory.currentIndex] : null
 
@@ -170,6 +170,8 @@ export default function Home() {
           legalMoves={legalMoves}
           lastMove={lastMove}
           onSquareClick={handleSquareClick}
+          animatingMove={ui.animatingMove}
+          onAnimationComplete={completeMoveAnimation}
         />
 
         {/* 先手の持ち駒エリア（下・固定） */}
