@@ -9,6 +9,8 @@ interface SquareProps {
   isCapturable: boolean
   isLastMoveFrom: boolean
   isLastMoveTo: boolean
+  /** 将棋盤の星マーカー（hoshi）を表示するか */
+  isStarPoint?: boolean
   onClick: () => void
 }
 
@@ -19,6 +21,7 @@ export function Square({
   isCapturable,
   isLastMoveFrom,
   isLastMoveTo,
+  isStarPoint = false,
   onClick,
 }: SquareProps) {
   // 木目テクスチャ: 斜めグラデーションで板目を表現
@@ -33,13 +36,18 @@ export function Square({
   else if (isLastMoveTo) bgColor = '#fde047'
   else if (isLastMoveFrom) bgColor = '#fef08a'
 
+  const insetShadow = 'inset 0 0 1px rgba(0,0,0,0.06)'
   const bgStyle = bgColor
-    ? { backgroundColor: bgColor }
-    : { backgroundImage: `${woodGrain}, linear-gradient(to bottom right, #d4a843, #c49132)`, backgroundColor: '#d4a843' }
+    ? { backgroundColor: bgColor, boxShadow: insetShadow }
+    : {
+        backgroundImage: `${woodGrain}, linear-gradient(to bottom right, #d4a843, #c49132)`,
+        backgroundColor: '#d4a843',
+        boxShadow: insetShadow,
+      }
 
   return (
     <div
-      className="relative flex aspect-square items-center justify-center border-r border-b border-amber-900/50 cursor-pointer select-none"
+      className="relative flex aspect-square items-center justify-center border-r border-b border-amber-900/60 cursor-pointer select-none"
       style={bgStyle}
       onClick={onClick}
     >
@@ -53,6 +61,14 @@ export function Square({
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
           <div className="h-[45%] w-[45%] rounded-full bg-green-600/40" />
         </div>
+      )}
+
+      {/* 星マーカー（hoshi） */}
+      {isStarPoint && !isSelected && !isLegalMove && !isCapturable && (
+        <div
+          className="pointer-events-none absolute rounded-full bg-amber-900/50"
+          style={{ width: 5, height: 5 }}
+        />
       )}
 
       {children}
