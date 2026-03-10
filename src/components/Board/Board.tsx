@@ -1,11 +1,12 @@
 'use client'
 
-import { useRef } from 'react'
-import type { AnimatingMoveInfo, Board as BoardType, Move, Player, Position } from '@/lib/shogi/types'
+import { useRef, useState, useLayoutEffect } from 'react'
+import type { AnimatingMoveInfo, Board as BoardType, Move, Player, Position, PromotingInfo } from '@/lib/shogi/types'
 import { Square } from './Square'
 import { Piece } from '@/components/Piece'
 import { MoveArrows } from './MoveArrows'
 import { AnimatingPiece } from './AnimatingPiece'
+import { PromotionEffect } from '@/components/Piece/PromotionEffect'
 
 // ============================================================
 // 定数
@@ -48,6 +49,8 @@ interface BoardProps {
   onSquareClick: (pos: Position) => void
   animatingMove: AnimatingMoveInfo | null
   onAnimationComplete: () => void
+  promotingInfo: PromotingInfo | null
+  onPromotionComplete: () => void
 }
 
 // ============================================================
@@ -63,8 +66,17 @@ export function Board({
   onSquareClick,
   animatingMove,
   onAnimationComplete,
+  promotingInfo,
+  onPromotionComplete,
 }: BoardProps) {
   const gridRef = useRef<HTMLDivElement>(null)
+  const [squareSize, setSquareSize] = useState<{ w: number; h: number } | null>(null)
+
+  useLayoutEffect(() => {
+    if (!gridRef.current) return
+    const { width, height } = gridRef.current.getBoundingClientRect()
+    setSquareSize({ w: width / 9, h: height / 9 })
+  }, [gridRef])
 
   // Set に変換しておくことでO(1)ルックアップを実現
   const legalMoveSet = new Set(legalMoves.map((p) => `${p.row},${p.col}`))
@@ -147,6 +159,16 @@ export function Board({
               animatingMove={animatingMove}
               gridRef={gridRef}
               onComplete={onAnimationComplete}
+            />
+          )}
+
+          {/* 成りアニメーション overlay */}
+          {promotingInfo && squareSize && (
+            <PromotionEffect
+              position={promotingInfo.position}
+              squareSize={squareSize}
+              isForcedPromote={promotingInfo.isForcedPromote}
+              onComplete={onPromotionComplete}
             />
           )}
         </div>

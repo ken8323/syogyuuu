@@ -35,6 +35,7 @@ export default function Home() {
     resign,
     completeTurnSwitch,
     completeMoveAnimation,
+    completePromotion,
   } = useGameStore()
   const {
     board,
@@ -172,6 +173,8 @@ export default function Home() {
           onSquareClick={handleSquareClick}
           animatingMove={ui.animatingMove}
           onAnimationComplete={completeMoveAnimation}
+          promotingInfo={ui.promotingInfo}
+          onPromotionComplete={completePromotion}
         />
 
         {/* 先手の持ち駒エリア（下・固定） */}

@@ -79,6 +79,7 @@ export type GamePhase =
   | 'captured_selected'
   | 'moving'
   | 'promotion_check'
+  | 'promoting'
   | 'turn_switching'
   | 'check_notify'
   | 'checkmate'
@@ -112,6 +113,12 @@ export interface AnimatingMoveInfo {
   isForcedPromote: boolean
 }
 
+export interface PromotingInfo {
+  position: Position
+  pieceType: PieceType
+  isForcedPromote: boolean
+}
+
 export interface UIState {
   isMenuOpen: boolean
   isAnimating: boolean
@@ -121,6 +128,8 @@ export interface UIState {
   isMuted: boolean
   /** 移動アニメーション中の情報（null = アニメーションなし） */
   animatingMove: AnimatingMoveInfo | null
+  /** 成りアニメーション中の情報（null = アニメーションなし） */
+  promotingInfo: PromotingInfo | null
 }
 
 // ============================================================
