@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import type { AnimatingMoveInfo, GameState, PieceType, Player, Position, UIState } from '../lib/shogi/types'
+import type { AnimatingMoveInfo, GameState, PieceType, Player, Position, UIState, PromotingInfo } from '../lib/shogi/types'
 import { getLegalMoves, getLegalDrops, isInCheck } from '../lib/shogi/moves'
 import { isCheckmate, canPromote, mustPromote } from '../lib/shogi/rules'
 import { executeMove, executeDrop, undoMove, redoMove, createInitialGameState } from '../lib/shogi/game'
@@ -37,6 +37,7 @@ interface GameStore {
   completeCheckNotify: () => void
   clearForcedPromotion: () => void
   completeMoveAnimation: () => void
+  completePromotion: () => void
 }
 
 // ============================================================
@@ -49,6 +50,7 @@ const INITIAL_UI_STATE: UIState = {
   forcedPromotionPiece: null,
   isMuted: false,
   animatingMove: null,
+  promotingInfo: null,
 }
 
 // ============================================================
@@ -267,12 +269,21 @@ export const useGameStore = create<GameStore>()(
 
           const reExecuted = executeMove(undone, lastMove.from, lastMove.to, true)
           playSound('promote')
-          set({
+          const promotingInfo: PromotingInfo = {
+            position: lastMove.to,
+            pieceType: lastMove.piece.type as PieceType,
+            isForcedPromote: false,
+          }
+          set(state => ({
             gameState: {
               ...reExecuted,
-              phase: 'turn_switching',
+              phase: 'promoting',
             },
-          })
+            ui: {
+              ...state.ui,
+              promotingInfo,
+            },
+          }))
         } else {
           // 成らない: 既に実行済みの非成り手をそのまま確定
           set(state => ({
@@ -459,17 +470,55 @@ export const useGameStore = create<GameStore>()(
         const { ui } = get()
         if (!ui.animatingMove) return
 
-        const { pendingPhase, isForcedPromote, piece } = ui.animatingMove
+        const { pendingPhase, isForcedPromote, piece, to } = ui.animatingMove
+
+        if (isForcedPromote) {
+          // 強制成り: promoting フェーズを経由してアニメーション再生
+          const promotingInfo: PromotingInfo = {
+            position: to,
+            pieceType: piece.type as PieceType,
+            isForcedPromote: true,
+          }
+          set(state => ({
+            gameState: {
+              ...state.gameState,
+              phase: 'promoting',
+            },
+            ui: {
+              ...state.ui,
+              animatingMove: null,
+              promotingInfo,
+            },
+          }))
+        } else {
+          set(state => ({
+            gameState: {
+              ...state.gameState,
+              phase: pendingPhase,
+            },
+            ui: {
+              ...state.ui,
+              animatingMove: null,
+            },
+          }))
+        }
+      },
+
+      completePromotion: () => {
+        const { ui } = get()
+        if (!ui.promotingInfo) return
+
+        const { isForcedPromote, pieceType } = ui.promotingInfo
 
         set(state => ({
           gameState: {
             ...state.gameState,
-            phase: pendingPhase,
+            phase: 'turn_switching',
           },
           ui: {
             ...state.ui,
-            animatingMove: null,
-            ...(isForcedPromote ? { forcedPromotionPiece: piece.type as PieceType } : {}),
+            promotingInfo: null,
+            ...(isForcedPromote ? { forcedPromotionPiece: pieceType } : {}),
           },
         }))
       },
