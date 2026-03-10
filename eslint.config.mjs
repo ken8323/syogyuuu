@@ -15,6 +15,8 @@ const eslintConfig = defineConfig([
     // Serwist によるビルド生成物
     "public/sw.js",
     "public/sw.js.map",
+    // Claude Code サブエージェント用 worktree
+    ".claude/worktrees/**",
   ]),
 ]);
 
