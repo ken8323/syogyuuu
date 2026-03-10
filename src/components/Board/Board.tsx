@@ -14,10 +14,6 @@ import { PromotionEffect } from '@/components/Piece/PromotionEffect'
 
 const DAN_LABELS = ['一', '二', '三', '四', '五', '六', '七', '八', '九']
 
-// 将棋盤の星マーカー位置（0-indexed row, col）
-// (3,3), (3,6), (6,3), (6,6) の4点
-const STAR_POINTS = new Set(['3,3', '3,6', '6,3', '6,6'])
-
 // ============================================================
 // ヘルパー関数
 // ============================================================
@@ -110,7 +106,7 @@ export function Board({
             className="grid grid-cols-9 border-l-2 border-t-2 border-amber-900"
             style={{
               boxShadow:
-                '2px 2px 0 #7a5c1e, 4px 4px 0 #5a3e0e, 0 6px 16px rgba(0,0,0,0.35), inset 0 0 8px rgba(255,200,80,0.15)',
+                'inset 3px 3px 6px rgba(255,210,80,0.35), inset -3px -3px 6px rgba(0,0,0,0.28), 0 4px 16px rgba(0,0,0,0.3)',
             }}
           >
             {Array.from({ length: 81 }, (_, i) => {
@@ -139,8 +135,6 @@ export function Board({
                 animatingMove.to.row === internalPos.row &&
                 animatingMove.to.col === internalPos.col
 
-              const isStarPoint = STAR_POINTS.has(`${internalPos.row},${internalPos.col}`)
-
               return (
                 <Square
                   key={posKey}
@@ -149,7 +143,6 @@ export function Board({
                   isCapturable={isCapturable}
                   isLastMoveFrom={isLastMoveFrom}
                   isLastMoveTo={isLastMoveTo}
-                  isStarPoint={isStarPoint}
                   onClick={() => onSquareClick(internalPos)}
                 >
                   {piece && !isAnimatingTarget && (
@@ -188,7 +181,7 @@ export function Board({
         </div>
 
         {/* 段ラベル（一〜九 または 九〜一） */}
-        <div className="flex w-6 flex-col border-t-2 border-amber-900">
+        <div className="flex w-6 flex-col">
           {Array.from({ length: 9 }, (_, displayRow) => (
             <div
               key={displayRow}
