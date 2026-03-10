@@ -6,6 +6,15 @@ import { isCheckmate, canPromote, mustPromote } from '../lib/shogi/rules'
 import { executeMove, executeDrop, undoMove, redoMove, createInitialGameState } from '../lib/shogi/game'
 import { getPieceAt } from '../lib/shogi/board'
 import { playSound, soundEngine } from '../lib/sound/soundEngine'
+import {
+  hapticSelect,
+  hapticPlace,
+  hapticCapture,
+  hapticPromote,
+  hapticCheck,
+  hapticCheckmate,
+  hapticUndoRedo,
+} from '../lib/haptics'
 
 // ============================================================
 // ストアの型定義
@@ -110,6 +119,7 @@ export const useGameStore = create<GameStore>()(
         const legalMoves = getLegalMoves(board, position, capturedPieces, currentPlayer)
 
         playSound('select')
+        hapticSelect(get().ui.isMuted)
         set(state => ({
           gameState: {
             ...state.gameState,
@@ -135,6 +145,7 @@ export const useGameStore = create<GameStore>()(
         const legalMoves = getLegalDrops(board, currentPlayer, pieceType, capturedPieces)
 
         playSound('select')
+        hapticSelect(get().ui.isMuted)
         set(state => ({
           gameState: {
             ...state.gameState,
@@ -188,14 +199,25 @@ export const useGameStore = create<GameStore>()(
           isForcedPromote = true
           pendingPhase = 'turn_switching'
           playSound('forced_promote')
+          hapticPromote(get().ui.isMuted)
         } else if (canPromote(piece, from, to)) {
           promote = false
           pendingPhase = 'promotion_check'
           playSound(captured ? 'capture' : 'place')
+          if (captured) {
+            hapticCapture(get().ui.isMuted)
+          } else {
+            hapticPlace(get().ui.isMuted)
+          }
         } else {
           promote = false
           pendingPhase = 'turn_switching'
           playSound(captured ? 'capture' : 'place')
+          if (captured) {
+            hapticCapture(get().ui.isMuted)
+          } else {
+            hapticPlace(get().ui.isMuted)
+          }
         }
 
         // 移動を実行（盤面を即時更新）
@@ -229,6 +251,7 @@ export const useGameStore = create<GameStore>()(
 
         const nextState = executeDrop(gameState, selectedCaptured, to)
         playSound('drop')
+        hapticPlace(get().ui.isMuted)
 
         set(state => ({
           gameState: {
@@ -269,6 +292,7 @@ export const useGameStore = create<GameStore>()(
 
           const reExecuted = executeMove(undone, lastMove.from, lastMove.to, true)
           playSound('promote')
+          hapticPromote(get().ui.isMuted)
           const promotingInfo: PromotingInfo = {
             position: lastMove.to,
             pieceType: lastMove.piece.type as PieceType,
@@ -309,6 +333,7 @@ export const useGameStore = create<GameStore>()(
         if (isCheckmate(board, capturedPieces, currentPlayer)) {
           const opponent: Player = currentPlayer === 'sente' ? 'gote' : 'sente'
           playSound('victory')
+          hapticCheckmate(get().ui.isMuted)
           set(state => ({
             appState: 'game_over',
             gameState: {
@@ -321,6 +346,7 @@ export const useGameStore = create<GameStore>()(
           }))
         } else if (isInCheck(board, currentPlayer)) {
           playSound('check')
+          hapticCheck(get().ui.isMuted)
           set(state => ({
             gameState: {
               ...state.gameState,
@@ -368,6 +394,7 @@ export const useGameStore = create<GameStore>()(
 
         const nextState = undoMove(gameState)
         playSound('undo')
+        hapticUndoRedo(get().ui.isMuted)
         set({
           gameState: {
             ...nextState,
@@ -386,6 +413,7 @@ export const useGameStore = create<GameStore>()(
 
         const nextState = redoMove(gameState)
         playSound('redo')
+        hapticUndoRedo(get().ui.isMuted)
         set({
           gameState: {
             ...nextState,
