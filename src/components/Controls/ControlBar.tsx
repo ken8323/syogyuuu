@@ -1,5 +1,6 @@
 'use client'
 
+import { motion } from 'framer-motion'
 import type { Player } from '@/lib/shogi/types'
 
 interface ControlBarProps {
@@ -26,7 +27,11 @@ export function ControlBar({
   const isSente = currentPlayer === 'sente'
 
   return (
-    <div className="flex h-full w-full items-center justify-between gap-2 px-2">
+    <motion.div
+      className="flex h-full w-full items-center justify-between gap-2 border-l-4 px-2"
+      animate={{ borderColor: isSente ? '#3B82F6' : '#EF4444' }}
+      transition={{ duration: 0.3 }}
+    >
       {/* もどるボタン */}
       <button
         className={[
@@ -45,13 +50,21 @@ export function ControlBar({
       {/* 手番表示 */}
       <div
         className={[
-          'flex flex-1 items-center justify-center rounded-lg px-2 py-1 text-sm font-bold',
+          'flex flex-1 items-center justify-center gap-2 rounded-lg px-2 py-1 text-sm font-bold',
           isSente
             ? 'bg-blue-100 text-blue-900'
             : 'bg-red-100 text-red-900',
         ].join(' ')}
       >
-        あなたのばんだよ！
+        <motion.span
+          className={[
+            'inline-block h-3 w-3 rounded-full',
+            isSente ? 'bg-blue-500' : 'bg-red-500',
+          ].join(' ')}
+          animate={{ scale: [1, 1.4, 1] }}
+          transition={{ duration: 1.2, repeat: Infinity, ease: 'easeInOut' }}
+        />
+        {isSente ? 'あおチームのばん' : 'あかチームのばん'}
       </div>
 
       {/* すすむボタン */}
@@ -86,6 +99,6 @@ export function ControlBar({
       >
         ☰
       </button>
-    </div>
+    </motion.div>
   )
 }

@@ -1,6 +1,7 @@
 'use client'
 
 import { useRef, useState, useLayoutEffect } from 'react'
+import { motion } from 'framer-motion'
 import type { AnimatingMoveInfo, Board as BoardType, Move, Player, Position, PromotingInfo } from '@/lib/shogi/types'
 import { Square } from './Square'
 import { Piece } from '@/components/Piece'
@@ -84,8 +85,17 @@ export function Board({
   const lastMoveFrom = lastMove?.type === 'move' ? lastMove.from : null
   const lastMoveTo = lastMove?.to ?? null
 
+  const boardGlow =
+    currentPlayer === 'sente'
+      ? '0 8px 24px rgba(59, 130, 246, 0.5)'
+      : '0 -8px 24px rgba(239, 68, 68, 0.5)'
+
   return (
-    <div className="inline-flex flex-col select-none">
+    <motion.div
+      className="inline-flex flex-col select-none"
+      animate={{ boxShadow: boardGlow }}
+      transition={{ duration: 0.3 }}
+    >
       {/* 筋ラベル（9〜1 または 1〜9） */}
       <div className="flex pr-6">
         {Array.from({ length: 9 }, (_, displayCol) => (
@@ -192,7 +202,7 @@ export function Board({
           ))}
         </div>
       </div>
-    </div>
+    </motion.div>
   )
 }
 
