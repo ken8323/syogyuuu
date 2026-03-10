@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { motion, type Variants } from 'framer-motion'
 import type { Piece as PieceType, PieceType as PieceTypeEnum, PromotedPieceType } from '@/lib/shogi/types'
 import type { AnimalColors } from './animals'
@@ -286,18 +286,50 @@ export function Piece({ piece, isSelected = false, isOpponent = false, idleStagg
 
   const idleConfig = IDLE_ANIMATION_CONFIG[piece.type]
 
+  // 後手の180度回転は外側のdivでCSS transformとして適用する。
+  // motion.divのrotateモーション値と競合しないようにするため。
+  const opponentRotateStyle: React.CSSProperties = isOpponent
+    ? { transform: 'rotate(180deg)', width: '100%', height: '100%' }
+    : { width: '100%', height: '100%' }
+
   // 選択中の場合: 既存のバウンスアニメーション
   if (isSelected) {
     return (
+      <div style={opponentRotateStyle}>
+        <motion.div
+          className={`flex h-full w-full flex-col items-center justify-center ${bgClass}`}
+          style={{
+            clipPath: PIECE_CLIP_PATH,
+            filter: filterStyle,
+          }}
+          animate={{ y: [0, -4, 0] }}
+          transition={{ duration: 0.5, repeat: Infinity, ease: 'easeInOut' }}
+        >
+          <div className="w-full flex-1 min-h-0 p-0.5">
+            <AnimalComponent {...colors} isPromoted={promoted} />
+          </div>
+          <span className={`text-[8px] font-bold leading-none pb-0.5 ${isSente ? 'text-blue-900' : 'text-red-900'}`}>
+            {hiragana}
+          </span>
+        </motion.div>
+      </div>
+    )
+  }
+
+  // 通常状態: アイドルアニメーション
+  const currentVariant = idleConfig ? animState : 'idle'
+
+  return (
+    <div style={opponentRotateStyle}>
       <motion.div
         className={`flex h-full w-full flex-col items-center justify-center ${bgClass}`}
         style={{
           clipPath: PIECE_CLIP_PATH,
-          rotate: isOpponent ? 180 : 0,
           filter: filterStyle,
         }}
-        animate={{ y: [0, -4, 0] }}
-        transition={{ duration: 0.5, repeat: Infinity, ease: 'easeInOut' }}
+        variants={idleConfig?.variants}
+        animate={currentVariant}
+        onAnimationComplete={animState === 'animating' ? onAnimationComplete : undefined}
       >
         <div className="w-full flex-1 min-h-0 p-0.5">
           <AnimalComponent {...colors} isPromoted={promoted} />
@@ -306,30 +338,6 @@ export function Piece({ piece, isSelected = false, isOpponent = false, idleStagg
           {hiragana}
         </span>
       </motion.div>
-    )
-  }
-
-  // 通常状態: アイドルアニメーション
-  const currentVariant = idleConfig ? animState : 'idle'
-
-  return (
-    <motion.div
-      className={`flex h-full w-full flex-col items-center justify-center ${bgClass}`}
-      style={{
-        clipPath: PIECE_CLIP_PATH,
-        rotate: isOpponent ? 180 : 0,
-        filter: filterStyle,
-      }}
-      variants={idleConfig?.variants}
-      animate={currentVariant}
-      onAnimationComplete={animState === 'animating' ? onAnimationComplete : undefined}
-    >
-      <div className="w-full flex-1 min-h-0 p-0.5">
-        <AnimalComponent {...colors} isPromoted={promoted} />
-      </div>
-      <span className={`text-[8px] font-bold leading-none pb-0.5 ${isSente ? 'text-blue-900' : 'text-red-900'}`}>
-        {hiragana}
-      </span>
-    </motion.div>
+    </div>
   )
 }
