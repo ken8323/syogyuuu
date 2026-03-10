@@ -9,8 +9,6 @@ interface SquareProps {
   isCapturable: boolean
   isLastMoveFrom: boolean
   isLastMoveTo: boolean
-  /** 将棋盤の星マーカー（hoshi）を表示するか */
-  isStarPoint?: boolean
   onClick: () => void
 }
 
@@ -21,7 +19,6 @@ export function Square({
   isCapturable,
   isLastMoveFrom,
   isLastMoveTo,
-  isStarPoint = false,
   onClick,
 }: SquareProps) {
   // 木目テクスチャ: 斜めグラデーションで板目を表現
@@ -36,7 +33,7 @@ export function Square({
   else if (isLastMoveTo) bgColor = '#fde047'
   else if (isLastMoveFrom) bgColor = '#fef08a'
 
-  const insetShadow = 'inset 0 0 1px rgba(0,0,0,0.06)'
+  const insetShadow = 'inset 1px 1px 3px rgba(0,0,0,0.15), inset -1px -1px 2px rgba(255,200,80,0.2)'
   const bgStyle = bgColor
     ? { backgroundColor: bgColor, boxShadow: insetShadow }
     : {
@@ -61,14 +58,6 @@ export function Square({
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
           <div className="h-[45%] w-[45%] rounded-full bg-green-600/40" />
         </div>
-      )}
-
-      {/* 星マーカー（hoshi） */}
-      {isStarPoint && !isSelected && !isLegalMove && !isCapturable && (
-        <div
-          className="pointer-events-none absolute rounded-full bg-amber-900/50"
-          style={{ width: 5, height: 5 }}
-        />
       )}
 
       {children}
