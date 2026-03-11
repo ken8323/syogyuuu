@@ -247,15 +247,17 @@ function useIdleAnimation(
 
 interface PieceProps {
   piece: PieceType
-  /** 選択中: 光彩 + バウンスアニメーション */
+  /** 選択中: scale 拡大 + 影深化 + バウンスアニメーション */
   isSelected?: boolean
   /** 相手の駒: 180度回転表示 */
   isOpponent?: boolean
   /** アイドルアニメーションのスタッガーディレイ（ms）。デフォルト0 */
   idleStaggerDelay?: number
+  /** 配置直後の着地アニメーション（scale 1.08→1.0 スプリングバウンス） */
+  isLanding?: boolean
 }
 
-export function Piece({ piece, isSelected = false, isOpponent = false, idleStaggerDelay = 0 }: PieceProps) {
+export function Piece({ piece, isSelected = false, isOpponent = false, idleStaggerDelay = 0, isLanding = false }: PieceProps) {
   const config = PIECE_CONFIG[piece.type]
   const promoted = isPromotedType(piece.type)
   const isSente = piece.owner === 'sente'
@@ -274,7 +276,7 @@ export function Piece({ piece, isSelected = false, isOpponent = false, idleStagg
       : 'drop-shadow(0 0 1.5px #FCA5A5)'
 
   const filterStyle = isSelected
-    ? `${borderShadow} drop-shadow(0 0 6px rgba(251,191,36,0.95))`
+    ? `${borderShadow} drop-shadow(0 0 6px rgba(251,191,36,0.95)) drop-shadow(0 4px 8px rgba(0,0,0,0.35))`
     : borderShadow
 
   // アイドルアニメーション: 選択中は無効
@@ -292,7 +294,7 @@ export function Piece({ piece, isSelected = false, isOpponent = false, idleStagg
     ? { transform: 'rotate(180deg)', width: '100%', height: '100%' }
     : { width: '100%', height: '100%' }
 
-  // 選択中の場合: 既存のバウンスアニメーション
+  // 選択中: scale 1.12 (spring) + y バウンス (repeat) + 影深化
   if (isSelected) {
     return (
       <div style={opponentRotateStyle}>
@@ -302,8 +304,34 @@ export function Piece({ piece, isSelected = false, isOpponent = false, idleStagg
             clipPath: PIECE_CLIP_PATH,
             filter: filterStyle,
           }}
-          animate={{ y: [0, -4, 0] }}
-          transition={{ duration: 0.5, repeat: Infinity, ease: 'easeInOut' }}
+          initial={{ scale: 1 }}
+          animate={{ scale: 1.12, y: [0, -4, 0] }}
+          transition={{
+            scale: { type: 'spring', stiffness: 400, damping: 20 },
+            y: { duration: 0.5, repeat: Infinity, ease: 'easeInOut', delay: 0.1 },
+          }}
+        >
+          <div className="w-full flex-1 min-h-0 p-0.5">
+            <AnimalComponent {...colors} isPromoted={promoted} />
+          </div>
+          <span className={`text-[8px] font-bold leading-none pb-0.5 ${isSente ? 'text-blue-900' : 'text-red-900'}`}>
+            {hiragana}
+          </span>
+        </motion.div>
+      </div>
+    )
+  }
+
+  // 着地直後: scale 1.08 → 1.0 スプリングバウンス
+  if (isLanding) {
+    return (
+      <div style={opponentRotateStyle}>
+        <motion.div
+          className={`flex h-full w-full flex-col items-center justify-center ${bgClass}`}
+          style={{ clipPath: PIECE_CLIP_PATH, filter: filterStyle }}
+          initial={{ scale: 1.08 }}
+          animate={{ scale: 1.0 }}
+          transition={{ type: 'spring', stiffness: 300, damping: 12 }}
         >
           <div className="w-full flex-1 min-h-0 p-0.5">
             <AnimalComponent {...colors} isPromoted={promoted} />
