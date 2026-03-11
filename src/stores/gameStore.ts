@@ -402,13 +402,14 @@ export const useGameStore = create<GameStore>()(
         const nextState = undoMove(gameState)
         playSound('undo')
         hapticUndoRedo(get().ui.isMuted)
-        set({
+        set((state) => ({
           gameState: {
             ...nextState,
             phase: 'idle',
             isCheck: false,
           },
-        })
+          ui: { ...state.ui, hintLevel: 0, hintPieces: [], hintMoves: [] },
+        }))
       },
 
       redo: () => {
@@ -421,13 +422,14 @@ export const useGameStore = create<GameStore>()(
         const nextState = redoMove(gameState)
         playSound('redo')
         hapticUndoRedo(get().ui.isMuted)
-        set({
+        set((state) => ({
           gameState: {
             ...nextState,
             phase: 'idle',
             isCheck: false,
           },
-        })
+          ui: { ...state.ui, hintLevel: 0, hintPieces: [], hintMoves: [] },
+        }))
       },
 
       // ============================================================
