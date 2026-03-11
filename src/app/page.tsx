@@ -8,6 +8,7 @@ import { PromotionDialog, ForcedPromotionToast, GameOverDialog, MenuDialog } fro
 import { CheckBanner } from '@/components/Notifications'
 import { TitleScreen } from '@/components/TitleScreen'
 import { useGameStore } from '@/stores/gameStore'
+import { useHintTimer } from '@/hooks/useHintTimer'
 import type { BoardMove, Position, PieceType } from '@/lib/shogi/types'
 import { getPieceAt } from '@/lib/shogi/board'
 
@@ -36,6 +37,9 @@ export default function Home() {
     completeTurnSwitch,
     completeMoveAnimation,
     completePromotion,
+    setHint,
+    clearHint,
+    showHint,
   } = useGameStore()
   const {
     board,
@@ -49,6 +53,15 @@ export default function Home() {
     winner,
     gameOverReason,
   } = gameState
+
+  // ヒントタイマー（10秒/15秒無操作でヒント表示）
+  useHintTimer({
+    phase,
+    isMenuOpen: ui.isMenuOpen,
+    onLevel1: () => setHint(1),
+    onLevel2: () => setHint(2),
+    onClear: clearHint,
+  })
 
   // turn_switching フェーズ完了を自動でトリガー
   // (#19 手番交代アニメーション実装後はアニメーション完了コールバックに置き換える)
@@ -177,6 +190,8 @@ export default function Home() {
           onAnimationComplete={completeMoveAnimation}
           promotingInfo={ui.promotingInfo}
           onPromotionComplete={completePromotion}
+          hintPieces={ui.hintPieces}
+          hintMoves={ui.hintMoves}
         />
 
         {/* 先手の持ち駒エリア（下・固定） */}
@@ -197,10 +212,12 @@ export default function Home() {
             canUndo={canUndo}
             canRedo={canRedo}
             isMuted={ui.isMuted}
+            canShowHint={phase === 'idle' && !ui.isMenuOpen}
             onUndo={undo}
             onRedo={redo}
             onMenu={toggleMenu}
             onToggleMute={toggleMute}
+            onShowHint={showHint}
           />
         </div>
       </div>

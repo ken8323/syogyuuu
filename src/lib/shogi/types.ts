@@ -130,6 +130,12 @@ export interface UIState {
   animatingMove: AnimatingMoveInfo | null
   /** 成りアニメーション中の情報（null = アニメーションなし） */
   promotingInfo: PromotingInfo | null
+  /** ヒントレベル（0=なし, 1=脈動のみ, 2=脈動+合法手表示） */
+  hintLevel: 0 | 1 | 2
+  /** ヒント対象の駒の位置（hintLevel>=1 で使用） */
+  hintPieces: Position[]
+  /** おすすめ手の合法手（hintLevel=2 で使用） */
+  hintMoves: Position[]
 }
 
 // ============================================================

@@ -1,5 +1,7 @@
 'use client'
 
+import { motion } from 'framer-motion'
+
 interface SquareProps {
   /** Piece component を差し込むスロット（#10 で Piece コンポーネントに置き換え） */
   children?: React.ReactNode
@@ -9,6 +11,10 @@ interface SquareProps {
   isCapturable: boolean
   isLastMoveFrom: boolean
   isLastMoveTo: boolean
+  /** ヒント: この駒を動かせる（脈動アニメーション） */
+  isHintPiece: boolean
+  /** ヒント: おすすめの移動先（琥珀色ドット） */
+  isHintMove: boolean
   onClick: () => void
 }
 
@@ -19,6 +25,8 @@ export function Square({
   isCapturable,
   isLastMoveFrom,
   isLastMoveTo,
+  isHintPiece,
+  isHintMove,
   onClick,
 }: SquareProps) {
   // 木目テクスチャ: 斜めグラデーションで板目を表現
@@ -58,6 +66,30 @@ export function Square({
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
           <div className="h-[45%] w-[45%] rounded-full bg-green-600/40" />
         </div>
+      )}
+
+      {/* ヒント: おすすめ移動先ドット（琥珀色・脈動） */}
+      {isHintMove && (
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+          <motion.div
+            className="h-[45%] w-[45%] rounded-full bg-amber-400/70"
+            animate={{ scale: [1, 1.25, 1], opacity: [0.7, 1, 0.7] }}
+            transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+          />
+        </div>
+      )}
+
+      {/* ヒント: 動かせる駒のグロー（黄色・脈動） */}
+      {isHintPiece && (
+        <motion.div
+          className="pointer-events-none absolute inset-0"
+          animate={{ opacity: [0, 0.5, 0] }}
+          transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+          style={{
+            background:
+              'radial-gradient(circle, rgba(251,191,36,0.7) 30%, transparent 70%)',
+          }}
+        />
       )}
 
       {children}
