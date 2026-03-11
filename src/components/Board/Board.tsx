@@ -85,6 +85,14 @@ export function Board({
 
   // Set に変換しておくことでO(1)ルックアップを実現
   const legalMoveSet = new Set(legalMoves.map((p) => `${p.row},${p.col}`))
+
+  // 着地アニメーションのキー: 手が変わるたびにユニークな文字列を生成
+  // Piece ラッパーの key に使い、isLastMoveTo のマスで Piece を再マウントさせる
+  const lastMoveKey = lastMove
+    ? lastMove.type === 'move'
+      ? `${lastMove.from.row}${lastMove.from.col}-${lastMove.to.row}${lastMove.to.col}`
+      : `drop-${lastMove.to.row}${lastMove.to.col}`
+    : 'init'
   const hintPieceSet = new Set(hintPieces.map((p) => `${p.row},${p.col}`))
   const hintMoveSet = new Set(hintMoves.map((p) => `${p.row},${p.col}`))
 
@@ -166,11 +174,15 @@ export function Board({
                   onClick={() => onSquareClick(internalPos)}
                 >
                   {piece && !isAnimatingTarget && (
-                    <div className="absolute inset-[3px]">
+                    <div
+                      key={isLastMoveTo ? `piece-${posKey}-${lastMoveKey}` : `piece-${posKey}`}
+                      className="absolute inset-[3px]"
+                    >
                       <Piece
                         piece={piece}
                         isSelected={isSelected}
                         isOpponent={piece.owner === 'gote'}
+                        isLanding={isLastMoveTo && !isSelected}
                       />
                     </div>
                   )}

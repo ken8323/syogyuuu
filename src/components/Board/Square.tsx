@@ -52,7 +52,10 @@ export function Square({
 
   return (
     <div
-      className="relative flex aspect-square items-center justify-center border-r border-b border-amber-900/60 cursor-pointer select-none"
+      className={[
+        'relative flex aspect-square items-center justify-center border-r border-b border-amber-900/60 cursor-pointer select-none',
+        isSelected ? 'z-10' : '',
+      ].join(' ')}
       style={bgStyle}
       onClick={onClick}
     >
@@ -89,6 +92,16 @@ export function Square({
             background:
               'radial-gradient(circle, rgba(251,191,36,0.7) 30%, transparent 70%)',
           }}
+        />
+      )}
+
+      {/* 着地フラッシュ（isLastMoveTo マウント時に opacity 0.4→0） */}
+      {isLastMoveTo && (
+        <motion.div
+          className="pointer-events-none absolute inset-0 rounded-sm bg-white"
+          initial={{ opacity: 0.4 }}
+          animate={{ opacity: 0 }}
+          transition={{ duration: 0.3, ease: 'easeOut' }}
         />
       )}
 

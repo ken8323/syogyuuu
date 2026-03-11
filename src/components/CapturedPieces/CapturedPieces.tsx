@@ -1,5 +1,6 @@
 'use client'
 
+import { motion } from 'framer-motion'
 import type { CapturedPieces as CapturedPiecesType, PieceType, Player } from '@/lib/shogi/types'
 import { PIECE_CONFIG } from '@/components/Piece'
 import type { AnimalColors } from '@/components/Piece/animals'
@@ -44,9 +45,11 @@ export function CapturedPieces({
         const { AnimalComponent, hiragana } = PIECE_CONFIG[pieceType]
 
         return (
-          <div
+          <motion.div
             key={pieceType}
             className="relative flex h-full max-h-[52px] flex-1 cursor-pointer items-center justify-center"
+            animate={{ scale: isSelected ? 1.12 : 1 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 20 }}
             onClick={() => isClickable && onSelect(pieceType)}
           >
             <div
@@ -77,7 +80,7 @@ export function CapturedPieces({
                 {count}
               </span>
             )}
-          </div>
+          </motion.div>
         )
       })}
     </div>
