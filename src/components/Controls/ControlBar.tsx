@@ -84,7 +84,12 @@ export function ControlBar({
 
       {/* ミュートボタン */}
       <button
-        className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg bg-stone-200 px-3 text-sm font-bold text-stone-700 hover:bg-stone-300"
+        className={[
+          'flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg px-3 text-sm font-bold transition-colors',
+          isMuted
+            ? 'bg-red-100 text-red-700 hover:bg-red-200'
+            : 'bg-stone-200 text-stone-700 hover:bg-stone-300',
+        ].join(' ')}
         onClick={onToggleMute}
         aria-label={isMuted ? 'ミュート解除' : 'ミュート'}
       >

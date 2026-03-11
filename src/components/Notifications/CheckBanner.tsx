@@ -2,19 +2,24 @@
 
 import { useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import type { Player } from '@/lib/shogi/types'
 
 interface CheckBannerProps {
   isVisible: boolean
+  /** 王手されているプレイヤー（現在の手番） */
+  currentPlayer: Player
   onDismiss: () => void
 }
 
-export function CheckBanner({ isVisible, onDismiss }: CheckBannerProps) {
+export function CheckBanner({ isVisible, currentPlayer, onDismiss }: CheckBannerProps) {
   // 1.5秒後に自動で閉じる
   useEffect(() => {
     if (!isVisible) return
     const timer = setTimeout(onDismiss, 1500)
     return () => clearTimeout(timer)
   }, [isVisible, onDismiss])
+
+  const teamLabel = currentPlayer === 'sente' ? 'あおチームの' : 'あかチームの'
 
   return (
     <AnimatePresence>
@@ -26,7 +31,7 @@ export function CheckBanner({ isVisible, onDismiss }: CheckBannerProps) {
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.25 }}
         >
-          🦁💦 ライオンがあぶないよ！
+          🦁💦 {teamLabel}ライオンがあぶないよ！
         </motion.div>
       )}
     </AnimatePresence>

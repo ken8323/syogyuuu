@@ -58,7 +58,7 @@ export function CapturedPieces({
                 isSelected ? 'ring-2 ring-yellow-400 bg-yellow-50' : '',
                 // 0枚: グレーアウト
                 !hasCount ? 'opacity-30' : '',
-                isClickable ? 'hover:brightness-95' : 'cursor-default',
+                isClickable ? 'hover:brightness-95' : 'cursor-not-allowed',
               ]
                 .filter(Boolean)
                 .join(' ')}

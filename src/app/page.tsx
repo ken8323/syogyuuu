@@ -136,12 +136,14 @@ export default function Home() {
       <PromotionDialog
         isOpen={phase === 'promotion_check'}
         pieceType={promotionPieceType}
+        owner={currentPlayer}
         onPromote={promote}
       />
 
       {/* 王手通知バナー */}
       <CheckBanner
         isVisible={phase === 'check_notify'}
+        currentPlayer={currentPlayer}
         onDismiss={completeCheckNotify}
       />
 

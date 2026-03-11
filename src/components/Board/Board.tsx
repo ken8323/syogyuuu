@@ -101,7 +101,7 @@ export function Board({
         {Array.from({ length: 9 }, (_, displayCol) => (
           <div
             key={displayCol}
-            className="flex-1 text-center text-xs font-medium text-amber-900"
+            className="flex-1 text-center text-sm font-medium text-amber-900"
           >
             {colLabel(displayCol)}
           </div>
@@ -113,7 +113,7 @@ export function Board({
         <div className="relative flex-1">
           <div
             ref={gridRef}
-            className="grid grid-cols-9 border-l-2 border-t-2 border-amber-900"
+            className="grid grid-cols-9 border-2 border-amber-900"
             style={{
               boxShadow:
                 'inset 3px 3px 6px rgba(255,210,80,0.35), inset -3px -3px 6px rgba(0,0,0,0.28), 0 4px 16px rgba(0,0,0,0.3)',
@@ -195,7 +195,7 @@ export function Board({
           {Array.from({ length: 9 }, (_, displayRow) => (
             <div
               key={displayRow}
-              className="flex flex-1 items-center justify-center text-xs font-medium text-amber-900"
+              className="flex flex-1 items-center justify-center text-sm font-medium text-amber-900"
             >
               {rowLabel(displayRow)}
             </div>
