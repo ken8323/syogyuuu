@@ -52,6 +52,8 @@ interface BoardProps {
   onAnimationComplete: () => void
   promotingInfo: PromotingInfo | null
   onPromotionComplete: () => void
+  hintPieces: Position[]
+  hintMoves: Position[]
 }
 
 // ============================================================
@@ -69,6 +71,8 @@ export function Board({
   onAnimationComplete,
   promotingInfo,
   onPromotionComplete,
+  hintPieces,
+  hintMoves,
 }: BoardProps) {
   const gridRef = useRef<HTMLDivElement>(null)
   const [squareSize, setSquareSize] = useState<{ w: number; h: number } | null>(null)
@@ -81,6 +85,8 @@ export function Board({
 
   // Set に変換しておくことでO(1)ルックアップを実現
   const legalMoveSet = new Set(legalMoves.map((p) => `${p.row},${p.col}`))
+  const hintPieceSet = new Set(hintPieces.map((p) => `${p.row},${p.col}`))
+  const hintMoveSet = new Set(hintMoves.map((p) => `${p.row},${p.col}`))
 
   const lastMoveFrom = lastMove?.type === 'move' ? lastMove.from : null
   const lastMoveTo = lastMove?.to ?? null
@@ -138,6 +144,8 @@ export function Board({
               const isLastMoveTo =
                 lastMoveTo?.row === internalPos.row &&
                 lastMoveTo?.col === internalPos.col
+              const isHintPiece = hintPieceSet.has(posKey)
+              const isHintMove = hintMoveSet.has(posKey)
 
               // アニメーション中は移動先マスの駒を非表示（AnimatingPiece が代わりに表示）
               const isAnimatingTarget =
@@ -153,6 +161,8 @@ export function Board({
                   isCapturable={isCapturable}
                   isLastMoveFrom={isLastMoveFrom}
                   isLastMoveTo={isLastMoveTo}
+                  isHintPiece={isHintPiece}
+                  isHintMove={isHintMove}
                   onClick={() => onSquareClick(internalPos)}
                 >
                   {piece && !isAnimatingTarget && (

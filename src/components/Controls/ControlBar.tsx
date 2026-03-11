@@ -8,10 +8,12 @@ interface ControlBarProps {
   canUndo: boolean
   canRedo: boolean
   isMuted: boolean
+  canShowHint: boolean
   onUndo: () => void
   onRedo: () => void
   onMenu: () => void
   onToggleMute: () => void
+  onShowHint: () => void
 }
 
 export function ControlBar({
@@ -19,10 +21,12 @@ export function ControlBar({
   canUndo,
   canRedo,
   isMuted,
+  canShowHint,
   onUndo,
   onRedo,
   onMenu,
   onToggleMute,
+  onShowHint,
 }: ControlBarProps) {
   const isSente = currentPlayer === 'sente'
 
@@ -80,6 +84,21 @@ export function ControlBar({
         aria-label="すすむ"
       >
         すすむ ▶
+      </button>
+
+      {/* おしえてボタン */}
+      <button
+        className={[
+          'flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg px-3 text-sm font-bold transition-colors',
+          canShowHint
+            ? 'bg-amber-100 text-amber-800 hover:bg-amber-200'
+            : 'cursor-not-allowed bg-stone-100 text-stone-400',
+        ].join(' ')}
+        onClick={canShowHint ? onShowHint : undefined}
+        disabled={!canShowHint}
+        aria-label="おしえて"
+      >
+        💡
       </button>
 
       {/* ミュートボタン */}

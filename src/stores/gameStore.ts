@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import type { AnimatingMoveInfo, GameState, PieceType, Player, Position, UIState, PromotingInfo } from '../lib/shogi/types'
 import { getLegalMoves, getLegalDrops, isInCheck } from '../lib/shogi/moves'
+import { getMovablePieces, getRecommendedMove } from '../lib/shogi/hint'
 import { isCheckmate, canPromote, mustPromote } from '../lib/shogi/rules'
 import { executeMove, executeDrop, undoMove, redoMove, createInitialGameState } from '../lib/shogi/game'
 import { getPieceAt } from '../lib/shogi/board'
@@ -47,6 +48,9 @@ interface GameStore {
   clearForcedPromotion: () => void
   completeMoveAnimation: () => void
   completePromotion: () => void
+  setHint: (level: 1 | 2) => void
+  clearHint: () => void
+  showHint: () => void
 }
 
 // ============================================================
@@ -60,6 +64,9 @@ const INITIAL_UI_STATE: UIState = {
   isMuted: false,
   animatingMove: null,
   promotingInfo: null,
+  hintLevel: 0,
+  hintPieces: [],
+  hintMoves: [],
 }
 
 // ============================================================
@@ -547,6 +554,54 @@ export const useGameStore = create<GameStore>()(
             ...state.ui,
             promotingInfo: null,
             ...(isForcedPromote ? { forcedPromotionPiece: pieceType } : {}),
+          },
+        }))
+      },
+
+      // ============================================================
+      // ヒント
+      // ============================================================
+
+      setHint: (level: 1 | 2) => {
+        const { gameState } = get()
+        const { board, capturedPieces, currentPlayer } = gameState
+
+        if (level === 1) {
+          const hintPieces = getMovablePieces(board, capturedPieces, currentPlayer)
+          set(state => ({
+            ui: { ...state.ui, hintLevel: 1, hintPieces, hintMoves: [] },
+          }))
+        } else {
+          const result = getRecommendedMove(board, capturedPieces, currentPlayer)
+          if (!result) return
+          set(state => ({
+            ui: {
+              ...state.ui,
+              hintLevel: 2,
+              hintPieces: [result.piece],
+              hintMoves: result.moves,
+            },
+          }))
+        }
+      },
+
+      clearHint: () => {
+        set(state => ({
+          ui: { ...state.ui, hintLevel: 0, hintPieces: [], hintMoves: [] },
+        }))
+      },
+
+      showHint: () => {
+        const { gameState } = get()
+        const { board, capturedPieces, currentPlayer } = gameState
+        const result = getRecommendedMove(board, capturedPieces, currentPlayer)
+        if (!result) return
+        set(state => ({
+          ui: {
+            ...state.ui,
+            hintLevel: 2,
+            hintPieces: [result.piece],
+            hintMoves: result.moves,
           },
         }))
       },
