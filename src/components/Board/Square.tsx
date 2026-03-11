@@ -1,6 +1,6 @@
 'use client'
 
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 
 interface SquareProps {
   /** Piece component を差し込むスロット（#10 で Piece コンポーネントに置き換え） */
@@ -15,6 +15,10 @@ interface SquareProps {
   isHintPiece: boolean
   /** ヒント: おすすめの移動先（琥珀色ドット） */
   isHintMove: boolean
+  /** 合法手ドットのポップイン遅延（ms）: 駒からのチェビシェフ距離 × 40ms */
+  legalMoveInDelay: number
+  /** 合法手ドットのポップアウト遅延（ms）: 逆順フェードアウト用 */
+  legalMoveOutDelay: number
   onClick: () => void
 }
 
@@ -27,6 +31,8 @@ export function Square({
   isLastMoveTo,
   isHintPiece,
   isHintMove,
+  legalMoveInDelay,
+  legalMoveOutDelay,
   onClick,
 }: SquareProps) {
   // 木目テクスチャ: 斜めグラデーションで板目を表現
@@ -59,17 +65,45 @@ export function Square({
       style={bgStyle}
       onClick={onClick}
     >
-      {/* 取れる駒ハイライト（赤） */}
-      {isCapturable && (
-        <div className="pointer-events-none absolute inset-0 rounded-sm bg-red-400/40" />
-      )}
+      {/* 取れる駒ハイライト（赤・ポップイン + パルス） */}
+      <AnimatePresence>
+        {isCapturable && (
+          <motion.div
+            className="pointer-events-none absolute inset-0 rounded-sm bg-red-400/40"
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0, opacity: 0, transition: { duration: 0.1, delay: legalMoveOutDelay / 1000 } }}
+            transition={{ type: 'spring', stiffness: 500, damping: 20, delay: legalMoveInDelay / 1000 }}
+          >
+            <motion.div
+              className="absolute inset-0 rounded-sm bg-red-400/30"
+              animate={{ scale: [1, 1.1, 1] }}
+              transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-      {/* 合法手ドット（緑） */}
-      {isLegalMove && !isCapturable && (
-        <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-          <div className="h-[45%] w-[45%] rounded-full bg-green-600/40" />
-        </div>
-      )}
+      {/* 合法手ドット（緑・ポップイン） */}
+      <AnimatePresence>
+        {isLegalMove && !isCapturable && (
+          <motion.div
+            className="pointer-events-none absolute inset-0 flex items-center justify-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0, transition: { duration: 0.1, delay: legalMoveOutDelay / 1000 } }}
+            transition={{ delay: legalMoveInDelay / 1000 }}
+          >
+            <motion.div
+              className="h-[45%] w-[45%] rounded-full bg-green-600/40"
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0, transition: { duration: 0.1, delay: legalMoveOutDelay / 1000 } }}
+              transition={{ type: 'spring', stiffness: 500, damping: 20, delay: legalMoveInDelay / 1000 }}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* ヒント: おすすめ移動先ドット（琥珀色・脈動） */}
       {isHintMove && (

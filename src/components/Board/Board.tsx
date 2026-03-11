@@ -37,6 +37,13 @@ function rowLabel(displayRow: number): string {
   return DAN_LABELS[displayRow]
 }
 
+/** チェビシェフ距離ベースのポップイン遅延（ms）を返す */
+function legalMoveInDelay(from: Position | null, to: Position): number {
+  if (!from) return 0
+  const dist = Math.max(Math.abs(to.row - from.row), Math.abs(to.col - from.col))
+  return dist * 40
+}
+
 // ============================================================
 // 型定義
 // ============================================================
@@ -85,6 +92,12 @@ export function Board({
 
   // Set に変換しておくことでO(1)ルックアップを実現
   const legalMoveSet = new Set(legalMoves.map((p) => `${p.row},${p.col}`))
+
+  // ポップアウト逆順のための最大 delay を事前計算
+  const maxLegalDelay =
+    legalMoves.length > 0 && selectedPosition
+      ? Math.max(...legalMoves.map((p) => legalMoveInDelay(selectedPosition, p)))
+      : 0
 
   // 着地アニメーションのキー: 手が変わるたびにユニークな文字列を生成
   // Piece ラッパーの key に使い、isLastMoveTo のマスで Piece を再マウントさせる
@@ -154,6 +167,8 @@ export function Board({
                 lastMoveTo?.col === internalPos.col
               const isHintPiece = hintPieceSet.has(posKey)
               const isHintMove = hintMoveSet.has(posKey)
+              const inDelay = isLegalMove ? legalMoveInDelay(selectedPosition, internalPos) : 0
+              const outDelay = isLegalMove ? maxLegalDelay - inDelay : 0
 
               // アニメーション中は移動先マスの駒を非表示（AnimatingPiece が代わりに表示）
               const isAnimatingTarget =
@@ -171,6 +186,8 @@ export function Board({
                   isLastMoveTo={isLastMoveTo}
                   isHintPiece={isHintPiece}
                   isHintMove={isHintMove}
+                  legalMoveInDelay={inDelay}
+                  legalMoveOutDelay={outDelay}
                   onClick={() => onSquareClick(internalPos)}
                 >
                   {piece && !isAnimatingTarget && (
