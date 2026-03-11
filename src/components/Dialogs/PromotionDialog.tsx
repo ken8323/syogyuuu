@@ -1,26 +1,30 @@
 'use client'
 
 import { motion, AnimatePresence } from 'framer-motion'
-import type { PieceType } from '@/lib/shogi/types'
+import type { PieceType, Player, PromotedPieceType } from '@/lib/shogi/types'
+import { PIECE_CONFIG } from '@/components/Piece'
+import type { AnimalColors } from '@/components/Piece/animals'
 
 // ============================================================
-// 成り設定（駒種 → メッセージ・絵文字）
+// 成り設定（駒種 → メッセージ・成駒の種類）
 // ============================================================
 
 interface PromotionConfig {
   message: string
-  beforeEmoji: string
-  afterEmoji: string
+  promotedType: PromotedPieceType
 }
 
 const PROMOTION_CONFIG: Partial<Record<PieceType, PromotionConfig>> = {
-  pawn:   { message: 'ひよこがニワトリになれるよ！ なる？', beforeEmoji: '🐤', afterEmoji: '🐔' },
-  lance:  { message: 'イノシシがパワーアップできるよ！ なる？', beforeEmoji: '🐗', afterEmoji: '🐗✨' },
-  knight: { message: 'うさぎがパワーアップできるよ！ なる？', beforeEmoji: '🐰', afterEmoji: '🐰✨' },
-  silver: { message: 'オオカミがパワーアップできるよ！ なる？', beforeEmoji: '🐺', afterEmoji: '🐺✨' },
-  bishop: { message: 'フクロウがパワーアップできるよ！ なる？', beforeEmoji: '🦉', afterEmoji: '🦉✨' },
-  rook:   { message: 'たかがパワーアップできるよ！ なる？',   beforeEmoji: '🦅', afterEmoji: '🦅✨' },
+  pawn:   { message: 'ひよこがニワトリになれるよ！ なる？', promotedType: 'promoted_pawn'   },
+  lance:  { message: 'イノシシがパワーアップできるよ！ なる？', promotedType: 'promoted_lance'  },
+  knight: { message: 'うさぎがパワーアップできるよ！ なる？', promotedType: 'promoted_knight' },
+  silver: { message: 'オオカミがパワーアップできるよ！ なる？', promotedType: 'promoted_silver' },
+  bishop: { message: 'フクロウがパワーアップできるよ！ なる？', promotedType: 'promoted_bishop' },
+  rook:   { message: 'たかがパワーアップできるよ！ なる？',   promotedType: 'promoted_rook'   },
 }
+
+const SENTE_COLORS: AnimalColors = { primary: '#3B82F6', dark: '#1E40AF' }
+const GOTE_COLORS: AnimalColors = { primary: '#EF4444', dark: '#991B1B' }
 
 // ============================================================
 // Props
@@ -29,6 +33,8 @@ const PROMOTION_CONFIG: Partial<Record<PieceType, PromotionConfig>> = {
 interface PromotionDialogProps {
   isOpen: boolean
   pieceType: PieceType | null
+  /** 成りを行うプレイヤー（駒の色を決定） */
+  owner: Player
   onPromote: (doPromote: boolean) => void
 }
 
@@ -36,12 +42,16 @@ interface PromotionDialogProps {
 // コンポーネント
 // ============================================================
 
-export function PromotionDialog({ isOpen, pieceType, onPromote }: PromotionDialogProps) {
+export function PromotionDialog({ isOpen, pieceType, owner, onPromote }: PromotionDialogProps) {
   const config = pieceType ? PROMOTION_CONFIG[pieceType] : null
+  const colors = owner === 'sente' ? SENTE_COLORS : GOTE_COLORS
+
+  const BeforeAnimal = pieceType ? PIECE_CONFIG[pieceType].AnimalComponent : null
+  const AfterAnimal = config ? PIECE_CONFIG[config.promotedType].AnimalComponent : null
 
   return (
     <AnimatePresence>
-      {isOpen && config && (
+      {isOpen && config && BeforeAnimal && AfterAnimal && (
         <>
           {/* 半透明オーバーレイ（タップしても閉じない） */}
           <motion.div
@@ -61,10 +71,14 @@ export function PromotionDialog({ isOpen, pieceType, onPromote }: PromotionDialo
           >
             <div className="w-full max-w-sm rounded-3xl bg-white px-8 py-8 shadow-2xl">
               {/* 変身アニメーション表示 */}
-              <div className="mb-6 flex items-center justify-center gap-4 text-5xl">
-                <span>{config.beforeEmoji}</span>
+              <div className="mb-6 flex items-center justify-center gap-4">
+                <div className="h-16 w-16">
+                  <BeforeAnimal {...colors} isPromoted={false} />
+                </div>
                 <span className="text-2xl text-amber-500">→</span>
-                <span>{config.afterEmoji}</span>
+                <div className="h-16 w-16">
+                  <AfterAnimal {...colors} isPromoted={true} />
+                </div>
               </div>
 
               {/* メッセージ */}
@@ -75,13 +89,13 @@ export function PromotionDialog({ isOpen, pieceType, onPromote }: PromotionDialo
               {/* ボタン */}
               <div className="flex flex-col gap-3">
                 <button
-                  className="min-h-[56px] w-full rounded-2xl bg-amber-500 text-xl font-black text-white shadow-md active:scale-95"
+                  className="min-h-[56px] w-full rounded-2xl bg-blue-500 text-xl font-black text-white shadow-md hover:bg-blue-600 active:scale-95"
                   onClick={() => onPromote(true)}
                 >
                   なる！🌟
                 </button>
                 <button
-                  className="min-h-[48px] w-full rounded-2xl bg-stone-200 text-base font-bold text-stone-600 active:scale-95"
+                  className="min-h-[48px] w-full rounded-2xl bg-stone-200 text-base font-bold text-stone-700 hover:bg-stone-300 active:scale-95"
                   onClick={() => onPromote(false)}
                 >
                   ならない
