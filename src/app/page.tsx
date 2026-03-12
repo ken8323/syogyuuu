@@ -5,7 +5,7 @@ import { Board } from '@/components/Board'
 import { CapturedPieces } from '@/components/CapturedPieces'
 import { ControlBar } from '@/components/Controls'
 import { PromotionDialog, ForcedPromotionToast, GameOverDialog, MenuDialog } from '@/components/Dialogs'
-import { CheckBanner } from '@/components/Notifications'
+import { CheckBanner, PraiseMessage } from '@/components/Notifications'
 import { TitleScreen } from '@/components/TitleScreen'
 import { useGameStore } from '@/stores/gameStore'
 import { useHintTimer } from '@/hooks/useHintTimer'
@@ -40,6 +40,7 @@ export default function Home() {
     setHint,
     clearHint,
     showHint,
+    clearPraise,
   } = useGameStore()
   const {
     board,
@@ -179,22 +180,25 @@ export default function Home() {
           />
         </div>
 
-        {/* 盤面 */}
-        <Board
-          board={board}
-          currentPlayer={currentPlayer}
-          selectedPosition={selectedPosition}
-          legalMoves={legalMoves}
-          lastMove={lastMove}
-          onSquareClick={handleSquareClick}
-          animatingMove={ui.animatingMove}
-          onAnimationComplete={completeMoveAnimation}
-          promotingInfo={ui.promotingInfo}
-          onPromotionComplete={completePromotion}
-          hintPieces={ui.hintPieces}
-          hintMoves={ui.hintMoves}
-          isCheck={isCheck}
-        />
+        {/* 盤面 + ほめメッセージ */}
+        <div className="relative">
+          <Board
+            board={board}
+            currentPlayer={currentPlayer}
+            selectedPosition={selectedPosition}
+            legalMoves={legalMoves}
+            lastMove={lastMove}
+            onSquareClick={handleSquareClick}
+            animatingMove={ui.animatingMove}
+            onAnimationComplete={completeMoveAnimation}
+            promotingInfo={ui.promotingInfo}
+            onPromotionComplete={completePromotion}
+            hintPieces={ui.hintPieces}
+            hintMoves={ui.hintMoves}
+            isCheck={isCheck}
+          />
+          <PraiseMessage message={ui.praiseMessage} onDismiss={clearPraise} />
+        </div>
 
         {/* 先手の持ち駒エリア（下・固定） */}
         <div className="h-[12svh]">

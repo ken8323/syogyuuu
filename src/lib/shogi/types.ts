@@ -136,6 +136,10 @@ export interface UIState {
   hintPieces: Position[]
   /** おすすめ手の合法手（hintLevel=2 で使用） */
   hintMoves: Position[]
+  /** 現在表示中のほめメッセージ（null = 非表示） */
+  praiseMessage: string | null
+  /** 対局内で初めて駒を取ったか */
+  hasFirstCapture: boolean
 }
 
 // ============================================================

@@ -8,6 +8,13 @@ import { executeMove, executeDrop, undoMove, redoMove, createInitialGameState } 
 import { getPieceAt } from '../lib/shogi/board'
 import { playSound, soundEngine } from '../lib/sound/soundEngine'
 import {
+  pickMessage,
+  CAPTURE_MESSAGES,
+  FIRST_CAPTURE_MESSAGE,
+  PROMOTE_MESSAGES,
+  MILESTONE_MESSAGES,
+} from '../lib/praise'
+import {
   hapticSelect,
   hapticPlace,
   hapticCapture,
@@ -51,6 +58,7 @@ interface GameStore {
   setHint: (level: 1 | 2) => void
   clearHint: () => void
   showHint: () => void
+  clearPraise: () => void
 }
 
 // ============================================================
@@ -67,6 +75,8 @@ const INITIAL_UI_STATE: UIState = {
   hintLevel: 0,
   hintPieces: [],
   hintMoves: [],
+  praiseMessage: null,
+  hasFirstCapture: false,
 }
 
 // ============================================================
@@ -230,6 +240,23 @@ export const useGameStore = create<GameStore>()(
         // 移動を実行（盤面を即時更新）
         const nextState = executeMove(gameState, from, to, promote)
 
+        // 捕獲時のほめメッセージ
+        let praiseMessage: string | null = null
+        let hasFirstCapture = get().ui.hasFirstCapture
+        if (captured) {
+          if (!hasFirstCapture) {
+            praiseMessage = FIRST_CAPTURE_MESSAGE
+            hasFirstCapture = true
+          } else {
+            praiseMessage = pickMessage(CAPTURE_MESSAGES, get().ui.praiseMessage)
+          }
+        }
+
+        // 強制成り時のほめメッセージ（捕獲と重複した場合は成りを優先）
+        if (isForcedPromote) {
+          praiseMessage = pickMessage(PROMOTE_MESSAGES, get().ui.praiseMessage)
+        }
+
         set(state => ({
           gameState: {
             ...nextState,
@@ -238,6 +265,7 @@ export const useGameStore = create<GameStore>()(
           ui: {
             ...state.ui,
             animatingMove: { piece, from, to, captured, pendingPhase, promote, isForcedPromote },
+            ...(praiseMessage !== null ? { praiseMessage, hasFirstCapture } : { hasFirstCapture }),
           },
         }))
       },
@@ -305,6 +333,7 @@ export const useGameStore = create<GameStore>()(
             pieceType: lastMove.piece.type as PieceType,
             isForcedPromote: false,
           }
+          const promoteMsg = pickMessage(PROMOTE_MESSAGES, get().ui.praiseMessage)
           set(state => ({
             gameState: {
               ...reExecuted,
@@ -313,6 +342,7 @@ export const useGameStore = create<GameStore>()(
             ui: {
               ...state.ui,
               promotingInfo,
+              praiseMessage: promoteMsg,
             },
           }))
         } else {
@@ -332,9 +362,16 @@ export const useGameStore = create<GameStore>()(
 
       completeTurnSwitch: () => {
         const { gameState } = get()
-        const { phase, board, capturedPieces, currentPlayer } = gameState
+        const { phase, board, capturedPieces, currentPlayer, moveHistory } = gameState
 
         if (phase !== 'turn_switching') return
+
+        // 10手ごとのマイルストーンほめメッセージ（既に別のほめメッセージが表示中でなければ）
+        const moveCount = moveHistory.currentIndex + 1
+        if (moveCount > 0 && moveCount % 10 === 0 && !get().ui.praiseMessage) {
+          const milestoneMsg = pickMessage(MILESTONE_MESSAGES, get().ui.praiseMessage)
+          set(state => ({ ui: { ...state.ui, praiseMessage: milestoneMsg } }))
+        }
 
         // currentPlayer は executeMove/executeDrop で既に切り替わっている
         if (isCheckmate(board, capturedPieces, currentPlayer)) {
@@ -606,6 +643,10 @@ export const useGameStore = create<GameStore>()(
             hintMoves: result.moves,
           },
         }))
+      },
+
+      clearPraise: () => {
+        set(state => ({ ui: { ...state.ui, praiseMessage: null } }))
       },
     }),
 
