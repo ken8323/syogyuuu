@@ -180,25 +180,22 @@ export default function Home() {
           />
         </div>
 
-        {/* 盤面 + ほめメッセージ */}
-        <div className="relative flex justify-center">
-          <Board
-            board={board}
-            currentPlayer={currentPlayer}
-            selectedPosition={selectedPosition}
-            legalMoves={legalMoves}
-            lastMove={lastMove}
-            onSquareClick={handleSquareClick}
-            animatingMove={ui.animatingMove}
-            onAnimationComplete={completeMoveAnimation}
-            promotingInfo={ui.promotingInfo}
-            onPromotionComplete={completePromotion}
-            hintPieces={ui.hintPieces}
-            hintMoves={ui.hintMoves}
-            isCheck={isCheck}
-          />
-          <PraiseMessage message={ui.praiseMessage} onDismiss={clearPraise} />
-        </div>
+        {/* 盤面 */}
+        <Board
+          board={board}
+          currentPlayer={currentPlayer}
+          selectedPosition={selectedPosition}
+          legalMoves={legalMoves}
+          lastMove={lastMove}
+          onSquareClick={handleSquareClick}
+          animatingMove={ui.animatingMove}
+          onAnimationComplete={completeMoveAnimation}
+          promotingInfo={ui.promotingInfo}
+          onPromotionComplete={completePromotion}
+          hintPieces={ui.hintPieces}
+          hintMoves={ui.hintMoves}
+          isCheck={isCheck}
+        />
 
         {/* 先手の持ち駒エリア（下・固定） */}
         <div className="h-[12svh]">
@@ -227,6 +224,9 @@ export default function Home() {
           />
         </div>
       </div>
+
+      {/* ほめメッセージ（画面中央にオーバーレイ） */}
+      <PraiseMessage message={ui.praiseMessage} onDismiss={clearPraise} />
     </main>
   )
 }
