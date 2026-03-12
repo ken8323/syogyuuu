@@ -7,6 +7,7 @@ export interface AnimalColors {
 
 interface AnimalProps extends AnimalColors {
   isPromoted?: boolean
+  isInCheck?: boolean
 }
 
 // 成駒バッジ（右上に金色の★）
@@ -22,7 +23,7 @@ function PromotedBadge() {
 }
 
 // ライオン（王将）: アンバーのたてがみ + ブラッシュ + ひげ
-export function Lion({ primary, dark, isPromoted }: AnimalProps) {
+export function Lion({ primary, dark, isPromoted, isInCheck }: AnimalProps) {
   return (
     <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
       {/* たてがみ（アンバー固定） */}
@@ -32,20 +33,37 @@ export function Lion({ primary, dark, isPromoted }: AnimalProps) {
       {/* 小さな三角耳 */}
       <polygon points="24,34 16,14 36,28" fill={dark} />
       <polygon points="76,34 84,14 64,28" fill={dark} />
-      {/* 目（大きめ） */}
-      <circle cx="37" cy="47" r="11" fill="white" />
-      <circle cx="63" cy="47" r="11" fill="white" />
-      <circle cx="38" cy="48" r="6" fill="#1a1a1a" />
-      <circle cx="64" cy="48" r="6" fill="#1a1a1a" />
-      <circle cx="40" cy="45" r="2.5" fill="white" />
-      <circle cx="66" cy="45" r="2.5" fill="white" />
+      {isInCheck ? (
+        <>
+          {/* 焦り顔: ><目 */}
+          <path d="M28 42 L46 50 M46 42 L28 50" stroke="#1a1a1a" strokeWidth="3.5" strokeLinecap="round" />
+          <path d="M54 42 L72 50 M72 42 L54 50" stroke="#1a1a1a" strokeWidth="3.5" strokeLinecap="round" />
+          {/* 汗マーク（青い水滴） */}
+          <ellipse cx="82" cy="28" rx="5" ry="7" fill="#60A5FA" opacity="0.9" />
+          <polygon points="82,18 78,28 86,28" fill="#60A5FA" opacity="0.9" />
+        </>
+      ) : (
+        <>
+          {/* 通常の目 */}
+          <circle cx="37" cy="47" r="11" fill="white" />
+          <circle cx="63" cy="47" r="11" fill="white" />
+          <circle cx="38" cy="48" r="6" fill="#1a1a1a" />
+          <circle cx="64" cy="48" r="6" fill="#1a1a1a" />
+          <circle cx="40" cy="45" r="2.5" fill="white" />
+          <circle cx="66" cy="45" r="2.5" fill="white" />
+        </>
+      )}
       {/* ブラッシュ（ほっぺのピンク） */}
       <ellipse cx="24" cy="58" rx="10" ry="7" fill="#FFB7C5" opacity="0.8" />
       <ellipse cx="76" cy="58" rx="10" ry="7" fill="#FFB7C5" opacity="0.8" />
       {/* 鼻 */}
       <ellipse cx="50" cy="60" rx="5" ry="3.5" fill={dark} />
-      {/* 笑顔 */}
-      <path d="M43 67 Q50 74 57 67" stroke={dark} strokeWidth="2.5" fill="none" strokeLinecap="round" />
+      {/* 表情: 焦り時は口が逆三角（焦り）、通常は笑顔 */}
+      {isInCheck ? (
+        <path d="M43 72 Q50 65 57 72" stroke={dark} strokeWidth="2.5" fill="none" strokeLinecap="round" />
+      ) : (
+        <path d="M43 67 Q50 74 57 67" stroke={dark} strokeWidth="2.5" fill="none" strokeLinecap="round" />
+      )}
       {/* ひげ */}
       <line x1="8" y1="58" x2="40" y2="61" stroke={dark} strokeWidth="1.5" strokeLinecap="round" opacity="0.6" />
       <line x1="8" y1="65" x2="40" y2="65" stroke={dark} strokeWidth="1.5" strokeLinecap="round" opacity="0.6" />

@@ -19,6 +19,8 @@ interface SquareProps {
   legalMoveInDelay: number
   /** 合法手ドットのポップアウト遅延（ms）: 逆順フェードアウト用 */
   legalMoveOutDelay: number
+  /** 王手状態の王将がいるマス（赤脈動） */
+  isKingInCheck?: boolean
   onClick: () => void
 }
 
@@ -33,6 +35,7 @@ export function Square({
   isHintMove,
   legalMoveInDelay,
   legalMoveOutDelay,
+  isKingInCheck = false,
   onClick,
 }: SquareProps) {
   // 木目テクスチャ: 斜めグラデーションで板目を表現
@@ -136,6 +139,16 @@ export function Square({
           initial={{ opacity: 0.4 }}
           animate={{ opacity: 0 }}
           transition={{ duration: 0.3, ease: 'easeOut' }}
+        />
+      )}
+
+      {/* 王手: 王将マスの赤脈動 */}
+      {isKingInCheck && (
+        <motion.div
+          className="pointer-events-none absolute inset-0"
+          animate={{ opacity: [0.15, 0.45, 0.15] }}
+          transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+          style={{ backgroundColor: 'rgba(239,68,68,1)' }}
         />
       )}
 
