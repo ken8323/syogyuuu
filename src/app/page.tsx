@@ -5,7 +5,7 @@ import { Board } from '@/components/Board'
 import { CapturedPieces } from '@/components/CapturedPieces'
 import { ControlBar } from '@/components/Controls'
 import { PromotionDialog, ForcedPromotionToast, GameOverDialog, MenuDialog } from '@/components/Dialogs'
-import { CheckBanner } from '@/components/Notifications'
+import { CheckBanner, PraiseMessage } from '@/components/Notifications'
 import { TitleScreen } from '@/components/TitleScreen'
 import { useGameStore } from '@/stores/gameStore'
 import { useHintTimer } from '@/hooks/useHintTimer'
@@ -40,6 +40,7 @@ export default function Home() {
     setHint,
     clearHint,
     showHint,
+    clearPraise,
   } = useGameStore()
   const {
     board,
@@ -223,6 +224,9 @@ export default function Home() {
           />
         </div>
       </div>
+
+      {/* ほめメッセージ（画面中央にオーバーレイ） */}
+      <PraiseMessage message={ui.praiseMessage} onDismiss={clearPraise} />
     </main>
   )
 }
