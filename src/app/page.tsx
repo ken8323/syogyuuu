@@ -181,7 +181,7 @@ export default function Home() {
         </div>
 
         {/* 盤面 + ほめメッセージ */}
-        <div className="relative">
+        <div className="relative flex justify-center">
           <Board
             board={board}
             currentPlayer={currentPlayer}
