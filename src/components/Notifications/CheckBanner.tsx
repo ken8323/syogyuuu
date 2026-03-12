@@ -25,13 +25,23 @@ export function CheckBanner({ isVisible, currentPlayer, onDismiss }: CheckBanner
     <AnimatePresence>
       {isVisible && (
         <motion.div
-          className="fixed left-1/2 top-6 z-50 -translate-x-1/2 rounded-2xl bg-red-500 px-6 py-3 text-base font-bold text-white shadow-lg"
+          className="fixed left-1/2 top-6 z-50 -translate-x-1/2 rounded-2xl bg-red-500 px-6 py-3 text-base font-bold text-white shadow-lg flex items-center gap-2"
           initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
+          animate={{ opacity: 1, y: 0, scale: [1, 1.03, 1] }}
           exit={{ opacity: 0, y: -20 }}
-          transition={{ duration: 0.25 }}
+          transition={{
+            opacity: { duration: 0.25 },
+            y: { duration: 0.25 },
+            scale: { duration: 0.5, repeat: Infinity, ease: 'easeInOut', delay: 0.25 },
+          }}
         >
-          🦁💦 {teamLabel}ライオンがあぶないよ！
+          <motion.span
+            animate={{ rotate: [-5, 5, -5, 0] }}
+            transition={{ duration: 0.5, repeat: Infinity, ease: 'easeInOut' }}
+          >
+            🦁
+          </motion.span>
+          <span>💦 {teamLabel}ライオンがあぶないよ！</span>
         </motion.div>
       )}
     </AnimatePresence>

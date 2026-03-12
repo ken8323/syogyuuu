@@ -61,6 +61,8 @@ interface BoardProps {
   onPromotionComplete: () => void
   hintPieces: Position[]
   hintMoves: Position[]
+  /** 現在の手番プレイヤーが王手されているか */
+  isCheck: boolean
 }
 
 // ============================================================
@@ -80,6 +82,7 @@ export function Board({
   onPromotionComplete,
   hintPieces,
   hintMoves,
+  isCheck,
 }: BoardProps) {
   const gridRef = useRef<HTMLDivElement>(null)
   const [squareSize, setSquareSize] = useState<{ w: number; h: number } | null>(null)
@@ -92,6 +95,20 @@ export function Board({
 
   // Set に変換しておくことでO(1)ルックアップを実現
   const legalMoveSet = new Set(legalMoves.map((p) => `${p.row},${p.col}`))
+
+  // 王手中の場合、現在手番プレイヤーの王将位置を特定
+  let checkKingPosKey: string | null = null
+  if (isCheck) {
+    outer: for (let r = 0; r < 9; r++) {
+      for (let c = 0; c < 9; c++) {
+        const p = board[r][c]
+        if (p && p.type === 'king' && p.owner === currentPlayer) {
+          checkKingPosKey = `${r},${c}`
+          break outer
+        }
+      }
+    }
+  }
 
   // ポップアウト逆順のための最大 delay を事前計算
   const maxLegalDelay =
@@ -167,6 +184,7 @@ export function Board({
                 lastMoveTo?.col === internalPos.col
               const isHintPiece = hintPieceSet.has(posKey)
               const isHintMove = hintMoveSet.has(posKey)
+              const isKingInCheck = isCheck && checkKingPosKey === posKey
               const inDelay = isLegalMove ? legalMoveInDelay(selectedPosition, internalPos) : 0
               const outDelay = isLegalMove ? maxLegalDelay - inDelay : 0
 
@@ -188,6 +206,7 @@ export function Board({
                   isHintMove={isHintMove}
                   legalMoveInDelay={inDelay}
                   legalMoveOutDelay={outDelay}
+                  isKingInCheck={isKingInCheck}
                   onClick={() => onSquareClick(internalPos)}
                 >
                   {piece && !isAnimatingTarget && (
@@ -200,6 +219,7 @@ export function Board({
                         isSelected={isSelected}
                         isOpponent={piece.owner === 'gote'}
                         isLanding={isLastMoveTo && !isSelected}
+                        isKingInCheck={isKingInCheck}
                       />
                     </div>
                   )}

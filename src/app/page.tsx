@@ -52,6 +52,7 @@ export default function Home() {
     capturedPieces,
     winner,
     gameOverReason,
+    isCheck,
   } = gameState
 
   // ヒントタイマー（10秒/15秒無操作でヒント表示）
@@ -192,6 +193,7 @@ export default function Home() {
           onPromotionComplete={completePromotion}
           hintPieces={ui.hintPieces}
           hintMoves={ui.hintMoves}
+          isCheck={isCheck}
         />
 
         {/* 先手の持ち駒エリア（下・固定） */}

@@ -255,9 +255,11 @@ interface PieceProps {
   idleStaggerDelay?: number
   /** 配置直後の着地アニメーション（scale 1.08→1.0 スプリングバウンス） */
   isLanding?: boolean
+  /** 王手状態の王将: ライオンの焦り顔を表示 */
+  isKingInCheck?: boolean
 }
 
-export function Piece({ piece, isSelected = false, isOpponent = false, idleStaggerDelay = 0, isLanding = false }: PieceProps) {
+export function Piece({ piece, isSelected = false, isOpponent = false, idleStaggerDelay = 0, isLanding = false, isKingInCheck = false }: PieceProps) {
   const config = PIECE_CONFIG[piece.type]
   const promoted = isPromotedType(piece.type)
   const isSente = piece.owner === 'sente'
@@ -294,6 +296,8 @@ export function Piece({ piece, isSelected = false, isOpponent = false, idleStagg
     ? { transform: 'rotate(180deg)', width: '100%', height: '100%' }
     : { width: '100%', height: '100%' }
 
+  const animalProps = { ...colors, isPromoted: promoted, isInCheck: piece.type === 'king' ? isKingInCheck : false }
+
   // 選択中: scale 1.12 (spring) + y バウンス (repeat) + 影深化
   if (isSelected) {
     return (
@@ -312,7 +316,7 @@ export function Piece({ piece, isSelected = false, isOpponent = false, idleStagg
           }}
         >
           <div className="w-full flex-1 min-h-0 p-0.5">
-            <AnimalComponent {...colors} isPromoted={promoted} />
+            <AnimalComponent {...animalProps} />
           </div>
           <span className={`text-[8px] font-bold leading-none pb-0.5 ${isSente ? 'text-blue-900' : 'text-red-900'}`}>
             {hiragana}
@@ -334,7 +338,7 @@ export function Piece({ piece, isSelected = false, isOpponent = false, idleStagg
           transition={{ type: 'spring', stiffness: 300, damping: 12 }}
         >
           <div className="w-full flex-1 min-h-0 p-0.5">
-            <AnimalComponent {...colors} isPromoted={promoted} />
+            <AnimalComponent {...animalProps} />
           </div>
           <span className={`text-[8px] font-bold leading-none pb-0.5 ${isSente ? 'text-blue-900' : 'text-red-900'}`}>
             {hiragana}
@@ -360,7 +364,7 @@ export function Piece({ piece, isSelected = false, isOpponent = false, idleStagg
         onAnimationComplete={animState === 'animating' ? onAnimationComplete : undefined}
       >
         <div className="w-full flex-1 min-h-0 p-0.5">
-          <AnimalComponent {...colors} isPromoted={promoted} />
+          <AnimalComponent {...animalProps} />
         </div>
         <span className={`text-[8px] font-bold leading-none pb-0.5 ${isSente ? 'text-blue-900' : 'text-red-900'}`}>
           {hiragana}
