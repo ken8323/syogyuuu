@@ -2,6 +2,7 @@
 
 import { motion, AnimatePresence } from 'framer-motion'
 import type { PieceType, Player, PromotedPieceType } from '@/lib/shogi/types'
+import { AnimatedButton } from '@/components/ui/AnimatedButton'
 import { PIECE_CONFIG } from '@/components/Piece'
 import type { AnimalColors } from '@/components/Piece/animals'
 
@@ -88,18 +89,18 @@ export function PromotionDialog({ isOpen, pieceType, owner, onPromote }: Promoti
 
               {/* ボタン */}
               <div className="flex flex-col gap-3">
-                <button
-                  className="min-h-[56px] w-full rounded-2xl bg-blue-500 text-xl font-black text-white shadow-md hover:bg-blue-600 active:scale-95"
+                <AnimatedButton
+                  className="min-h-[56px] w-full rounded-2xl bg-blue-500 text-xl font-black text-white shadow-md hover:bg-blue-600"
                   onClick={() => onPromote(true)}
                 >
                   なる！🌟
-                </button>
-                <button
-                  className="min-h-[48px] w-full rounded-2xl bg-stone-200 text-base font-bold text-stone-700 hover:bg-stone-300 active:scale-95"
+                </AnimatedButton>
+                <AnimatedButton
+                  className="min-h-[48px] w-full rounded-2xl bg-stone-200 text-base font-bold text-stone-700 hover:bg-stone-300"
                   onClick={() => onPromote(false)}
                 >
                   ならない
-                </button>
+                </AnimatedButton>
               </div>
             </div>
           </motion.div>

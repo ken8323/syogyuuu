@@ -2,6 +2,7 @@
 
 import { motion, AnimatePresence } from 'framer-motion'
 import type { Player } from '@/lib/shogi/types'
+import { AnimatedButton } from '@/components/ui/AnimatedButton'
 
 interface GameOverDialogProps {
   isOpen: boolean
@@ -77,18 +78,18 @@ export function GameOverDialog({ isOpen, winner, gameOverReason, onRematch, onQu
 
               {/* ボタン */}
               <div className="mt-8 flex flex-col gap-3">
-                <button
-                  className="rounded-2xl bg-amber-500 py-4 text-lg font-bold text-white shadow hover:bg-amber-600 active:scale-95"
+                <AnimatedButton
+                  className="rounded-2xl bg-amber-500 py-4 text-lg font-bold text-white shadow hover:bg-amber-600"
                   onClick={onRematch}
                 >
                   もういっかい あそぶ！
-                </button>
-                <button
-                  className="rounded-2xl bg-gray-200 py-3 text-base font-semibold text-gray-600 hover:bg-gray-300 active:scale-95"
+                </AnimatedButton>
+                <AnimatedButton
+                  className="rounded-2xl bg-gray-200 py-3 text-base font-semibold text-gray-600 hover:bg-gray-300"
                   onClick={onQuit}
                 >
                   おわる
-                </button>
+                </AnimatedButton>
               </div>
             </div>
           </motion.div>

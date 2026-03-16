@@ -564,3 +564,15 @@ iPad 10.2" (810pt高) の場合:
 - 持ち駒エリア高さ: 810 x 12% = 約97pt（44pt以上を確保可能）
 - 横幅: 盤面幅と同幅。7種の駒を均等配置（各駒間にバッジ表示余白を含む）
 - 持ち駒が0枚の種類は薄くグレーアウトして表示位置を固定する
+
+---
+
+## 3. 共通 UI コンポーネント
+
+### 3.1 AnimatedButton
+
+- パス: `src/components/ui/AnimatedButton.tsx`
+- 用途: スプリング押下アニメーション付きの共通ボタンコンポーネント
+- props: `className`, `disabled`, `onClick`, `aria-label`, `type`, `children`
+- disabled=true のとき whileTap を無効化
+- 使用箇所: T-003, T-004, G-016〜G-020, P-007, P-008, W-005, W-006, M-003〜M-005
