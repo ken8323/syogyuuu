@@ -67,10 +67,10 @@ export function GameOverDialog({ isOpen, winner, gameOverReason, onRematch, onQu
             exit={{ opacity: 0, scale: 0.8 }}
             transition={{ type: 'spring', stiffness: 300, damping: 25 }}
           >
-            <div className="w-full max-w-sm rounded-3xl bg-white px-8 py-8 text-center shadow-2xl">
+            <div className="w-full max-w-sm rounded-3xl bg-white px-4 py-6 text-center shadow-2xl sm:px-8 sm:py-8">
               {/* 見出し */}
-              <p className="text-4xl font-black text-amber-500">{headline}</p>
-              <p className="mt-2 text-2xl font-bold">
+              <p className="text-3xl font-black text-amber-500 sm:text-4xl">{headline}</p>
+              <p className="mt-2 text-xl font-bold sm:text-2xl">
                 <span className={winnerInfo.color}>{winnerInfo.team}</span>
                 <span className="text-gray-800">のかち！</span>
               </p>

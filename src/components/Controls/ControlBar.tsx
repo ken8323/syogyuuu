@@ -39,7 +39,7 @@ export function ControlBar({
       {/* もどるボタン */}
       <button
         className={[
-          'flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg px-3 text-sm font-bold transition-colors',
+          'flex min-h-[44px] min-w-[44px] items-center justify-center whitespace-nowrap rounded-lg px-3 text-sm font-bold transition-colors',
           canUndo
             ? 'bg-amber-100 text-amber-900 hover:bg-amber-200'
             : 'cursor-not-allowed bg-stone-100 text-stone-400',
@@ -54,7 +54,7 @@ export function ControlBar({
       {/* 手番表示 */}
       <div
         className={[
-          'flex flex-1 items-center justify-center gap-2 rounded-lg px-2 py-1 text-sm font-bold',
+          'flex min-w-0 flex-1 items-center justify-center gap-2 rounded-lg px-2 py-1 text-sm font-bold',
           isSente
             ? 'bg-blue-100 text-blue-900'
             : 'bg-red-100 text-red-900',
@@ -68,13 +68,13 @@ export function ControlBar({
           animate={{ scale: [1, 1.4, 1] }}
           transition={{ duration: 1.2, repeat: Infinity, ease: 'easeInOut' }}
         />
-        {isSente ? 'あおチームのばん' : 'あかチームのばん'}
+        <span className="truncate">{isSente ? 'あおチームのばん' : 'あかチームのばん'}</span>
       </div>
 
       {/* すすむボタン */}
       <button
         className={[
-          'flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg px-3 text-sm font-bold transition-colors',
+          'flex min-h-[44px] min-w-[44px] items-center justify-center whitespace-nowrap rounded-lg px-3 text-sm font-bold transition-colors',
           canRedo
             ? 'bg-amber-100 text-amber-900 hover:bg-amber-200'
             : 'cursor-not-allowed bg-stone-100 text-stone-400',

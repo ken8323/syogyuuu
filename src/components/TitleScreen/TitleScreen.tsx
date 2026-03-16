@@ -115,7 +115,7 @@ function IdleAnimal({
 export function TitleScreen({ hasSavedGame, onStartNew, onResume }: TitleScreenProps) {
   return (
     <main
-      className="relative flex min-h-screen flex-col items-center justify-center gap-8 overflow-hidden p-8"
+      className="relative flex min-h-screen flex-col items-center justify-center gap-8 overflow-hidden p-4 sm:p-8"
       style={{
         background: 'radial-gradient(ellipse at 50% 40%, #fffbeb 0%, #fef3c7 40%, #fde68a 100%)',
       }}
@@ -192,7 +192,7 @@ export function TitleScreen({ hasSavedGame, onStartNew, onResume }: TitleScreenP
         {TITLE_CHARS.map((char, i) => (
           <motion.span
             key={i}
-            className="text-5xl font-black drop-shadow-sm"
+            className="text-3xl font-black drop-shadow-sm sm:text-5xl"
             style={{ color: RAINBOW[i % RAINBOW.length] }}
             initial={{ opacity: 0, y: 20, scale: 0.5 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -205,7 +205,7 @@ export function TitleScreen({ hasSavedGame, onStartNew, onResume }: TitleScreenP
 
       {/* ボタン */}
       <motion.div
-        className="flex w-64 flex-col gap-4"
+        className="flex w-full max-w-xs flex-col gap-4"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1.4 }}
