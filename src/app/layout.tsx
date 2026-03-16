@@ -14,12 +14,13 @@ export const metadata: Metadata = {
   description: '親子で楽しむ将棋アプリ',
 }
 
-// ズーム禁止・スケール固定（iPad専用アプリのため）
+// ズーム禁止・スケール固定・ノッチ対応
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
+  viewportFit: 'cover',
 }
 
 export default function RootLayout({

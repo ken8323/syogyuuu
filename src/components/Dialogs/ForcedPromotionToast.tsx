@@ -32,7 +32,7 @@ export function ForcedPromotionToast({ pieceType, onDismiss }: ForcedPromotionTo
     <AnimatePresence>
       {pieceType && message && (
         <motion.div
-          className="fixed left-1/2 top-6 z-50 -translate-x-1/2 rounded-2xl bg-amber-500 px-6 py-3 text-base font-bold text-white shadow-lg"
+          className="fixed left-1/2 top-6 z-50 -translate-x-1/2 rounded-2xl bg-amber-500 px-4 py-3 text-sm font-bold text-white shadow-lg sm:px-6 sm:text-base"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}

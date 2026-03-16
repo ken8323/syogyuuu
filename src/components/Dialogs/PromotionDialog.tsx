@@ -69,7 +69,7 @@ export function PromotionDialog({ isOpen, pieceType, owner, onPromote }: Promoti
             exit={{ opacity: 0, scale: 0.85 }}
             transition={{ type: 'spring', stiffness: 300, damping: 25 }}
           >
-            <div className="w-full max-w-sm rounded-3xl bg-white px-8 py-8 shadow-2xl">
+            <div className="w-full max-w-sm rounded-3xl bg-white px-4 py-6 shadow-2xl sm:px-8 sm:py-8">
               {/* 変身アニメーション表示 */}
               <div className="mb-6 flex items-center justify-center gap-4">
                 <div className="h-16 w-16">
