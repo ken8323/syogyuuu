@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { AnimatedButton } from '@/components/ui/AnimatedButton'
 
 interface MenuDialogProps {
   isOpen: boolean
@@ -71,18 +72,18 @@ export function MenuDialog({ isOpen, onClose, onResign, onReset }: MenuDialogPro
                     <p className="py-2 text-center text-base font-semibold text-gray-700">
                       {confirmConfig.message}
                     </p>
-                    <button
-                      className="rounded-2xl bg-red-500 py-3 text-base font-bold text-white hover:bg-red-600 active:scale-95"
+                    <AnimatedButton
+                      className="rounded-2xl bg-red-500 py-3 text-base font-bold text-white hover:bg-red-600"
                       onClick={handleConfirm}
                     >
                       うん、{confirmConfig.buttonLabel}
-                    </button>
-                    <button
-                      className="rounded-2xl bg-gray-200 py-3 text-base font-semibold text-gray-600 hover:bg-gray-300 active:scale-95"
+                    </AnimatedButton>
+                    <AnimatedButton
+                      className="rounded-2xl bg-gray-200 py-3 text-base font-semibold text-gray-600 hover:bg-gray-300"
                       onClick={() => setConfirmAction(null)}
                     >
                       やめる
-                    </button>
+                    </AnimatedButton>
                   </motion.div>
                 ) : (
                   /* メインメニュー */
@@ -94,24 +95,24 @@ export function MenuDialog({ isOpen, onClose, onResign, onReset }: MenuDialogPro
                     transition={{ duration: 0.15 }}
                     className="flex flex-col gap-3"
                   >
-                    <button
-                      className="rounded-2xl bg-red-100 py-3 text-base font-semibold text-red-700 hover:bg-red-200 active:scale-95"
+                    <AnimatedButton
+                      className="rounded-2xl bg-red-100 py-3 text-base font-semibold text-red-700 hover:bg-red-200"
                       onClick={() => setConfirmAction('resign')}
                     >
                       まいった（とうりょう）
-                    </button>
-                    <button
-                      className="rounded-2xl bg-amber-100 py-3 text-base font-semibold text-amber-700 hover:bg-amber-200 active:scale-95"
+                    </AnimatedButton>
+                    <AnimatedButton
+                      className="rounded-2xl bg-amber-100 py-3 text-base font-semibold text-amber-700 hover:bg-amber-200"
                       onClick={() => setConfirmAction('reset')}
                     >
                       さいしょから やりなおす
-                    </button>
-                    <button
-                      className="rounded-2xl bg-gray-200 py-3 text-base font-semibold text-gray-600 hover:bg-gray-300 active:scale-95"
+                    </AnimatedButton>
+                    <AnimatedButton
+                      className="rounded-2xl bg-gray-200 py-3 text-base font-semibold text-gray-600 hover:bg-gray-300"
                       onClick={handleClose}
                     >
                       とじる
-                    </button>
+                    </AnimatedButton>
                   </motion.div>
                 )}
               </AnimatePresence>

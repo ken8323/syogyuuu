@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { motion, type TargetAndTransition } from 'framer-motion'
+import { AnimatedButton } from '@/components/ui/AnimatedButton'
 import type { AnimalColors } from '@/components/Piece/animals'
 import { Lion, Hawk, Owl, Elephant, Wolf, Rabbit, Boar, Chick, Chicken } from '@/components/Piece/animals'
 
@@ -210,24 +211,20 @@ export function TitleScreen({ hasSavedGame, onStartNew, onResume }: TitleScreenP
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1.4 }}
       >
-        <motion.button
+        <AnimatedButton
           className="rounded-2xl bg-amber-500 py-5 text-xl font-bold text-white shadow-lg"
-          whileTap={{ scale: 0.95 }}
-          whileHover={{ scale: 1.03 }}
           onClick={onStartNew}
         >
           あそぶ！
-        </motion.button>
+        </AnimatedButton>
 
         {hasSavedGame && (
-          <motion.button
+          <AnimatedButton
             className="rounded-2xl border-2 border-amber-400 bg-white py-4 text-lg font-semibold text-amber-700 shadow"
-            whileTap={{ scale: 0.95 }}
-            whileHover={{ scale: 1.03 }}
             onClick={onResume}
           >
             つづきから
-          </motion.button>
+          </AnimatedButton>
         )}
       </motion.div>
     </main>

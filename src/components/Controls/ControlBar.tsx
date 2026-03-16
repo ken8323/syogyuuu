@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion'
 import type { Player } from '@/lib/shogi/types'
+import { AnimatedButton } from '@/components/ui/AnimatedButton'
 
 interface ControlBarProps {
   currentPlayer: Player
@@ -37,7 +38,7 @@ export function ControlBar({
       transition={{ duration: 0.3 }}
     >
       {/* もどるボタン */}
-      <button
+      <AnimatedButton
         className={[
           'flex min-h-[44px] min-w-[44px] items-center justify-center whitespace-nowrap rounded-lg px-3 text-sm font-bold transition-colors',
           canUndo
@@ -49,7 +50,7 @@ export function ControlBar({
         aria-label="もどる"
       >
         ◀ もどる
-      </button>
+      </AnimatedButton>
 
       {/* 手番表示 */}
       <div
@@ -72,7 +73,7 @@ export function ControlBar({
       </div>
 
       {/* すすむボタン */}
-      <button
+      <AnimatedButton
         className={[
           'flex min-h-[44px] min-w-[44px] items-center justify-center whitespace-nowrap rounded-lg px-3 text-sm font-bold transition-colors',
           canRedo
@@ -84,10 +85,10 @@ export function ControlBar({
         aria-label="すすむ"
       >
         すすむ ▶
-      </button>
+      </AnimatedButton>
 
       {/* おしえてボタン */}
-      <button
+      <AnimatedButton
         className={[
           'flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg px-3 text-sm font-bold transition-colors',
           canShowHint
@@ -99,10 +100,10 @@ export function ControlBar({
         aria-label="おしえて"
       >
         💡
-      </button>
+      </AnimatedButton>
 
       {/* ミュートボタン */}
-      <button
+      <AnimatedButton
         className={[
           'flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg px-3 text-sm font-bold transition-colors',
           isMuted
@@ -113,16 +114,16 @@ export function ControlBar({
         aria-label={isMuted ? 'ミュート解除' : 'ミュート'}
       >
         {isMuted ? '🔇' : '🔊'}
-      </button>
+      </AnimatedButton>
 
       {/* メニューボタン */}
-      <button
+      <AnimatedButton
         className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg bg-stone-200 px-3 text-sm font-bold text-stone-700 hover:bg-stone-300"
         onClick={onMenu}
         aria-label="メニュー"
       >
         ☰
-      </button>
+      </AnimatedButton>
     </motion.div>
   )
 }
