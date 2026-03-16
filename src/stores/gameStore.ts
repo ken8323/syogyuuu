@@ -3,7 +3,7 @@ import { persist } from 'zustand/middleware'
 import type { AnimatingMoveInfo, GameState, PieceType, Player, Position, UIState, PromotingInfo } from '../lib/shogi/types'
 import { getLegalMoves, getLegalDrops, isInCheck } from '../lib/shogi/moves'
 import { getMovablePieces, getRecommendedMove } from '../lib/shogi/hint'
-import { isCheckmate, canPromote, mustPromote } from '../lib/shogi/rules'
+import { isCheckmate, canPromote, mustPromote, getPromotedType } from '../lib/shogi/rules'
 import { executeMove, executeDrop, undoMove, redoMove, createInitialGameState } from '../lib/shogi/game'
 import { getPieceAt } from '../lib/shogi/board'
 import { playSound, soundEngine } from '../lib/sound/soundEngine'
@@ -436,17 +436,50 @@ export const useGameStore = create<GameStore>()(
         if (phase !== 'idle') return
         if (moveHistory.currentIndex < 0) return
 
+        const move = moveHistory.moves[moveHistory.currentIndex]
         const nextState = undoMove(gameState)
         playSound('undo')
         hapticUndoRedo(get().ui.isMuted)
-        set((state) => ({
-          gameState: {
-            ...nextState,
-            phase: 'idle',
-            isCheck: false,
-          },
-          ui: { ...state.ui, hintLevel: 0, hintPieces: [], hintMoves: [] },
-        }))
+
+        if (move.type === 'move') {
+          // BoardMove undo: 駒が to→from へ逆スライド
+          set((state) => ({
+            gameState: { ...nextState, phase: 'moving', isCheck: false },
+            ui: {
+              ...state.ui,
+              hintLevel: 0, hintPieces: [], hintMoves: [],
+              animatingMove: {
+                piece: move.piece,
+                from: move.to,
+                to: move.from,
+                captured: move.captured,
+                pendingPhase: 'idle',
+                promote: false,
+                isForcedPromote: false,
+                undoRedo: 'undo',
+              },
+            },
+          }))
+        } else {
+          // DropMove undo: 打った駒がポップアウト（from=to=move.to）
+          set((state) => ({
+            gameState: { ...nextState, phase: 'moving', isCheck: false },
+            ui: {
+              ...state.ui,
+              hintLevel: 0, hintPieces: [], hintMoves: [],
+              animatingMove: {
+                piece: move.piece,
+                from: move.to,
+                to: move.to,
+                captured: null,
+                pendingPhase: 'idle',
+                promote: false,
+                isForcedPromote: false,
+                undoRedo: 'undo',
+              },
+            },
+          }))
+        }
       },
 
       redo: () => {
@@ -456,17 +489,53 @@ export const useGameStore = create<GameStore>()(
         if (phase !== 'idle') return
         if (moveHistory.currentIndex >= moveHistory.moves.length - 1) return
 
+        const move = moveHistory.moves[moveHistory.currentIndex + 1]
         const nextState = redoMove(gameState)
         playSound('redo')
         hapticUndoRedo(get().ui.isMuted)
-        set((state) => ({
-          gameState: {
-            ...nextState,
-            phase: 'idle',
-            isCheck: false,
-          },
-          ui: { ...state.ui, hintLevel: 0, hintPieces: [], hintMoves: [] },
-        }))
+
+        if (move.type === 'move') {
+          // BoardMove redo: 正方向スライド（成り済みの駒タイプで表示）
+          const movedPieceType = move.promoted
+            ? (getPromotedType(move.piece.type as PieceType) ?? move.piece.type)
+            : move.piece.type
+          set((state) => ({
+            gameState: { ...nextState, phase: 'moving', isCheck: false },
+            ui: {
+              ...state.ui,
+              hintLevel: 0, hintPieces: [], hintMoves: [],
+              animatingMove: {
+                piece: { type: movedPieceType, owner: move.piece.owner },
+                from: move.from,
+                to: move.to,
+                captured: move.captured,
+                pendingPhase: 'idle',
+                promote: false,
+                isForcedPromote: false,
+                undoRedo: 'redo',
+              },
+            },
+          }))
+        } else {
+          // DropMove redo: 既存 pop-in（from=null）
+          set((state) => ({
+            gameState: { ...nextState, phase: 'moving', isCheck: false },
+            ui: {
+              ...state.ui,
+              hintLevel: 0, hintPieces: [], hintMoves: [],
+              animatingMove: {
+                piece: move.piece,
+                from: null,
+                to: move.to,
+                captured: null,
+                pendingPhase: 'idle',
+                promote: false,
+                isForcedPromote: false,
+                undoRedo: 'redo',
+              },
+            },
+          }))
+        }
       },
 
       // ============================================================

@@ -190,11 +190,28 @@ interface AnimatingMoveInfo {
   from: Position | null      // 移動元（null = 持ち駒打ち）
   to: Position               // 移動先
   captured: Piece | null     // 取られる駒（null = 取りなし）
-  pendingPhase: 'turn_switching' | 'promotion_check'  // アニメーション完了後の遷移先
+  pendingPhase: 'idle' | 'turn_switching' | 'promotion_check'  // アニメーション完了後の遷移先（'idle' = undo/redo）
   promote: boolean           // 成りが確定しているか（強制成り時に true）
   isForcedPromote: boolean   // 強制成りか
+  undoRedo?: 'undo' | 'redo' // undo/redo アニメーション識別（通常移動時は undefined）
 }
 ```
+
+**`undoRedo` による挙動の違い:**
+
+| `undoRedo` | `from` / `to` の意味 | アニメーション |
+|------------|---------------------|--------------|
+| `undefined`（通常） | `from` = 移動元, `to` = 移動先 | スプリングスライド |
+| `'undo'`（BoardMove） | `from` = move.to（逆元）, `to` = move.from（逆先）| 0.3s easeOut スライド。`captured` あれば持ち駒エリアから `from` へ飛び込み |
+| `'undo'`（DropMove） | `from` = `to` = move.to（同位置） | pop-out（scale 1→0, 0.2s） |
+| `'redo'`（BoardMove） | `from` = move.from, `to` = move.to | 0.25s easeOut スライド |
+| `'redo'`（DropMove） | `from` = null | 既存 pop-in（scale 0→1）|
+
+**捕獲返還アニメーション（`undoRedo='undo'` かつ `captured` あり）:**
+- 開始座標: `gridRef.getBoundingClientRect()` と `window.innerHeight * 0.12`（12svh）から持ち駒エリアのスロット位置を概算
+- `captured.owner === 'sente'` → 後手持ち駒エリア（TOP）から飛び込み
+- `captured.owner === 'gote'` → 先手持ち駒エリア（BOTTOM）から飛び込み
+- スロット index = `PIECE_ORDER.indexOf(demotedType)`（金銀桂香飛角歩 の順）
 
 ### 4.5 成りアニメーション情報
 
