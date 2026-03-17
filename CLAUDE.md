@@ -92,6 +92,12 @@ Conventional Commits形式:
 - overlay/通知コンポーネントは `fixed` 配置を第一候補にし、既存レイアウト構造を変更しない
 - レイアウトに影響する変更は `validate` に加え、ブラウザでの視覚的確認を行ってから push すること
 
+### Framer Motion アニメーション実装時のルール
+
+- `type: 'spring'` または `type: 'inertia'` を使う場合、`animate` に配列（keyframes）を渡さない。Framer Motion v12 ではスプリング/イナーシャは2フレーム（開始→終了）のみサポート
+- オーバーシュート（弾み）表現はキーフレーム配列ではなく `stiffness` / `damping` パラメータで制御する（underdamped: `damping / (2 * sqrt(stiffness)) < 1`）
+- spring + keyframes を組み合わせたいときは `type: 'tween'` + `ease` + `times` に切り替える
+
 ## 仕様駆動開発
 
 ### 原則

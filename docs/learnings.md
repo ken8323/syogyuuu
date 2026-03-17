@@ -57,6 +57,15 @@ CI失敗・レビュー差し戻し・本番バグなどの振り返り記録。
 
 ---
 
+### 2026-03-17: Framer Motion v12 で spring アニメーションに3フレーム指定するとクラッシュ
+
+- **事象**: 捕獲時にほめメッセージ（PraiseMessage）が表示されると `Only two keyframes currently supported with spring and inertia animations. Trying to animate 0,1.15,1` エラーが発生し操作不能になった
+- **原因**: `PraiseMessage.tsx` で `scale: [0, 1.15, 1.0]`（3キーフレーム配列）に `type: 'spring'` トランジションを指定していた。Framer Motion v12 ではスプリング/イナーシャアニメーションは2フレーム（開始→終了）のみサポート。バージョンアップで制約が厳格化されたが既存コードの横断確認が未実施だった
+- **対策**: `scale: 1` の1値に変更。`stiffness:400, damping:18` の underdamped spring（減衰比 ≈ 0.45）が自然にオーバーシュートして同等の視覚効果を実現。**ルール追加**: Framer Motion で `type: 'spring'` または `type: 'inertia'` を使う場合、`animate` に配列（keyframes）を渡さない。オーバーシュート表現はスプリング物理パラメータ（stiffness/damping）で制御する
+- **関連Issue**: #103（feature/undo-redo-animation PR）
+
+---
+
 ### 2026-03-13: バグ修正後に振り返りスキルを実行しなかった
 
 - **事象**: Board ラッパーによるレイアウト崩壊を修正した後、CLAUDE.md に「バグ修正後は即座に `/retrospective` を実行すること」と明記されているにもかかわらず、ユーザーに指摘されるまで振り返りを実施しなかった
