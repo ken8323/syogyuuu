@@ -73,6 +73,8 @@ export type Move = BoardMove | DropMove
 // ゲーム状態の型定義
 // ============================================================
 
+export type TutorialStep = 'select_piece' | 'move_piece' | 'capture_piece' | 'complete'
+
 export type GamePhase =
   | 'idle'
   | 'piece_selected'
