@@ -205,7 +205,7 @@ export function TitleScreen({ hasSavedGame, onStartNew, onResume }: TitleScreenP
       </div>
 
       {/* バージョン番号 */}
-      <p className="absolute bottom-2 right-3 text-xs text-amber-400/60 select-none">
+      <p className="absolute bottom-2 right-3 text-xs text-amber-600/80 select-none">
         v{process.env.NEXT_PUBLIC_APP_VERSION}
       </p>
 
