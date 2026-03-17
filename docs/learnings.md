@@ -63,3 +63,22 @@ CI失敗・レビュー差し戻し・本番バグなどの振り返り記録。
 - **原因**: 修正 push → ユーザー確認待ちの流れに意識が集中し、「修正完了 ≠ 対応完了」というルールが頭から抜けていた。CLAUDE.md のルールを修正作業中に参照していなかった
 - **対策**: バグ修正の commit/push を行った直後に、次のアクションとして必ず `/retrospective` を実行する。「push したら retrospective」をセットで記憶する
 - **関連Issue**: #71, #98
+
+---
+
+### 2026-03-17: 後手持ち駒アイコンに回転が適用されていなかった
+
+- **事象**: 後手（赤）の持ち駒エリアのアイコンが盤面の駒と逆向きに表示されていた
+- **原因**: `CapturedPieces.tsx` に `rotate(180deg)` が実装されておらず、Board との表示仕様の横断確認が未実施だった
+- **対策**: 後手表示を持つコンポーネントを新規作成・修正するときは、Board の `isOpponent` 回転ルールとの整合を必ず確認する
+- **関連Issue**: #109
+
+---
+
+### 2026-03-17: 成りダイアログの駒アイコン色が currentPlayer に依存していた
+
+- **事象**: 成りダイアログに表示される駒アイコンの色が、成りを行うプレイヤーと逆のチームカラーになっていた
+- **原因**: `executeMove` が呼ばれた時点で `currentPlayer` が次のプレイヤーに切り替わる。そのため `promotion_check` フェーズ時には `currentPlayer` は相手のプレイヤーになっており、`owner={currentPlayer}` では必ず逆の色が表示される。また修正1回目（`animatingMove?.piece.owner`）も、`completeMoveAnimation` 内で `animatingMove` と `phase` が同一の `set()` で更新されるため、`promotion_check` フェーズ到達時には `animatingMove` がすでに `null` であり、同様に `currentPlayer` にフォールバックして逆になった
+- **対策**: `executeMove` 後に変わるプレイヤー依存の情報（「誰が動かしたか」）は `currentPlayer` から取得しない。`moveHistory.moves[currentIndex].piece.owner` など、移動履歴から取得する。`executeMove` が副作用として `currentPlayer` を切り替えることを常に意識する
+- **関連Issue**: #110
+

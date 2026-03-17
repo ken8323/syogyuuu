@@ -92,6 +92,18 @@ Conventional Commits形式:
 - overlay/通知コンポーネントは `fixed` 配置を第一候補にし、既存レイアウト構造を変更しない
 - レイアウトに影響する変更は `validate` に加え、ブラウザでの視覚的確認を行ってから push すること
 
+### 後手（gote）表示ルール
+
+- 後手の駒アイコンは外側 div に `style={{ transform: 'rotate(180deg)' }}` を適用して上下反転する
+- Board・CapturedPieces など駒アイコンを表示する全コンポーネントで統一すること
+- 新規コンポーネントで駒アイコンを表示する場合、`isSente` / `owner` に応じた回転を忘れずに実装する
+
+### executeMove 後の currentPlayer 依存の禁止
+
+- `executeMove` は呼び出しと同時に `currentPlayer` を次のプレイヤーへ切り替える
+- 「誰が今の手を指したか」を取得したい場合は `currentPlayer` を使わず、`moveHistory.moves[currentIndex].piece.owner` を参照する
+- `promotion_check` など `executeMove` 後のフェーズで表示する情報（ダイアログの駒色など）は移動履歴から取得する
+
 ## 仕様駆動開発
 
 ### 原則
