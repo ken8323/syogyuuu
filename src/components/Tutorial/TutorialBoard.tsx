@@ -17,7 +17,7 @@ interface TutorialBoardProps {
   selectedPos: { row: number; col: number } | null
   highlightSquares: Array<{ row: number; col: number; color: 'green' | 'red' }>
   onSquareTap: (row: number, col: number) => void
-  boardRef: React.RefObject<HTMLDivElement>
+  boardRef: React.RefObject<HTMLDivElement | null>
 }
 
 export function TutorialBoard({

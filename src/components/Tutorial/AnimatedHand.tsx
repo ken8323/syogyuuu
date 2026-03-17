@@ -6,7 +6,7 @@ import { useLayoutEffect, useState } from 'react'
 interface AnimatedHandProps {
   targetRow: number
   targetCol: number
-  boardRef: React.RefObject<HTMLDivElement>
+  boardRef: React.RefObject<HTMLDivElement | null>
   squareSize: number
 }
 
