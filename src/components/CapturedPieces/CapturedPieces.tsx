@@ -66,7 +66,10 @@ export function CapturedPieces({
                 .filter(Boolean)
                 .join(' ')}
             >
-              <div className="w-full flex-1 min-h-0 p-0.5">
+              <div
+                className="w-full flex-1 min-h-0 p-0.5"
+                style={isSente ? undefined : { transform: 'rotate(180deg)' }}
+              >
                 <AnimalComponent {...colors} isPromoted={false} />
               </div>
               <span className={`text-[8px] font-bold leading-none pb-0.5 ${isSente ? 'text-blue-900' : 'text-red-900'}`}>
