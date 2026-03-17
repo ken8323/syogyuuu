@@ -108,9 +108,10 @@ export interface AnimatingMoveInfo {
   from: Position | null  // null = 持ち駒打ち
   to: Position
   captured: Piece | null
-  pendingPhase: 'turn_switching' | 'promotion_check'
+  pendingPhase: 'idle' | 'turn_switching' | 'promotion_check'
   promote: boolean
   isForcedPromote: boolean
+  undoRedo?: 'undo' | 'redo'
 }
 
 export interface PromotingInfo {

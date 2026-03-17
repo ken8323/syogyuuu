@@ -193,6 +193,13 @@ export function Board({
                 animatingMove !== null &&
                 animatingMove.to.row === internalPos.row &&
                 animatingMove.to.col === internalPos.col
+              // undo 時は移動元マス（=move.to）の駒も非表示（逆スライドの重複描画防止）
+              const isAnimatingUndoSource =
+                animatingMove !== null &&
+                animatingMove.undoRedo === 'undo' &&
+                animatingMove.from !== null &&
+                animatingMove.from.row === internalPos.row &&
+                animatingMove.from.col === internalPos.col
 
               return (
                 <Square
@@ -209,7 +216,7 @@ export function Board({
                   isKingInCheck={isKingInCheck}
                   onClick={() => onSquareClick(internalPos)}
                 >
-                  {piece && !isAnimatingTarget && (
+                  {piece && !isAnimatingTarget && !isAnimatingUndoSource && (
                     <div
                       key={isLastMoveTo ? `piece-${posKey}-${lastMoveKey}` : `piece-${posKey}`}
                       className="absolute inset-[3px]"

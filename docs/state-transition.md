@@ -134,12 +134,20 @@ phase = 'turn_switching'
 
 | 現在の状態 | イベント | 次の状態 | 処理内容 | 効果音 | 触覚 |
 |-----------|---------|---------|---------|--------|------|
-| IDLE | 「もどる」タップ | IDLE | 手の履歴から1手戻す。盤面状態を復元。ヒントクリア | undo | hapticUndoRedo |
-| IDLE | 「すすむ」タップ | IDLE | 戻した手を再実行。盤面状態を更新。ヒントクリア | redo | hapticUndoRedo |
+| IDLE | 「もどる」タップ | MOVING | 盤面を1手前に戻す → `animatingMove` をセット（逆方向スライド）→ アニメーション完了後 IDLE へ。ヒントクリア | undo | hapticUndoRedo |
+| IDLE | 「すすむ」タップ | MOVING | 1手先を再実行 → `animatingMove` をセット（正方向スライド）→ アニメーション完了後 IDLE へ。ヒントクリア | redo | hapticUndoRedo |
+
+| アニメーション種別 | 条件 | 挙動 |
+|------------------|------|------|
+| Undo BoardMove | `undoRedo='undo'`, from≠to | 駒が to→from へ逆スライド（0.3s easeOut）。captured あれば持ち駒エリアから盤面へ飛び込み（同 0.3s） |
+| Undo DropMove | `undoRedo='undo'`, from=to | 打った駒が盤面で縮小消滅（pop-out, scale 1→0, 0.2s） |
+| Redo BoardMove | `undoRedo='redo'` | 駒が from→to へスライド（0.25s easeOut）。captured あればフェードアウト |
+| Redo DropMove | `undoRedo='redo'`, from=null | 既存 pop-in（scale 0→1）と同じ |
 
 ※ 盤面は常に先手視点固定のため、Undo/Redo 時の回転処理は不要。
 ※ `canUndo = moveHistory.currentIndex >= 0 && phase === 'idle'`
 ※ `canRedo = moveHistory.currentIndex < moveHistory.moves.length - 1 && phase === 'idle'`
+※ アニメーション詳細は `data-type-definition.md` セクション 4.4 を参照
 
 ### 2.4 メニューフロー
 

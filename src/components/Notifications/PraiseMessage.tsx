@@ -22,7 +22,7 @@ export function PraiseMessage({ message, onDismiss }: PraiseMessageProps) {
           key={message}
           className="pointer-events-none fixed inset-0 flex items-center justify-center z-40"
           initial={{ opacity: 0, scale: 0 }}
-          animate={{ opacity: 1, scale: [0, 1.15, 1.0] }}
+          animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.8 }}
           transition={{
             scale: { type: 'spring', stiffness: 400, damping: 18 },
