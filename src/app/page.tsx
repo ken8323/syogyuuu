@@ -169,7 +169,7 @@ export default function Home() {
       <PromotionDialog
         isOpen={phase === 'promotion_check'}
         pieceType={promotionPieceType}
-        owner={currentPlayer}
+        owner={ui.animatingMove?.piece.owner ?? currentPlayer}
         onPromote={promote}
       />
 
