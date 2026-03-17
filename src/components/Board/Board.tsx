@@ -157,7 +157,7 @@ export function Board({
         <div className="relative flex-1">
           <div
             ref={gridRef}
-            className="grid grid-cols-9 border-2 border-amber-900"
+            className="grid grid-cols-9 border-2 border-amber-900 overflow-hidden"
             style={{
               boxShadow:
                 'inset 3px 3px 6px rgba(255,210,80,0.35), inset -3px -3px 6px rgba(0,0,0,0.28), 0 4px 16px rgba(0,0,0,0.3)',
