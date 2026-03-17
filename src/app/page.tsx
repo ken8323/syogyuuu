@@ -169,7 +169,11 @@ export default function Home() {
       <PromotionDialog
         isOpen={phase === 'promotion_check'}
         pieceType={promotionPieceType}
-        owner={ui.animatingMove?.piece.owner ?? currentPlayer}
+        owner={
+          phase === 'promotion_check' && lastMove?.type === 'move'
+            ? (lastMove as BoardMove).piece.owner
+            : currentPlayer
+        }
         onPromote={promote}
       />
 
