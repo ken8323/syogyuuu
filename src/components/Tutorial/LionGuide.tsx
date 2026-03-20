@@ -1,9 +1,7 @@
 'use client'
 
+import Image from 'next/image'
 import { motion } from 'framer-motion'
-import { Lion } from '@/components/Piece/animals'
-
-const SENTE_COLORS = { primary: '#3B82F6', dark: '#1E40AF' }
 
 interface LionGuideProps {
   message: string
@@ -24,8 +22,8 @@ export function LionGuide({ message }: LionGuideProps) {
       }}
     >
       <div className="flex items-center gap-3 px-4">
-        <div className="w-12 h-12 flex-shrink-0">
-          <Lion primary={SENTE_COLORS.primary} dark={SENTE_COLORS.dark} />
+        <div className="relative w-12 h-12 flex-shrink-0">
+          <Image src="/icons/lion.png" alt="ライオン" fill style={{ objectFit: 'contain' }} />
         </div>
         <motion.div
           key={message}
