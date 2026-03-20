@@ -1,9 +1,11 @@
 'use client'
 
-import { Lion, Chick } from '@/components/Piece/animals'
+import Image from 'next/image'
 
-const SENTE_COLORS = { primary: '#3B82F6', dark: '#1E40AF' }
-const GOTE_COLORS = { primary: '#EF4444', dark: '#991B1B' }
+const PIECE_IMAGES: Record<'lion' | 'chick', string> = {
+  lion: '/icons/lion.png',
+  chick: '/icons/hiyoko.png',
+}
 
 interface TutorialPiece {
   type: 'lion' | 'chick'
@@ -61,40 +63,19 @@ export function TutorialBoard({
             >
               {piece && (
                 <div
-                  className="w-9 h-9"
+                  className="relative w-9 h-9"
                   style={
                     piece.owner === 'gote'
                       ? { transform: 'rotate(180deg)' }
                       : undefined
                   }
                 >
-                  {piece.type === 'lion' ? (
-                    <Lion
-                      primary={
-                        piece.owner === 'sente'
-                          ? SENTE_COLORS.primary
-                          : GOTE_COLORS.primary
-                      }
-                      dark={
-                        piece.owner === 'sente'
-                          ? SENTE_COLORS.dark
-                          : GOTE_COLORS.dark
-                      }
-                    />
-                  ) : (
-                    <Chick
-                      primary={
-                        piece.owner === 'sente'
-                          ? SENTE_COLORS.primary
-                          : GOTE_COLORS.primary
-                      }
-                      dark={
-                        piece.owner === 'sente'
-                          ? SENTE_COLORS.dark
-                          : GOTE_COLORS.dark
-                      }
-                    />
-                  )}
+                  <Image
+                    src={PIECE_IMAGES[piece.type]}
+                    alt={piece.type}
+                    fill
+                    style={{ objectFit: 'contain' }}
+                  />
                 </div>
               )}
             </div>

@@ -1,35 +1,29 @@
-import type { ComponentType } from 'react'
 import type { PieceType, PromotedPieceType } from '@/lib/shogi/types'
-import type { AnimalColors } from './animals'
-import { Lion, Hawk, Owl, Elephant, Wolf, Rabbit, Boar, Chick, Chicken } from './animals'
-
-interface AnimalProps extends AnimalColors {
-  isPromoted?: boolean
-}
 
 export interface PieceConfig {
-  AnimalComponent: ComponentType<AnimalProps>
+  /** 駒画像のパス（public/icons/ 配下） */
+  imageSrc: string
   /** 駒名のひらがな */
   hiragana: string
 }
 
 export const PIECE_CONFIG: Record<PieceType | PromotedPieceType, PieceConfig> = {
   // 通常駒
-  king:   { AnimalComponent: Lion,     hiragana: 'おう'   },
-  rook:   { AnimalComponent: Hawk,     hiragana: 'ひしゃ' },
-  bishop: { AnimalComponent: Owl,      hiragana: 'かく'   },
-  gold:   { AnimalComponent: Elephant, hiragana: 'きん'   },
-  silver: { AnimalComponent: Wolf,     hiragana: 'ぎん'   },
-  knight: { AnimalComponent: Rabbit,   hiragana: 'けいま' },
-  lance:  { AnimalComponent: Boar,     hiragana: 'きょう' },
-  pawn:   { AnimalComponent: Chick,    hiragana: 'ふ'     },
+  king:   { imageSrc: '/icons/lion.png',      hiragana: 'おう'   },
+  rook:   { imageSrc: '/icons/washi.png',     hiragana: 'ひしゃ' },
+  bishop: { imageSrc: '/icons/fukuro.png',    hiragana: 'かく'   },
+  gold:   { imageSrc: '/icons/zou.png',       hiragana: 'きん'   },
+  silver: { imageSrc: '/icons/ookami.png',    hiragana: 'ぎん'   },
+  knight: { imageSrc: '/icons/rabbit.png',    hiragana: 'けいま' },
+  lance:  { imageSrc: '/icons/inoshishi.png', hiragana: 'きょう' },
+  pawn:   { imageSrc: '/icons/hiyoko.png',    hiragana: 'ふ'     },
   // 成駒
-  promoted_rook:   { AnimalComponent: Hawk,    hiragana: 'りゅうおう' },
-  promoted_bishop: { AnimalComponent: Owl,     hiragana: 'りゅうま' },
-  promoted_silver: { AnimalComponent: Wolf,    hiragana: 'なぎん' },
-  promoted_knight: { AnimalComponent: Rabbit,  hiragana: 'なけい' },
-  promoted_lance:  { AnimalComponent: Boar,    hiragana: 'なきょ' },
-  promoted_pawn:   { AnimalComponent: Chicken, hiragana: 'ときん' },
+  promoted_rook:   { imageSrc: '/icons/nari_washi.png',    hiragana: 'りゅうおう' },
+  promoted_bishop: { imageSrc: '/icons/nari_fukuro.png',   hiragana: 'りゅうま'   },
+  promoted_silver: { imageSrc: '/icons/nari_ookami.png',   hiragana: 'なぎん'     },
+  promoted_knight: { imageSrc: '/icons/nari_rabbit.png',   hiragana: 'なけい'     },
+  promoted_lance:  { imageSrc: '/icons/nari_inoshishi.png',hiragana: 'なきょ'     },
+  promoted_pawn:   { imageSrc: '/icons/niwatori.png',      hiragana: 'ときん'     },
 }
 
 export function isPromotedType(type: PieceType | PromotedPieceType): boolean {

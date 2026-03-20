@@ -1,10 +1,10 @@
 'use client'
 
+import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import type { PieceType, Player, PromotedPieceType } from '@/lib/shogi/types'
 import { AnimatedButton } from '@/components/ui/AnimatedButton'
 import { PIECE_CONFIG } from '@/components/Piece'
-import type { AnimalColors } from '@/components/Piece/animals'
 
 // ============================================================
 // 成り設定（駒種 → メッセージ・成駒の種類）
@@ -24,9 +24,6 @@ const PROMOTION_CONFIG: Partial<Record<PieceType, PromotionConfig>> = {
   rook:   { message: 'たかがパワーアップできるよ！ なる？',   promotedType: 'promoted_rook'   },
 }
 
-const SENTE_COLORS: AnimalColors = { primary: '#3B82F6', dark: '#1E40AF' }
-const GOTE_COLORS: AnimalColors = { primary: '#EF4444', dark: '#991B1B' }
-
 // ============================================================
 // Props
 // ============================================================
@@ -45,14 +42,17 @@ interface PromotionDialogProps {
 
 export function PromotionDialog({ isOpen, pieceType, owner, onPromote }: PromotionDialogProps) {
   const config = pieceType ? PROMOTION_CONFIG[pieceType] : null
-  const colors = owner === 'sente' ? SENTE_COLORS : GOTE_COLORS
 
-  const BeforeAnimal = pieceType ? PIECE_CONFIG[pieceType].AnimalComponent : null
-  const AfterAnimal = config ? PIECE_CONFIG[config.promotedType].AnimalComponent : null
+  const beforeImageSrc = pieceType ? PIECE_CONFIG[pieceType].imageSrc : null
+  const afterImageSrc = config ? PIECE_CONFIG[config.promotedType].imageSrc : null
+  const beforeHiragana = pieceType ? PIECE_CONFIG[pieceType].hiragana : ''
+  const afterHiragana = config ? PIECE_CONFIG[config.promotedType].hiragana : ''
+
+  const ringClass = owner === 'sente' ? 'ring-blue-300' : 'ring-red-300'
 
   return (
     <AnimatePresence>
-      {isOpen && config && BeforeAnimal && AfterAnimal && (
+      {isOpen && config && beforeImageSrc && afterImageSrc && (
         <>
           {/* 半透明オーバーレイ（タップしても閉じない） */}
           <motion.div
@@ -73,12 +73,12 @@ export function PromotionDialog({ isOpen, pieceType, owner, onPromote }: Promoti
             <div className="w-full max-w-sm rounded-3xl bg-white px-4 py-6 shadow-2xl sm:px-8 sm:py-8">
               {/* 変身アニメーション表示 */}
               <div className="mb-6 flex items-center justify-center gap-4">
-                <div className="h-16 w-16">
-                  <BeforeAnimal {...colors} isPromoted={false} />
+                <div className={`relative h-16 w-16 rounded-lg ring-2 ${ringClass}`}>
+                  <Image src={beforeImageSrc} alt={beforeHiragana} fill style={{ objectFit: 'contain' }} />
                 </div>
                 <span className="text-2xl text-amber-500">→</span>
-                <div className="h-16 w-16">
-                  <AfterAnimal {...colors} isPromoted={true} />
+                <div className={`relative h-16 w-16 rounded-lg ring-2 ring-amber-400`}>
+                  <Image src={afterImageSrc} alt={afterHiragana} fill style={{ objectFit: 'contain' }} />
                 </div>
               </div>
 
