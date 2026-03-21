@@ -1,10 +1,9 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import Image from 'next/image'
 import { motion, type TargetAndTransition } from 'framer-motion'
 import { AnimatedButton } from '@/components/ui/AnimatedButton'
-import type { AnimalColors } from '@/components/Piece/animals'
-import { Lion, Hawk, Owl, Elephant, Wolf, Rabbit, Boar, Chick, Chicken } from '@/components/Piece/animals'
 
 interface TitleScreenProps {
   hasSavedGame: boolean
@@ -15,10 +14,6 @@ interface TitleScreenProps {
 // タイトル文字と虹色
 const TITLE_CHARS = ['し', 'ょ', 'う', 'ぎ', 'ゅ', 'ー', '！']
 const RAINBOW = ['#EF4444', '#F97316', '#EAB308', '#22C55E', '#3B82F6', '#8B5CF6', '#EC4899']
-
-// 動物カラー
-const SENTE: AnimalColors = { primary: '#3B82F6', dark: '#1E40AF' }
-const GOTE: AnimalColors = { primary: '#EF4444', dark: '#991B1B' }
 
 // アイドルアニメーションのバリエーション
 const ANIM_VARIANTS: Record<string, TargetAndTransition> = {
@@ -31,19 +26,18 @@ const ANIM_VARIANTS: Record<string, TargetAndTransition> = {
 // 円形配置の8体
 const CIRCLE_ANIMALS: Array<{
   id: string
-  Component: React.ComponentType<AnimalColors & { isPromoted?: boolean }>
-  colors: AnimalColors
+  imageSrc: string
   intervalMs: number
   animVariant: keyof typeof ANIM_VARIANTS
 }> = [
-  { id: 'hawk',     Component: Hawk,     colors: GOTE,  intervalMs: 25000, animVariant: 'wobble' },
-  { id: 'owl',      Component: Owl,      colors: SENTE, intervalMs: 20000, animVariant: 'wobble' },
-  { id: 'elephant', Component: Elephant, colors: GOTE,  intervalMs: 25000, animVariant: 'nod'    },
-  { id: 'wolf',     Component: Wolf,     colors: SENTE, intervalMs: 20000, animVariant: 'shake'  },
-  { id: 'rabbit',   Component: Rabbit,   colors: GOTE,  intervalMs: 15000, animVariant: 'jump'   },
-  { id: 'boar',     Component: Boar,     colors: SENTE, intervalMs: 25000, animVariant: 'nod'    },
-  { id: 'chick',    Component: Chick,    colors: GOTE,  intervalMs: 15000, animVariant: 'nod'    },
-  { id: 'chicken',  Component: Chicken,  colors: SENTE, intervalMs: 20000, animVariant: 'shake'  },
+  { id: 'hawk',     imageSrc: '/icons/washi.png',     intervalMs: 25000, animVariant: 'wobble' },
+  { id: 'owl',      imageSrc: '/icons/fukuro.png',    intervalMs: 20000, animVariant: 'wobble' },
+  { id: 'elephant', imageSrc: '/icons/zou.png',       intervalMs: 25000, animVariant: 'nod'    },
+  { id: 'wolf',     imageSrc: '/icons/ookami.png',    intervalMs: 20000, animVariant: 'shake'  },
+  { id: 'rabbit',   imageSrc: '/icons/rabbit.png',    intervalMs: 15000, animVariant: 'jump'   },
+  { id: 'boar',     imageSrc: '/icons/inoshishi.png', intervalMs: 25000, animVariant: 'nod'    },
+  { id: 'chick',    imageSrc: '/icons/hiyoko.png',    intervalMs: 15000, animVariant: 'nod'    },
+  { id: 'chicken',  imageSrc: '/icons/niwatori.png',  intervalMs: 20000, animVariant: 'shake'  },
 ]
 
 // パーティクル（固定値）
@@ -87,14 +81,14 @@ function useIdleAnimation(intervalMs: number) {
 
 // アイドルアニメーション付き動物コンポーネント
 function IdleAnimal({
-  Component,
-  colors,
+  imageSrc,
+  alt,
   intervalMs,
   animVariant,
   size,
 }: {
-  Component: React.ComponentType<AnimalColors & { isPromoted?: boolean }>
-  colors: AnimalColors
+  imageSrc: string
+  alt: string
   intervalMs: number
   animVariant: keyof typeof ANIM_VARIANTS
   size: number
@@ -104,11 +98,12 @@ function IdleAnimal({
 
   return (
     <motion.div
+      className="relative"
       style={{ width: size, height: size }}
       animate={isAnimating ? anim : {}}
       onAnimationComplete={isAnimating ? onComplete : undefined}
     >
-      <Component {...colors} />
+      <Image src={imageSrc} alt={alt} fill style={{ objectFit: 'contain' }} />
     </motion.div>
   )
 }
@@ -148,8 +143,8 @@ export function TitleScreen({ hasSavedGame, onStartNew, onResume }: TitleScreenP
           transition={{ delay: 0.1, type: 'spring', stiffness: 260, damping: 18 }}
         >
           <IdleAnimal
-            Component={Lion}
-            colors={{ primary: '#F59E0B', dark: '#D97706' }}
+            imageSrc="/icons/lion.png"
+            alt="ライオン"
             intervalMs={30000}
             animVariant="wobble"
             size={96}
@@ -157,7 +152,7 @@ export function TitleScreen({ hasSavedGame, onStartNew, onResume }: TitleScreenP
         </motion.div>
 
         {/* 円形に配置した8体 */}
-        {CIRCLE_ANIMALS.map(({ id, Component, colors, intervalMs, animVariant }, i) => {
+        {CIRCLE_ANIMALS.map(({ id, imageSrc, intervalMs, animVariant }, i) => {
           const angle = (i / CIRCLE_ANIMALS.length) * 2 * Math.PI - Math.PI / 2
           const x = Math.round(Math.cos(angle) * CIRCLE_RADIUS)
           const y = Math.round(Math.sin(angle) * CIRCLE_RADIUS)
@@ -177,8 +172,8 @@ export function TitleScreen({ hasSavedGame, onStartNew, onResume }: TitleScreenP
               transition={{ delay: 0.15 + i * 0.07, type: 'spring', stiffness: 280, damping: 18 }}
             >
               <IdleAnimal
-                Component={Component}
-                colors={colors}
+                imageSrc={imageSrc}
+                alt={id}
                 intervalMs={intervalMs}
                 animVariant={animVariant}
                 size={56}

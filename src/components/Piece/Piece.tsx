@@ -1,14 +1,10 @@
 'use client'
 
 import React, { useState, useEffect, useRef } from 'react'
+import Image from 'next/image'
 import { motion, type Variants } from 'framer-motion'
 import type { Piece as PieceType, PieceType as PieceTypeEnum, PromotedPieceType } from '@/lib/shogi/types'
-import type { AnimalColors } from './animals'
 import { PIECE_CONFIG, isPromotedType } from './pieceConfig'
-
-// 先手: 青系 / 後手: 赤系
-const SENTE_COLORS: AnimalColors = { primary: '#3B82F6', dark: '#1E40AF' }
-const GOTE_COLORS: AnimalColors = { primary: '#EF4444', dark: '#991B1B' }
 
 // 将棋駒の五角形（上部が尖った形）
 const PIECE_CLIP_PATH = 'polygon(50% 0%, 100% 22%, 100% 100%, 0% 100%, 0% 22%)'
@@ -255,17 +251,14 @@ interface PieceProps {
   idleStaggerDelay?: number
   /** 配置直後の着地アニメーション（scale 1.08→1.0 スプリングバウンス） */
   isLanding?: boolean
-  /** 王手状態の王将: ライオンの焦り顔を表示 */
+  /** 王手状態の王将（将来拡張用・現在は未使用） */
   isKingInCheck?: boolean
 }
 
-export function Piece({ piece, isSelected = false, isOpponent = false, idleStaggerDelay = 0, isLanding = false, isKingInCheck = false }: PieceProps) {
+export function Piece({ piece, isSelected = false, isOpponent = false, idleStaggerDelay = 0, isLanding = false }: PieceProps) {
   const config = PIECE_CONFIG[piece.type]
   const promoted = isPromotedType(piece.type)
   const isSente = piece.owner === 'sente'
-  const colors = isSente ? SENTE_COLORS : GOTE_COLORS
-
-  const { AnimalComponent, hiragana } = config
 
   // 背景色
   const bgClass = isSente ? 'bg-blue-50' : 'bg-red-50'
@@ -296,8 +289,6 @@ export function Piece({ piece, isSelected = false, isOpponent = false, idleStagg
     ? { transform: 'rotate(180deg)', width: '100%', height: '100%' }
     : { width: '100%', height: '100%' }
 
-  const animalProps = { ...colors, isPromoted: promoted, isInCheck: piece.type === 'king' ? isKingInCheck : false }
-
   // 選択中: scale 1.12 (spring) + y バウンス (repeat) + 影深化
   if (isSelected) {
     return (
@@ -315,11 +306,11 @@ export function Piece({ piece, isSelected = false, isOpponent = false, idleStagg
             y: { duration: 0.5, repeat: Infinity, ease: 'easeInOut', delay: 0.1 },
           }}
         >
-          <div className="w-full flex-1 min-h-0 p-0.5">
-            <AnimalComponent {...animalProps} />
+          <div className="relative w-full flex-1 min-h-0 p-0.5">
+            <Image src={config.imageSrc} alt={config.hiragana} fill style={{ objectFit: 'contain' }} />
           </div>
           <span className={`text-[8px] font-bold leading-none pb-0.5 ${isSente ? 'text-blue-900' : 'text-red-900'}`}>
-            {hiragana}
+            {config.hiragana}
           </span>
         </motion.div>
       </div>
@@ -337,11 +328,11 @@ export function Piece({ piece, isSelected = false, isOpponent = false, idleStagg
           animate={{ scale: 1.0 }}
           transition={{ type: 'spring', stiffness: 300, damping: 12 }}
         >
-          <div className="w-full flex-1 min-h-0 p-0.5">
-            <AnimalComponent {...animalProps} />
+          <div className="relative w-full flex-1 min-h-0 p-0.5">
+            <Image src={config.imageSrc} alt={config.hiragana} fill style={{ objectFit: 'contain' }} />
           </div>
           <span className={`text-[8px] font-bold leading-none pb-0.5 ${isSente ? 'text-blue-900' : 'text-red-900'}`}>
-            {hiragana}
+            {config.hiragana}
           </span>
         </motion.div>
       </div>
@@ -363,11 +354,11 @@ export function Piece({ piece, isSelected = false, isOpponent = false, idleStagg
         animate={currentVariant}
         onAnimationComplete={animState === 'animating' ? onAnimationComplete : undefined}
       >
-        <div className="w-full flex-1 min-h-0 p-0.5">
-          <AnimalComponent {...animalProps} />
+        <div className="relative w-full flex-1 min-h-0 p-0.5">
+          <Image src={config.imageSrc} alt={config.hiragana} fill style={{ objectFit: 'contain' }} />
         </div>
         <span className={`text-[8px] font-bold leading-none pb-0.5 ${isSente ? 'text-blue-900' : 'text-red-900'}`}>
-          {hiragana}
+          {config.hiragana}
         </span>
       </motion.div>
     </div>
