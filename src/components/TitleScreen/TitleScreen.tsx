@@ -103,7 +103,7 @@ function IdleAnimal({
       animate={isAnimating ? anim : {}}
       onAnimationComplete={isAnimating ? onComplete : undefined}
     >
-      <Image src={imageSrc} alt={alt} fill style={{ objectFit: 'contain' }} />
+      <Image src={imageSrc} alt={alt} width={size} height={size} style={{ objectFit: 'contain', width: '100%', height: '100%' }} />
     </motion.div>
   )
 }
