@@ -34,7 +34,7 @@ function BlockArrow({ rotation }: { rotation: number }) {
       className="w-full h-full flex items-center justify-center"
       style={{ transform: `rotate(${rotation}deg)` }}
     >
-      <svg viewBox="0 0 22 18" width="85%" height="85%">
+      <svg viewBox="0 0 22 18" width="60%" height="60%">
         {/* 奥行きフェイス（暗いティール、下にオフセット） */}
         <polygon
           points="1,10 13,10 13,7 21,13 13,19 13,16 1,16"
