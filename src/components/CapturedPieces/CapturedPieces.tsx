@@ -62,14 +62,16 @@ export function CapturedPieces({
                 .join(' ')}
             >
               <div
-                className="relative w-full flex-1 min-h-0 p-0.5"
+                className="flex h-full w-full flex-col items-center justify-center"
                 style={isSente ? undefined : { transform: 'rotate(180deg)' }}
               >
-                <Image src={imageSrc} alt={hiragana} fill style={{ objectFit: 'contain' }} />
+                <div className="relative w-full flex-1 min-h-0 p-0.5">
+                  <Image src={imageSrc} alt={hiragana} fill style={{ objectFit: 'contain' }} />
+                </div>
+                <span className={`text-[8px] font-bold leading-none pb-0.5 ${isSente ? 'text-blue-900' : 'text-red-900'}`}>
+                  {hiragana}
+                </span>
               </div>
-              <span className={`text-[8px] font-bold leading-none pb-0.5 ${isSente ? 'text-blue-900' : 'text-red-900'}`}>
-                {hiragana}
-              </span>
             </div>
 
             {/* 枚数バッジ */}
