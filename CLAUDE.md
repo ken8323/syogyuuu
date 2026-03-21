@@ -80,8 +80,6 @@ Conventional Commits形式:
 
 - CI失敗、レビュー差し戻し、本番バグが発生したら **修正対応後に必ず** `retrospective` スキルを実行すること
 - 修正完了 ≠ 対応完了。修正PR作成後、振り返りを完了するまでが対応フローである
-- 振り返り結果は必ず `docs/learnings.md` に記録し、GitHub Issueも作成すること
-- 振り返りIssueは `docs/learnings.md` への記録完了後にクローズする（対応不要の記録用Issueを残さない）
 - CLAUDE.mdのルール追加時は既存ルールとの整合性を確認すること
 
 ### GitHub Actions ワークフロー変更時のルール
