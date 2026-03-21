@@ -7,17 +7,12 @@ import { ControlBar } from '@/components/Controls'
 import { PromotionDialog, ForcedPromotionToast, GameOverDialog, MenuDialog } from '@/components/Dialogs'
 import { CheckBanner, PraiseMessage } from '@/components/Notifications'
 import { TitleScreen } from '@/components/TitleScreen'
-import { Tutorial } from '@/components/Tutorial/Tutorial'
 import { useGameStore } from '@/stores/gameStore'
 import { useHintTimer } from '@/hooks/useHintTimer'
 import type { BoardMove, Position, PieceType } from '@/lib/shogi/types'
 import { getPieceAt } from '@/lib/shogi/board'
 
 export default function Home() {
-  const startTutorial = useGameStore((s) => s.startTutorial)
-  const completeTutorial = useGameStore((s) => s.completeTutorial)
-  const tutorialCompleted = useGameStore((s) => s.tutorialCompleted)
-
   const {
     appState,
     gameState,
@@ -81,25 +76,12 @@ export default function Home() {
   // 保存データの有無: 手の履歴が1手以上あれば続きがある
   const hasSavedGame = gameState.moveHistory.moves.length > 0
 
-  const handleStartNew = () => {
-    if (!tutorialCompleted) {
-      startTutorial()
-    } else {
-      startNewGame()
-    }
-  }
-
-  // チュートリアル画面
-  if (appState === 'tutorial') {
-    return <Tutorial onComplete={completeTutorial} />
-  }
-
   // タイトル画面
   if (appState === 'title') {
     return (
       <TitleScreen
         hasSavedGame={hasSavedGame}
-        onStartNew={handleStartNew}
+        onStartNew={startNewGame}
         onResume={resumeGame}
       />
     )

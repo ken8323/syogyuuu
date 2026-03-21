@@ -30,15 +30,12 @@ import {
 
 interface GameStore {
   // 状態
-  appState: 'title' | 'tutorial' | 'playing' | 'game_over'
-  tutorialCompleted: boolean
+  appState: 'title' | 'playing' | 'game_over'
   gameState: GameState
   ui: UIState
 
   // アクション
   startNewGame: () => void
-  startTutorial: () => void
-  completeTutorial: () => void
   resumeGame: () => void
   selectPiece: (position: Position) => void
   selectCapturedPiece: (pieceType: PieceType) => void
@@ -91,7 +88,6 @@ export const useGameStore = create<GameStore>()(
     (set, get) => ({
       // 初期状態
       appState: 'title',
-      tutorialCompleted: false,
       gameState: createInitialGameState(),
       ui: INITIAL_UI_STATE,
 
@@ -105,20 +101,6 @@ export const useGameStore = create<GameStore>()(
           gameState: createInitialGameState(),
           ui: { ...INITIAL_UI_STATE, isMuted: state.ui.isMuted },
         }))
-      },
-
-      startTutorial: () => {
-        set({ appState: 'tutorial' })
-      },
-
-      completeTutorial: () => {
-        const state = get()
-        const newGame = createInitialGameState()
-        set({
-          tutorialCompleted: true,
-          appState: 'playing',
-          gameState: newGame,
-        })
       },
 
       resumeGame: () => {
@@ -743,7 +725,6 @@ export const useGameStore = create<GameStore>()(
     {
       name: 'shogyuu_game_state',
       partialize: (state) => ({
-        tutorialCompleted: state.tutorialCompleted,
         gameState: {
           board: state.gameState.board,
           capturedPieces: state.gameState.capturedPieces,
