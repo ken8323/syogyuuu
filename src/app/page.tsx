@@ -123,7 +123,12 @@ export default function Home() {
     if (phase === 'idle' || phase === 'piece_selected') {
       const piece = getPieceAt(board, pos)
       if (piece?.owner === currentPlayer) {
-        selectPiece(pos)
+        // 選択中の駒を再タップ → 選択解除
+        if (selectedPosition && selectedPosition.row === pos.row && selectedPosition.col === pos.col) {
+          deselectPiece()
+        } else {
+          selectPiece(pos)
+        }
       } else if (phase === 'piece_selected') {
         const isLegal = legalMoves.some((p) => p.row === pos.row && p.col === pos.col)
         if (isLegal) {

@@ -95,6 +95,7 @@
 | IDLE | 持ち駒タップ | CAPTURED_SELECTED | 打てるマス計算 → ハイライト表示。ヒントクリア | select | hapticSelect |
 | IDLE | その他タップ | IDLE | 何もしない | - | - |
 | PIECE_SELECTED | 合法手マスタップ | MOVING | 盤面即時更新＋移動アニメーション開始。pendingPhase決定 | place/capture/forced_promote | hapticPlace/hapticCapture/hapticPromote |
+| PIECE_SELECTED | 選択中の駒を再タップ | IDLE | 選択解除。ハイライト・矢印消去 | - | - |
 | PIECE_SELECTED | 別の自駒タップ | PIECE_SELECTED | 選択切替。新しい駒の合法手表示 | select | hapticSelect |
 | PIECE_SELECTED | 合法手外タップ | IDLE | 選択解除。ハイライト消去 | - | - |
 | CAPTURED_SELECTED | 打てるマスタップ | MOVING | 盤面即時更新＋打ちアニメーション開始 | drop | hapticPlace |
