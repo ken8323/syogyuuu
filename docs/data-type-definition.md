@@ -463,7 +463,7 @@ const INITIAL_BOARD: Board = [
 ```typescript
 interface GameStore {
   // 状態
-  appState: 'title' | 'tutorial' | 'playing' | 'game_over'
+  appState: 'title' | 'playing' | 'game_over'
   gameState: GameState
   ui: UIState
 
@@ -511,10 +511,6 @@ interface GameStore {
   clearForcedPromotion: () => void           // 強制成りトースト消去
   clearPraise: () => void                    // ほめメッセージ消去
 
-  // チュートリアル
-  tutorialCompleted: boolean                 // チュートリアル完了フラグ（persist保存）
-  startTutorial: () => void                  // appState を 'tutorial' に遷移
-  completeTutorial: () => void               // tutorialCompleted=true、新規対局開始、appState='playing'
 }
 ```
 
@@ -523,7 +519,7 @@ interface GameStore {
 ```typescript
 // Zustand の persist ミドルウェアで localStorage に保存
 // 保存キー: 'shogyuu_game_state'
-// 保存対象: board, capturedPieces, currentPlayer, moveHistory, isMuted, tutorialCompleted
+// 保存対象: board, capturedPieces, currentPlayer, moveHistory, isMuted
 // 除外: phase, selectedPosition, legalMoves, ui (isMenuOpen, isAnimating, animatingMove等) 等の一時的なUI状態
 // 復元時: phase=idle にリセット、soundEngine.setMuted() でミュート状態を同期
 ```
