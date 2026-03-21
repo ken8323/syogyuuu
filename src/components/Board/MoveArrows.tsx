@@ -34,7 +34,7 @@ function BlockArrow({ rotation }: { rotation: number }) {
       className="w-full h-full flex items-center justify-center"
       style={{ transform: `rotate(${rotation}deg)` }}
     >
-      <svg viewBox="0 0 22 18" width="60%" height="60%">
+      <svg viewBox="0 0 22 18" width="50%" height="50%">
         {/* 奥行きフェイス（暗いティール、下にオフセット） */}
         <polygon
           points="1,10 13,10 13,7 21,13 13,19 13,16 1,16"
@@ -86,7 +86,7 @@ export function MoveArrows({ piece }: MoveArrowsProps) {
   return (
     <div
       className="pointer-events-none absolute grid grid-cols-3 grid-rows-3 z-10"
-      style={{ inset: '-100%' }}
+      style={{ inset: '-66%' }}
     >
       {Object.entries(DIRECTION_GRID).map(([key, { col, row }]) => {
         const isActive = activeDirections.has(key)
