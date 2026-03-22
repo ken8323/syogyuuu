@@ -260,15 +260,15 @@ export function Piece({ piece, isSelected = false, isOpponent = false, idleStagg
   const promoted = isPromotedType(piece.type)
   const isSente = piece.owner === 'sente'
 
-  // 背景色
-  const bgClass = isSente ? 'bg-blue-50' : 'bg-red-50'
+  // 背景色（和風くすみカラー）
+  const bgColor = isSente ? '#C8D8E4' : '#E4C8C8'
 
   // clip-path 使用時は ring が効かないため drop-shadow で枠線を表現
   const borderShadow = promoted
     ? 'drop-shadow(0 0 2px #F59E0B) drop-shadow(0 0 2px #F59E0B)'
     : isSente
-      ? 'drop-shadow(0 0 1.5px #93C5FD)'
-      : 'drop-shadow(0 0 1.5px #FCA5A5)'
+      ? 'drop-shadow(0 0 1.5px #7A9CB8)'
+      : 'drop-shadow(0 0 1.5px #B87A7A)'
 
   const filterStyle = isSelected
     ? `${borderShadow} drop-shadow(0 0 6px rgba(251,191,36,0.95)) drop-shadow(0 4px 8px rgba(0,0,0,0.35))`
@@ -294,8 +294,9 @@ export function Piece({ piece, isSelected = false, isOpponent = false, idleStagg
     return (
       <div style={opponentRotateStyle}>
         <motion.div
-          className={`flex h-full w-full flex-col items-center justify-center ${bgClass}`}
+          className="flex h-full w-full flex-col items-center justify-center"
           style={{
+            backgroundColor: bgColor,
             clipPath: PIECE_CLIP_PATH,
             filter: filterStyle,
           }}
@@ -309,7 +310,7 @@ export function Piece({ piece, isSelected = false, isOpponent = false, idleStagg
           <div className="relative w-full flex-1 min-h-0 p-0.5">
             <Image src={config.imageSrc} alt={config.hiragana} fill style={{ objectFit: 'contain' }} />
           </div>
-          <span className={`text-[8px] font-bold leading-none pb-0.5 ${isSente ? 'text-blue-900' : 'text-red-900'}`}>
+          <span className={`text-[8px] font-bold leading-none pb-0.5 ${isSente ? 'text-[#2C4A5E]' : 'text-[#5E2C2C]'}`}>
             {config.hiragana}
           </span>
         </motion.div>
@@ -322,8 +323,8 @@ export function Piece({ piece, isSelected = false, isOpponent = false, idleStagg
     return (
       <div style={opponentRotateStyle}>
         <motion.div
-          className={`flex h-full w-full flex-col items-center justify-center ${bgClass}`}
-          style={{ clipPath: PIECE_CLIP_PATH, filter: filterStyle }}
+          className="flex h-full w-full flex-col items-center justify-center"
+          style={{ backgroundColor: bgColor, clipPath: PIECE_CLIP_PATH, filter: filterStyle }}
           initial={{ scale: 1.08 }}
           animate={{ scale: 1.0 }}
           transition={{ type: 'spring', stiffness: 300, damping: 12 }}
@@ -331,7 +332,7 @@ export function Piece({ piece, isSelected = false, isOpponent = false, idleStagg
           <div className="relative w-full flex-1 min-h-0 p-0.5">
             <Image src={config.imageSrc} alt={config.hiragana} fill style={{ objectFit: 'contain' }} />
           </div>
-          <span className={`text-[8px] font-bold leading-none pb-0.5 ${isSente ? 'text-blue-900' : 'text-red-900'}`}>
+          <span className={`text-[8px] font-bold leading-none pb-0.5 ${isSente ? 'text-[#2C4A5E]' : 'text-[#5E2C2C]'}`}>
             {config.hiragana}
           </span>
         </motion.div>
@@ -345,8 +346,9 @@ export function Piece({ piece, isSelected = false, isOpponent = false, idleStagg
   return (
     <div style={opponentRotateStyle}>
       <motion.div
-        className={`flex h-full w-full flex-col items-center justify-center ${bgClass}`}
+        className="flex h-full w-full flex-col items-center justify-center"
         style={{
+          backgroundColor: bgColor,
           clipPath: PIECE_CLIP_PATH,
           filter: filterStyle,
         }}
@@ -357,7 +359,7 @@ export function Piece({ piece, isSelected = false, isOpponent = false, idleStagg
         <div className="relative w-full flex-1 min-h-0 p-0.5">
           <Image src={config.imageSrc} alt={config.hiragana} fill style={{ objectFit: 'contain' }} />
         </div>
-        <span className={`text-[8px] font-bold leading-none pb-0.5 ${isSente ? 'text-blue-900' : 'text-red-900'}`}>
+        <span className={`text-[8px] font-bold leading-none pb-0.5 ${isSente ? 'text-[#2C4A5E]' : 'text-[#5E2C2C]'}`}>
           {config.hiragana}
         </span>
       </motion.div>

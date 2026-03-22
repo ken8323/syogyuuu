@@ -51,7 +51,7 @@ export function CapturedPieces({
               className={[
                 'flex h-full w-full flex-col items-center justify-center rounded-sm transition-opacity',
                 // 色分け（先手=青系、後手=赤系）
-                isSente ? 'bg-blue-50 ring-1 ring-blue-200' : 'bg-red-50 ring-1 ring-red-200',
+                isSente ? 'ring-1 ring-[#7A9CB8]' : 'ring-1 ring-[#B87A7A]',
                 // 選択中: 金色ハイライト
                 isSelected ? 'ring-2 ring-yellow-400 bg-yellow-50' : '',
                 // 0枚: グレーアウト
@@ -60,6 +60,7 @@ export function CapturedPieces({
               ]
                 .filter(Boolean)
                 .join(' ')}
+              style={{ backgroundColor: isSelected ? undefined : (isSente ? '#C8D8E4' : '#E4C8C8') }}
             >
               <div
                 className="flex h-full w-full flex-col items-center justify-center"
@@ -68,7 +69,7 @@ export function CapturedPieces({
                 <div className="relative w-full flex-1 min-h-0 p-0.5">
                   <Image src={imageSrc} alt={hiragana} fill style={{ objectFit: 'contain' }} />
                 </div>
-                <span className={`text-[8px] font-bold leading-none pb-0.5 ${isSente ? 'text-blue-900' : 'text-red-900'}`}>
+                <span className={`text-[8px] font-bold leading-none pb-0.5 ${isSente ? 'text-[#2C4A5E]' : 'text-[#5E2C2C]'}`}>
                   {hiragana}
                 </span>
               </div>
