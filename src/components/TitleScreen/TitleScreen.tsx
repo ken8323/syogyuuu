@@ -30,14 +30,14 @@ const CIRCLE_ANIMALS: Array<{
   intervalMs: number
   animVariant: keyof typeof ANIM_VARIANTS
 }> = [
-  { id: 'hawk',     imageSrc: '/icons/washi.png',     intervalMs: 25000, animVariant: 'wobble' },
-  { id: 'owl',      imageSrc: '/icons/fukuro.png',    intervalMs: 20000, animVariant: 'wobble' },
-  { id: 'elephant', imageSrc: '/icons/zou.png',       intervalMs: 25000, animVariant: 'nod'    },
-  { id: 'wolf',     imageSrc: '/icons/ookami.png',    intervalMs: 20000, animVariant: 'shake'  },
-  { id: 'rabbit',   imageSrc: '/icons/rabbit.png',    intervalMs: 15000, animVariant: 'jump'   },
-  { id: 'boar',     imageSrc: '/icons/inoshishi.png', intervalMs: 25000, animVariant: 'nod'    },
-  { id: 'chick',    imageSrc: '/icons/hiyoko.png',    intervalMs: 15000, animVariant: 'nod'    },
-  { id: 'chicken',  imageSrc: '/icons/niwatori.png',  intervalMs: 20000, animVariant: 'shake'  },
+  { id: 'hawk',     imageSrc: '/icons/washi.webp',     intervalMs: 25000, animVariant: 'wobble' },
+  { id: 'owl',      imageSrc: '/icons/fukuro.webp',    intervalMs: 20000, animVariant: 'wobble' },
+  { id: 'elephant', imageSrc: '/icons/zou.webp',       intervalMs: 25000, animVariant: 'nod'    },
+  { id: 'wolf',     imageSrc: '/icons/ookami.webp',    intervalMs: 20000, animVariant: 'shake'  },
+  { id: 'rabbit',   imageSrc: '/icons/rabbit.webp',    intervalMs: 15000, animVariant: 'jump'   },
+  { id: 'boar',     imageSrc: '/icons/inoshishi.webp', intervalMs: 25000, animVariant: 'nod'    },
+  { id: 'chick',    imageSrc: '/icons/hiyoko.webp',    intervalMs: 15000, animVariant: 'nod'    },
+  { id: 'chicken',  imageSrc: '/icons/niwatori.webp',  intervalMs: 20000, animVariant: 'shake'  },
 ]
 
 // パーティクル（固定値）
@@ -143,7 +143,7 @@ export function TitleScreen({ hasSavedGame, onStartNew, onResume }: TitleScreenP
           transition={{ delay: 0.1, type: 'spring', stiffness: 260, damping: 18 }}
         >
           <IdleAnimal
-            imageSrc="/icons/lion.png"
+            imageSrc="/icons/lion.webp"
             alt="ライオン"
             intervalMs={30000}
             animVariant="wobble"
