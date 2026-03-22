@@ -71,26 +71,27 @@ export function PromotionDialog({ isOpen, pieceType, owner, onPromote }: Promoti
             exit={{ opacity: 0, scale: 0.85 }}
             transition={{ type: 'spring', stiffness: 300, damping: 25 }}
           >
-            <div className="w-full max-w-sm rounded-3xl bg-white px-4 py-6 shadow-2xl sm:px-8 sm:py-8">
-              {/* 変身アニメーション表示 + メッセージ（後手は180度回転） */}
-              <div style={isGote ? { transform: 'rotate(180deg)' } : undefined}>
-                <div className="mb-6 flex items-center justify-center gap-4">
-                  <div className={`relative h-16 w-16 rounded-lg ring-2 ${ringClass}`}>
-                    <Image src={beforeImageSrc} alt={beforeHiragana} fill style={{ objectFit: 'contain' }} />
-                  </div>
-                  <span className="text-2xl text-amber-500">→</span>
-                  <div className={`relative h-16 w-16 rounded-lg ring-2 ring-amber-400`}>
-                    <Image src={afterImageSrc} alt={afterHiragana} fill style={{ objectFit: 'contain' }} />
-                  </div>
+            <div
+              className="w-full max-w-sm rounded-3xl bg-white px-4 py-6 shadow-2xl sm:px-8 sm:py-8"
+              style={isGote ? { transform: 'rotate(180deg)' } : undefined}
+            >
+              {/* 変身アニメーション表示 */}
+              <div className="mb-6 flex items-center justify-center gap-4">
+                <div className={`relative h-16 w-16 rounded-lg ring-2 ${ringClass}`}>
+                  <Image src={beforeImageSrc} alt={beforeHiragana} fill style={{ objectFit: 'contain' }} />
                 </div>
-
-                {/* メッセージ */}
-                <p className="mb-8 text-center text-lg font-bold text-stone-800">
-                  {config.message}
-                </p>
+                <span className="text-2xl text-amber-500">→</span>
+                <div className={`relative h-16 w-16 rounded-lg ring-2 ring-amber-400`}>
+                  <Image src={afterImageSrc} alt={afterHiragana} fill style={{ objectFit: 'contain' }} />
+                </div>
               </div>
 
-              {/* ボタン（回転しない） */}
+              {/* メッセージ */}
+              <p className="mb-8 text-center text-lg font-bold text-stone-800">
+                {config.message}
+              </p>
+
+              {/* ボタン */}
               <div className="flex flex-col gap-3">
                 <AnimatedButton
                   className="min-h-[56px] w-full rounded-2xl bg-blue-500 text-xl font-black text-white shadow-md hover:bg-blue-600"
