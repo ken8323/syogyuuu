@@ -75,9 +75,14 @@ export function CapturedPieces({
               </div>
             </div>
 
-            {/* 枚数バッジ */}
+            {/* 枚数バッジ（後手は180度回転＋位置反転） */}
             {hasCount && (
-              <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-amber-700 text-[9px] font-bold text-white">
+              <span
+                className={`absolute flex h-4 w-4 items-center justify-center rounded-full bg-amber-700 text-[9px] font-bold text-white ${
+                  isSente ? '-right-0.5 -top-0.5' : '-bottom-0.5 -left-0.5'
+                }`}
+                style={isSente ? undefined : { transform: 'rotate(180deg)' }}
+              >
                 {count}
               </span>
             )}
