@@ -9,6 +9,7 @@ interface TitleScreenProps {
   hasSavedGame: boolean
   onStartNew: () => void
   onResume: () => void
+  onOpenGuide: () => void
 }
 
 // タイトル文字と虹色
@@ -108,7 +109,7 @@ function IdleAnimal({
   )
 }
 
-export function TitleScreen({ hasSavedGame, onStartNew, onResume }: TitleScreenProps) {
+export function TitleScreen({ hasSavedGame, onStartNew, onResume, onOpenGuide }: TitleScreenProps) {
   return (
     <main
       className="relative flex min-h-screen flex-col items-center justify-center gap-8 overflow-hidden p-4 sm:p-8"
@@ -226,6 +227,13 @@ export function TitleScreen({ hasSavedGame, onStartNew, onResume }: TitleScreenP
             つづきから
           </AnimatedButton>
         )}
+
+        <AnimatedButton
+          className="rounded-2xl border-2 border-amber-300 bg-amber-50 py-3 text-base font-semibold text-amber-600 shadow-sm"
+          onClick={onOpenGuide}
+        >
+          こまの うごきかた
+        </AnimatedButton>
       </motion.div>
     </main>
   )

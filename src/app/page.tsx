@@ -1,18 +1,21 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Board } from '@/components/Board'
 import { CapturedPieces } from '@/components/CapturedPieces'
 import { ControlBar } from '@/components/Controls'
 import { PromotionDialog, ForcedPromotionToast, GameOverDialog, MenuDialog } from '@/components/Dialogs'
 import { CheckBanner, PraiseMessage } from '@/components/Notifications'
 import { TitleScreen } from '@/components/TitleScreen'
+import { PieceGuideDialog } from '@/components/PieceGuide'
 import { useGameStore } from '@/stores/gameStore'
 import { useHintTimer } from '@/hooks/useHintTimer'
 import type { BoardMove, Position, PieceType } from '@/lib/shogi/types'
 import { getPieceAt } from '@/lib/shogi/board'
 
 export default function Home() {
+  const [isGuideOpen, setIsGuideOpen] = useState(false)
+
   const {
     appState,
     gameState,
@@ -79,11 +82,15 @@ export default function Home() {
   // タイトル画面
   if (appState === 'title') {
     return (
-      <TitleScreen
-        hasSavedGame={hasSavedGame}
-        onStartNew={startNewGame}
-        onResume={resumeGame}
-      />
+      <>
+        <TitleScreen
+          hasSavedGame={hasSavedGame}
+          onStartNew={startNewGame}
+          onResume={resumeGame}
+          onOpenGuide={() => setIsGuideOpen(true)}
+        />
+        <PieceGuideDialog isOpen={isGuideOpen} onClose={() => setIsGuideOpen(false)} />
+      </>
     )
   }
 
@@ -141,7 +148,14 @@ export default function Home() {
         onClose={toggleMenu}
         onResign={resign}
         onReset={resetGame}
+        onOpenGuide={() => {
+          toggleMenu()
+          setIsGuideOpen(true)
+        }}
       />
+
+      {/* 駒の動き方ヘルプ */}
+      <PieceGuideDialog isOpen={isGuideOpen} onClose={() => setIsGuideOpen(false)} />
 
       {/* 勝敗ダイアログ */}
       <GameOverDialog

@@ -9,6 +9,7 @@ interface MenuDialogProps {
   onClose: () => void
   onResign: () => void
   onReset: () => void
+  onOpenGuide: () => void
 }
 
 type ConfirmAction = 'resign' | 'reset' | null
@@ -18,7 +19,7 @@ const CONFIRM_CONFIG: Record<'resign' | 'reset', { message: string; buttonLabel:
   reset:  { message: 'ほんとうに さいしょから やりなおす？', buttonLabel: 'やりなおす！' },
 }
 
-export function MenuDialog({ isOpen, onClose, onResign, onReset }: MenuDialogProps) {
+export function MenuDialog({ isOpen, onClose, onResign, onReset, onOpenGuide }: MenuDialogProps) {
   const [confirmAction, setConfirmAction] = useState<ConfirmAction>(null)
 
   const handleClose = () => {
@@ -106,6 +107,12 @@ export function MenuDialog({ isOpen, onClose, onResign, onReset }: MenuDialogPro
                       onClick={() => setConfirmAction('reset')}
                     >
                       さいしょから やりなおす
+                    </AnimatedButton>
+                    <AnimatedButton
+                      className="rounded-2xl bg-sky-100 py-3 text-base font-semibold text-sky-700 hover:bg-sky-200"
+                      onClick={onOpenGuide}
+                    >
+                      こまの うごきかた
                     </AnimatedButton>
                     <AnimatedButton
                       className="rounded-2xl bg-gray-200 py-3 text-base font-semibold text-gray-600 hover:bg-gray-300"
