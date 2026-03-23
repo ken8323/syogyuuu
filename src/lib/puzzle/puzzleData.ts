@@ -257,26 +257,26 @@ export const PUZZLES_3TE: PuzzleDefinition[] = [
     ],
   },
   {
-    // 金打ち＋銀成りで詰み
-    // 玉9一(0,0), 銀7三(2,2), 飛8三(2,1), 持ち駒:金
-    // Step1: 金打ち8一(0,1) 王手(左=9一=玉)。飛8三が縦利きで守る。
-    //   9二(1,0)のみ逃げ可。
-    // Step2: 玉→9二(1,0)
-    // Step3: 銀7三→8二成(1,1) 成銀(=金)の左=9二=玉で王手。
-    //   9一は成銀の前方斜め左、9三は飛の横利き/成銀の後方斜め、8一は金 → 詰み
+    // 追い金: 金打ち → 玉逃げ → 金打ち（3筋）
+    // 玉3二(1,6), 歩3一(0,6)後手, 歩2一(0,7)後手, 飛3五(4,6), 持ち駒:金2
+    // Step1: 金打ち3三(2,6) 王手。飛が守る。4一(0,5)のみ逃げ可。
+    // Step2: 玉→4一(0,5)
+    // Step3: 金打ち4二(1,5) 王手。3三の金が守る。
+    //   5一は金が利く、3一は自歩、5二/3二は金が利く → 詰み
     id: '3te-04',
     difficulty: '3te',
     title: '3てづめ もんだい4',
     board: placeOnBoard([
-      [0, 0, G('king')],      // 9一 玉
-      [2, 2, S('silver')],    // 7三 銀
-      [2, 1, S('rook')],      // 8三 飛
+      [1, 6, G('king')],      // 3二 玉
+      [0, 6, G('pawn')],      // 3一 歩・後手（壁）
+      [0, 7, G('pawn')],      // 2一 歩・後手（壁）
+      [4, 6, S('rook')],      // 3五 飛
     ]),
-    attackerCaptured: { gold: 1 },
+    attackerCaptured: { gold: 2 },
     solution: [
-      { from: null, to: { row: 0, col: 1 }, pieceType: 'gold' },              // 金打ち8一（王手）
-      { from: { row: 0, col: 0 }, to: { row: 1, col: 0 } },                   // 玉→9二
-      { from: { row: 2, col: 2 }, to: { row: 1, col: 1 }, promote: true },    // 銀→8二成（詰み）
+      { from: null, to: { row: 2, col: 6 }, pieceType: 'gold' },              // 金打ち3三（王手）
+      { from: { row: 1, col: 6 }, to: { row: 0, col: 5 } },                   // 玉→4一
+      { from: null, to: { row: 1, col: 5 }, pieceType: 'gold' },              // 金打ち4二（詰み）
     ],
   },
   {
@@ -302,26 +302,26 @@ export const PUZZLES_3TE: PuzzleDefinition[] = [
     ],
   },
   {
-    // 金打ち → 玉逃げ → 銀成りで詰み
-    // 玉1一(0,8), 銀3三(2,6), 飛2三(2,7), 持ち駒:金
-    // Step1: 金打ち2一(0,7) 王手(右=1一=玉)。飛が縦利きで守る。
-    //   1二(1,8)のみ逃げ可。
-    // Step2: 玉→1二(1,8)
-    // Step3: 銀3三→2二成(1,7) 成銀=金の動き。右(1,8)=1二=玉で王手。
-    //   1三は飛の横利き、1一は金2一の右が利く → 詰み
+    // 追い金: 金打ち → 玉逃げ → 金打ち（7筋）
+    // 玉7二(1,2), 歩7一(0,2)後手, 歩8一(0,1)後手, 飛7五(4,2), 持ち駒:金2
+    // Step1: 金打ち7三(2,2) 王手。飛が守る。6一(0,3)のみ逃げ可。
+    // Step2: 玉→6一(0,3)
+    // Step3: 金打ち6二(1,3) 王手。7三の金が守る。
+    //   5一は金が利く、7一は自歩、5二/7二は金が利く → 詰み
     id: '3te-06',
     difficulty: '3te',
     title: '3てづめ もんだい6',
     board: placeOnBoard([
-      [0, 8, G('king')],      // 1一 玉
-      [2, 6, S('silver')],    // 3三 銀
-      [2, 7, S('rook')],      // 2三 飛
+      [1, 2, G('king')],      // 7二 玉
+      [0, 2, G('pawn')],      // 7一 歩・後手（壁）
+      [0, 1, G('pawn')],      // 8一 歩・後手（壁）
+      [4, 2, S('rook')],      // 7五 飛
     ]),
-    attackerCaptured: { gold: 1 },
+    attackerCaptured: { gold: 2 },
     solution: [
-      { from: null, to: { row: 0, col: 7 }, pieceType: 'gold' },              // 金打ち2一（王手）
-      { from: { row: 0, col: 8 }, to: { row: 1, col: 8 } },                   // 玉→1二
-      { from: { row: 2, col: 6 }, to: { row: 1, col: 7 }, promote: true },    // 銀→2二成（詰み）
+      { from: null, to: { row: 2, col: 2 }, pieceType: 'gold' },              // 金打ち7三（王手）
+      { from: { row: 1, col: 2 }, to: { row: 0, col: 3 } },                   // 玉→6一
+      { from: null, to: { row: 1, col: 3 }, pieceType: 'gold' },              // 金打ち6二（詰み）
     ],
   },
   {
