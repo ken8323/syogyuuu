@@ -30,7 +30,7 @@ import {
 
 interface GameStore {
   // 状態
-  appState: 'title' | 'playing' | 'game_over'
+  appState: 'title' | 'playing' | 'game_over' | 'puzzle_select' | 'puzzle'
   gameState: GameState
   ui: UIState
 
@@ -48,6 +48,7 @@ interface GameStore {
   resign: () => void
   resetGame: () => void
   goToTitle: () => void
+  goToPuzzleSelect: () => void
   toggleMenu: () => void
   toggleMute: () => void
   completeTurnSwitch: () => void
@@ -567,6 +568,10 @@ export const useGameStore = create<GameStore>()(
           gameState: createInitialGameState(),
           ui: { ...INITIAL_UI_STATE, isMuted: state.ui.isMuted },
         }))
+      },
+
+      goToPuzzleSelect: () => {
+        set({ appState: 'puzzle_select' })
       },
 
       resetGame: () => {
