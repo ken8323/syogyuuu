@@ -235,11 +235,11 @@ export const PUZZLES_3TE: PuzzleDefinition[] = [
     ],
   },
   {
-    // 追い金: 金打ち → 玉逃げ → 金打ち（5筋）
-    // 玉5二(1,4), 歩4一(0,5)後手, 飛5四(3,4), 持ち駒:金2
+    // 追い金: 金打ち → 玉逃げ → 金寄り（5筋）
+    // 玉5二(1,4), 歩4一(0,5)後手, 飛5四(3,4), 持ち駒:金1
     // Step1: 金打ち5三(2,4) 王手。飛が守る。逃げ場は6一/5一。5一に逃げる。
     // Step2: 玉→5一(0,4)
-    // Step3: 金打ち5二(1,4) 王手。5三の金の前方が守る。
+    // Step3: 金5三→5二(1,4) 王手。飛が5三経由で守る。
     //   6一/4一は金が利く → 詰み
     id: '3te-03',
     difficulty: '3te',
@@ -249,11 +249,11 @@ export const PUZZLES_3TE: PuzzleDefinition[] = [
       [0, 5, G('pawn')],      // 4一 歩・後手（壁）
       [3, 4, S('rook')],      // 5四 飛
     ]),
-    attackerCaptured: { gold: 2 },
+    attackerCaptured: { gold: 1 },
     solution: [
       { from: null, to: { row: 2, col: 4 }, pieceType: 'gold' },              // 金打ち5三（王手）
       { from: { row: 1, col: 4 }, to: { row: 0, col: 4 } },                   // 玉→5一
-      { from: null, to: { row: 1, col: 4 }, pieceType: 'gold' },              // 金打ち5二（詰み）
+      { from: { row: 2, col: 4 }, to: { row: 1, col: 4 } },                   // 金5三→5二（詰み）
     ],
   },
   {
