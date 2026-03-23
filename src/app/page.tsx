@@ -8,7 +8,9 @@ import { PromotionDialog, ForcedPromotionToast, GameOverDialog, MenuDialog } fro
 import { CheckBanner, PraiseMessage } from '@/components/Notifications'
 import { TitleScreen } from '@/components/TitleScreen'
 import { PieceGuideDialog } from '@/components/PieceGuide'
+import { PuzzleSelectScreen, PuzzlePage } from '@/components/Puzzle'
 import { useGameStore } from '@/stores/gameStore'
+import { usePuzzleStore } from '@/stores/puzzleStore'
 import { useHintTimer } from '@/hooks/useHintTimer'
 import type { BoardMove, Position, PieceType } from '@/lib/shogi/types'
 import { getPieceAt } from '@/lib/shogi/board'
@@ -36,6 +38,7 @@ export default function Home() {
     completeCheckNotify,
     resetGame,
     goToTitle,
+    goToPuzzleSelect,
     resign,
     completeTurnSwitch,
     completeMoveAnimation,
@@ -45,6 +48,9 @@ export default function Home() {
     showHint,
     clearPraise,
   } = useGameStore()
+
+  const puzzleSolvedIds = usePuzzleStore(s => s.solvedPuzzleIds)
+  const startPuzzle = usePuzzleStore(s => s.startPuzzle)
   const {
     board,
     currentPlayer,
@@ -79,6 +85,29 @@ export default function Home() {
   // 保存データの有無: 手の履歴が1手以上あれば続きがある
   const hasSavedGame = gameState.moveHistory.moves.length > 0
 
+  // パズル選択画面
+  if (appState === 'puzzle_select') {
+    return (
+      <PuzzleSelectScreen
+        solvedPuzzleIds={puzzleSolvedIds}
+        onSelectPuzzle={(puzzleId) => {
+          startPuzzle(puzzleId)
+          useGameStore.setState({ appState: 'puzzle' })
+        }}
+        onBack={goToTitle}
+      />
+    )
+  }
+
+  // パズル対局画面
+  if (appState === 'puzzle') {
+    return (
+      <PuzzlePage
+        onBack={goToPuzzleSelect}
+      />
+    )
+  }
+
   // タイトル画面
   if (appState === 'title') {
     return (
@@ -88,6 +117,7 @@ export default function Home() {
           onStartNew={startNewGame}
           onResume={resumeGame}
           onOpenGuide={() => setIsGuideOpen(true)}
+          onOpenPuzzle={goToPuzzleSelect}
         />
         <PieceGuideDialog isOpen={isGuideOpen} onClose={() => setIsGuideOpen(false)} />
       </>

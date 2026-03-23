@@ -636,3 +636,45 @@ function useHintTimer(options: UseHintTimerOptions): void
 - `phase === 'idle'` かつ `isMenuOpen === false` の間、10秒後に `onLevel1`、15秒後に `onLevel2` を呼び出す
 - `phase` が idle 以外になるか `isMenuOpen` が true になるとタイマーリセット＋ `onClear` 呼び出し
 - コールバックは ref で保持し、stale closure を防止
+
+---
+
+## 13. パズル（詰将棋）
+
+### 13.1 パズル定義（PuzzleDefinition）
+
+```typescript
+type PuzzleDifficulty = '1te' | '3te'
+
+interface PuzzleDefinition {
+  id: string                           // パズルID（例: '1te-01'）
+  difficulty: PuzzleDifficulty         // 難易度
+  title: string                        // 問題名（例: '1てづめ もんだい1'）
+  board: Board                         // 初期盤面
+  attackerCaptured: Partial<Record<PieceType, number>>  // 攻め方（先手）の持ち駒
+  // 正解手順（3手詰めの場合: [攻め手1, 玉方応手, 攻め手2]）
+  solution: Array<{
+    from: Position | null              // 移動元（null = 持ち駒打ち）
+    to: Position                       // 移動先
+    pieceType?: PieceType              // 打つ駒の種類（持ち駒打ちの場合）
+    promote?: boolean                  // 成るかどうか
+  }>
+}
+```
+
+### 13.2 パズル状態（PuzzleState）
+
+```typescript
+interface PuzzleState {
+  currentPuzzleId: string | null       // 現在プレイ中のパズルID
+  solvedPuzzleIds: string[]            // クリア済みパズルIDリスト（localStorage永続化）
+  moveIndex: number                    // 現在の手順インデックス（solution配列のindex）
+  gameState: GameState                 // パズル用ゲーム状態（対局と同じ構造を流用）
+}
+```
+
+### 13.3 AppState 拡張
+
+```typescript
+type AppState = 'title' | 'playing' | 'game_over' | 'puzzle_select' | 'puzzle'
+```
