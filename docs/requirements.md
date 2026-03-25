@@ -204,6 +204,13 @@
 - リリース時: scale 0.95 → 1.0（spring: stiffness 400, damping 15、自然なオーバーシュート）
 - disabled 状態のボタンにはアニメーションなし
 
+#### 3.6.8 背景演出
+- 全画面に和紙風テクスチャを適用（CSSグラデーション＋疑似要素によるノイズ表現）
+- 盤面周囲に控えめな和風角飾り（四隅の隅入り角）
+- 全てCSS（疑似要素）で実装。パフォーマンスに影響しない軽量な演出とする
+
+→ 背景演出コンポーネントの詳細は `screen-definition.md` セクション 2.13 を参照
+
 ### 3.7 将来対応が必要なルール（MVP対象外）
 
 - 千日手（同一局面が4回出現した場合の引き分け判定）
@@ -290,6 +297,8 @@ src/
     Notifications/           # 通知
       CheckBanner.tsx        # 王手通知バナー
       PraiseMessage.tsx      # ほめメッセージ（画面中央オーバーレイ）
+    Background/              # 背景演出
+      SeasonalBackground.tsx # 和紙テクスチャ＋角飾りの統合コンポーネント
     TitleScreen/             # タイトル画面
       TitleScreen.tsx        # 新規対局・つづきからボタン
   lib/

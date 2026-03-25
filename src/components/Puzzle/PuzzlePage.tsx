@@ -10,6 +10,7 @@ import { PuzzleSolvedDialog } from './PuzzleSolvedDialog'
 import { usePuzzleStore } from '@/stores/puzzleStore'
 import { getPieceAt } from '@/lib/shogi/board'
 import { findPuzzleById, hasNextPuzzle as checkHasNextPuzzle } from '@/lib/puzzle/puzzleData'
+import { SeasonalBackground } from '@/components/Background'
 import type { Position, PieceType } from '@/lib/shogi/types'
 
 interface PuzzlePageProps {
@@ -132,6 +133,7 @@ export function PuzzlePage({ onBack }: PuzzlePageProps) {
 
   return (
     <main className="relative flex h-dvh flex-col items-center justify-center gap-2 overflow-hidden bg-amber-50 p-4">
+      <SeasonalBackground />
       {/* パズル情報バー */}
       {puzzle && (
         <motion.div

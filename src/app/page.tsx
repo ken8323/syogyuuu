@@ -9,6 +9,7 @@ import { CheckBanner, PraiseMessage } from '@/components/Notifications'
 import { TitleScreen } from '@/components/TitleScreen'
 import { PieceGuideDialog } from '@/components/PieceGuide'
 import { PuzzleSelectScreen, PuzzlePage } from '@/components/Puzzle'
+import { SeasonalBackground } from '@/components/Background'
 import { useGameStore } from '@/stores/gameStore'
 import { usePuzzleStore } from '@/stores/puzzleStore'
 import { useHintTimer } from '@/hooks/useHintTimer'
@@ -172,6 +173,7 @@ export default function Home() {
 
   return (
     <main className="relative flex h-dvh flex-col items-center justify-center gap-2 overflow-hidden bg-amber-50 p-4">
+      <SeasonalBackground />
       {/* メニューダイアログ */}
       <MenuDialog
         isOpen={ui.isMenuOpen}

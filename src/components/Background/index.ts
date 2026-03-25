@@ -1,0 +1,1 @@
+export { SeasonalBackground } from './SeasonalBackground'
