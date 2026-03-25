@@ -119,7 +119,7 @@ export function TitleScreen({ hasSavedGame, onStartNew, onResume, onOpenGuide, o
         background: 'radial-gradient(ellipse at 50% 40%, #fffbeb 0%, #fef3c7 40%, #fde68a 100%)',
       }}
     >
-      <SeasonalBackground showParticles={false} />
+      <SeasonalBackground />
       {/* パーティクル */}
       {PARTICLES.map((p) => (
         <motion.div

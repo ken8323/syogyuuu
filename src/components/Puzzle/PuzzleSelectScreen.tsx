@@ -60,7 +60,7 @@ export function PuzzleSelectScreen({ solvedPuzzleIds, onSelectPuzzle, onBack }: 
         background: 'radial-gradient(ellipse at 50% 40%, #fffbeb 0%, #fef3c7 40%, #fde68a 100%)',
       }}
     >
-      <SeasonalBackground showParticles={false} />
+      <SeasonalBackground />
       {/* タイトル */}
       <motion.h1
         className="text-2xl font-black text-amber-700 drop-shadow-sm sm:text-3xl"
