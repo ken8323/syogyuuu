@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
 import { motion, type TargetAndTransition } from 'framer-motion'
 import { AnimatedButton } from '@/components/ui/AnimatedButton'
+import { SeasonalBackground } from '@/components/Background'
 
 interface TitleScreenProps {
   hasSavedGame: boolean
@@ -118,6 +119,7 @@ export function TitleScreen({ hasSavedGame, onStartNew, onResume, onOpenGuide, o
         background: 'radial-gradient(ellipse at 50% 40%, #fffbeb 0%, #fef3c7 40%, #fde68a 100%)',
       }}
     >
+      <SeasonalBackground showParticles={false} />
       {/* パーティクル */}
       {PARTICLES.map((p) => (
         <motion.div
