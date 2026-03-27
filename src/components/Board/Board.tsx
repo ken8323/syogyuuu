@@ -157,10 +157,19 @@ export function Board({
         <div className="relative flex-1">
           <div
             ref={gridRef}
-            className="grid grid-cols-9 border-2 border-amber-900 overflow-hidden"
+            className="grid grid-cols-9 overflow-hidden"
             style={{
-              boxShadow:
-                'inset 3px 3px 6px rgba(255,210,80,0.35), inset -3px -3px 6px rgba(0,0,0,0.28), 0 4px 16px rgba(0,0,0,0.3)',
+              border: '3px solid #3d1c00',
+              boxShadow: [
+                // 漆の光沢（左上ハイライト）
+                'inset 2px 2px 4px rgba(255,180,60,0.4)',
+                // 漆の深み（右下シャドウ）
+                'inset -2px -2px 4px rgba(0,0,0,0.5)',
+                // 漆の深み（全体）
+                'inset 0 0 8px rgba(80,30,0,0.3)',
+                // 外側ドロップシャドウ
+                '0 4px 16px rgba(0,0,0,0.35)',
+              ].join(', '),
             }}
           >
             {Array.from({ length: 81 }, (_, i) => {

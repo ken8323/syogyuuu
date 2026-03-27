@@ -38,11 +38,18 @@ export function Square({
   isKingInCheck = false,
   onClick,
 }: SquareProps) {
-  // 木目テクスチャ: 斜めグラデーションで板目を表現
+  // 木目テクスチャ: 5層グラデーションで板目の質感を表現
   const woodGrain = [
-    'linear-gradient(105deg, transparent 40%, rgba(139,90,43,0.07) 40%, rgba(139,90,43,0.07) 42%, transparent 42%)',
-    'linear-gradient(105deg, transparent 60%, rgba(139,90,43,0.05) 60%, rgba(139,90,43,0.05) 61%, transparent 61%)',
-    'linear-gradient(to bottom, rgba(255,220,150,0.3) 0%, transparent 60%)',
+    // 太い木目筋
+    'linear-gradient(105deg, transparent 38%, rgba(139,90,43,0.10) 38%, rgba(139,90,43,0.10) 41%, transparent 41%)',
+    // 中間の木目筋
+    'linear-gradient(105deg, transparent 58%, rgba(139,90,43,0.07) 58%, rgba(139,90,43,0.07) 60%, transparent 60%)',
+    // 細い木目筋
+    'linear-gradient(105deg, transparent 72%, rgba(139,90,43,0.04) 72%, rgba(139,90,43,0.04) 73%, transparent 73%)',
+    // 年輪風の微細パターン
+    'repeating-linear-gradient(102deg, transparent, transparent 3px, rgba(160,120,60,0.08) 3px, rgba(160,120,60,0.08) 4px)',
+    // 上部ハイライト（光の当たり具合）
+    'linear-gradient(to bottom, rgba(255,220,150,0.25) 0%, transparent 55%)',
   ].join(', ')
 
   let bgColor = ''
@@ -50,19 +57,30 @@ export function Square({
   else if (isLastMoveTo) bgColor = '#fde047'
   else if (isLastMoveFrom) bgColor = '#fef08a'
 
-  const insetShadow = 'inset 1px 1px 3px rgba(0,0,0,0.15), inset -1px -1px 2px rgba(255,200,80,0.2)'
+  // 木彫り風溝: box-shadow で右辺・下辺に影+ハイライトを重ねる
+  const grooveShadow = [
+    // 右辺の溝（影）
+    '1px 0 0 rgba(100,60,20,0.4)',
+    // 右辺の溝（ハイライト）
+    '-1px 0 0 rgba(255,210,130,0.15)',
+    // 下辺の溝（影）
+    '0 1px 0 rgba(100,60,20,0.4)',
+    // 下辺の溝（ハイライト）
+    '0 -1px 0 rgba(255,210,130,0.15)',
+  ].join(', ')
+
   const bgStyle = bgColor
-    ? { backgroundColor: bgColor, boxShadow: insetShadow }
+    ? { backgroundColor: bgColor, boxShadow: grooveShadow }
     : {
         backgroundImage: `${woodGrain}, linear-gradient(to bottom right, #d4a843, #c49132)`,
         backgroundColor: '#d4a843',
-        boxShadow: insetShadow,
+        boxShadow: grooveShadow,
       }
 
   return (
     <div
       className={[
-        'relative flex aspect-square items-center justify-center border-r border-b border-amber-900/60 cursor-pointer select-none',
+        'relative flex aspect-square items-center justify-center cursor-pointer select-none',
         isSelected ? 'z-10' : '',
       ].join(' ')}
       style={bgStyle}
