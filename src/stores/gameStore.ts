@@ -60,6 +60,7 @@ interface GameStore {
   clearHint: () => void
   showHint: () => void
   clearPraise: () => void
+  clearTurnChange: () => void
 }
 
 // ============================================================
@@ -78,6 +79,7 @@ const INITIAL_UI_STATE: UIState = {
   hintMoves: [],
   praiseMessage: null,
   hasFirstCapture: false,
+  turnChangePlayer: null,
 }
 
 // ============================================================
@@ -406,6 +408,10 @@ export const useGameStore = create<GameStore>()(
               phase: 'idle',
               isCheck: false,
             },
+            ui: {
+              ...state.ui,
+              turnChangePlayer: currentPlayer,
+            },
           }))
         }
       },
@@ -721,6 +727,10 @@ export const useGameStore = create<GameStore>()(
 
       clearPraise: () => {
         set(state => ({ ui: { ...state.ui, praiseMessage: null } }))
+      },
+
+      clearTurnChange: () => {
+        set(state => ({ ui: { ...state.ui, turnChangePlayer: null } }))
       },
     }),
 

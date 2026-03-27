@@ -5,7 +5,7 @@ import { Board } from '@/components/Board'
 import { CapturedPieces } from '@/components/CapturedPieces'
 import { ControlBar } from '@/components/Controls'
 import { PromotionDialog, ForcedPromotionToast, GameOverDialog, MenuDialog } from '@/components/Dialogs'
-import { CheckBanner, PraiseMessage } from '@/components/Notifications'
+import { CheckBanner, PraiseMessage, TurnChangeToast } from '@/components/Notifications'
 import { TitleScreen } from '@/components/TitleScreen'
 import { PieceGuideDialog } from '@/components/PieceGuide'
 import { PuzzleSelectScreen, PuzzlePage } from '@/components/Puzzle'
@@ -48,6 +48,7 @@ export default function Home() {
     clearHint,
     showHint,
     clearPraise,
+    clearTurnChange,
   } = useGameStore()
 
   const puzzleSolvedIds = usePuzzleStore(s => s.solvedPuzzleIds)
@@ -282,6 +283,9 @@ export default function Home() {
 
       {/* ほめメッセージ（画面中央にオーバーレイ） */}
       <PraiseMessage message={ui.praiseMessage} onDismiss={clearPraise} />
+
+      {/* 手番交代トースト */}
+      <TurnChangeToast player={ui.turnChangePlayer} onDismiss={clearTurnChange} />
     </main>
   )
 }

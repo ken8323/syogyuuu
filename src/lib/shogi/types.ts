@@ -141,6 +141,8 @@ export interface UIState {
   praiseMessage: string | null
   /** 対局内で初めて駒を取ったか */
   hasFirstCapture: boolean
+  /** 手番交代トースト通知用（表示後に clearTurnChange() で null に戻す） */
+  turnChangePlayer: Player | null
 }
 
 // ============================================================
