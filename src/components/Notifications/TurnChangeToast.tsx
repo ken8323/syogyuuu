@@ -39,8 +39,17 @@ export function TurnChangeToast({ player, onDismiss }: TurnChangeToastProps) {
           exit={{ opacity: 0, y: exitY }}
           transition={{ opacity: { duration: 0.25 }, y: { duration: 0.25 } }}
         >
-          <span>{emoji}</span>
-          <span>{label}</span>
+          {isSente ? (
+            <>
+              <span>{label}</span>
+              <span>{emoji}</span>
+            </>
+          ) : (
+            <>
+              <span>{emoji}</span>
+              <span>{label}</span>
+            </>
+          )}
         </motion.div>
       )}
     </AnimatePresence>
