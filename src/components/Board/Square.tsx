@@ -47,7 +47,7 @@ export function Square({
     // 細い木目筋
     'linear-gradient(105deg, transparent 72%, rgba(139,90,43,0.04) 72%, rgba(139,90,43,0.04) 73%, transparent 73%)',
     // 年輪風の微細パターン
-    'repeating-linear-gradient(102deg, transparent, transparent 3px, rgba(160,120,60,0.03) 3px, rgba(160,120,60,0.03) 4px)',
+    'repeating-linear-gradient(102deg, transparent, transparent 3px, rgba(160,120,60,0.08) 3px, rgba(160,120,60,0.08) 4px)',
     // 上部ハイライト（光の当たり具合）
     'linear-gradient(to bottom, rgba(255,220,150,0.25) 0%, transparent 55%)',
   ].join(', ')
