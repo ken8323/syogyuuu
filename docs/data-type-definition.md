@@ -155,7 +155,15 @@ interface GameState {
   isCheck: boolean                   // 王手がかかっているか
   winner: Player | null              // 勝者（対局中は null）
   gameOverReason: 'checkmate' | 'resign' | null  // 終了理由
+  handicap: HandicapLevel            // ハンデレベル（駒落ち）
 }
+
+// ハンデレベル（赤チーム/後手の駒落ち）
+type HandicapLevel =
+  | 'none'    // ハンデなし
+  | 'light'   // ちょっとハンデ: 飛車なし
+  | 'medium'  // ふつうのハンデ: 飛車・角なし
+  | 'heavy'   // おおきいハンデ: 飛車・角・香車×2なし
 ```
 
 ### 4.2 ゲームフェーズ
@@ -466,12 +474,13 @@ const INITIAL_BOARD: Board = [
 ```typescript
 interface GameStore {
   // 状態
-  appState: 'title' | 'playing' | 'game_over'
+  appState: 'title' | 'handicap_select' | 'playing' | 'game_over'
   gameState: GameState
   ui: UIState
 
   // ゲーム開始・再開
-  startNewGame: () => void                  // 新規対局開始
+  goToHandicapSelect: () => void            // ハンデ選択画面へ遷移
+  startNewGame: (level: HandicapLevel) => void  // 新規対局開始（ハンデレベル指定）
   resumeGame: () => void                    // 保存された対局を再開
 
   // 駒の選択
@@ -574,7 +583,7 @@ interface GameStore {
 
 | 関数 | シグネチャ | 説明 |
 |------|----------|------|
-| createInitialGameState | `() => GameState` | 初期ゲーム状態を生成 |
+| createInitialGameState | `(handicap?: HandicapLevel) => GameState` | 初期ゲーム状態を生成（デフォルト: 'none'） |
 | executeMove | `(state, from, to, promote) => GameState` | 盤上の駒を移動（履歴追加・手番交代含む） |
 | executeDrop | `(state, pieceType, to) => GameState` | 持ち駒を打つ（履歴追加・手番交代含む） |
 | undoMove | `(state) => GameState` | 1手戻す |
@@ -679,5 +688,5 @@ interface PuzzleState {
 ### 13.3 AppState 拡張
 
 ```typescript
-type AppState = 'title' | 'playing' | 'game_over' | 'puzzle_select' | 'puzzle'
+type AppState = 'title' | 'handicap_select' | 'playing' | 'game_over' | 'puzzle_select' | 'puzzle'
 ```

@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import type { AnimatingMoveInfo, GameState, PieceType, Player, Position, UIState, PromotingInfo } from '../lib/shogi/types'
+import type { AnimatingMoveInfo, GameState, HandicapLevel, PieceType, Player, Position, UIState, PromotingInfo } from '../lib/shogi/types'
 import { getLegalMoves, getLegalDrops, isInCheck } from '../lib/shogi/moves'
 import { getMovablePieces, getRecommendedMove } from '../lib/shogi/hint'
 import { isCheckmate, canPromote, mustPromote, getPromotedType } from '../lib/shogi/rules'
@@ -30,12 +30,13 @@ import {
 
 interface GameStore {
   // 状態
-  appState: 'title' | 'playing' | 'game_over' | 'puzzle_select' | 'puzzle'
+  appState: 'title' | 'handicap_select' | 'playing' | 'game_over' | 'puzzle_select' | 'puzzle'
   gameState: GameState
   ui: UIState
 
   // アクション
-  startNewGame: () => void
+  goToHandicapSelect: () => void
+  startNewGame: (level: HandicapLevel) => void
   resumeGame: () => void
   selectPiece: (position: Position) => void
   selectCapturedPiece: (pieceType: PieceType) => void
@@ -98,10 +99,14 @@ export const useGameStore = create<GameStore>()(
       // ゲーム開始・再開
       // ============================================================
 
-      startNewGame: () => {
+      goToHandicapSelect: () => {
+        set({ appState: 'handicap_select' })
+      },
+
+      startNewGame: (level: HandicapLevel) => {
         set(state => ({
           appState: 'playing',
-          gameState: createInitialGameState(),
+          gameState: createInitialGameState(level),
           ui: { ...INITIAL_UI_STATE, isMuted: state.ui.isMuted },
         }))
       },
@@ -582,7 +587,7 @@ export const useGameStore = create<GameStore>()(
 
       resetGame: () => {
         set(state => ({
-          appState: 'playing',
+          appState: 'handicap_select',
           gameState: createInitialGameState(),
           ui: { ...INITIAL_UI_STATE, isMuted: state.ui.isMuted },
         }))

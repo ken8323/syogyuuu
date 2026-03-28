@@ -9,6 +9,7 @@ import { CheckBanner, PraiseMessage, TurnChangeToast } from '@/components/Notifi
 import { TitleScreen } from '@/components/TitleScreen'
 import { PieceGuideDialog } from '@/components/PieceGuide'
 import { PuzzleSelectScreen, PuzzlePage } from '@/components/Puzzle'
+import { HandicapSelectScreen } from '@/components/HandicapSelect'
 import { SeasonalBackground } from '@/components/Background'
 import { useGameStore } from '@/stores/gameStore'
 import { usePuzzleStore } from '@/stores/puzzleStore'
@@ -49,6 +50,7 @@ export default function Home() {
     showHint,
     clearPraise,
     clearTurnChange,
+    goToHandicapSelect,
   } = useGameStore()
 
   const puzzleSolvedIds = usePuzzleStore(s => s.solvedPuzzleIds)
@@ -87,6 +89,16 @@ export default function Home() {
   // 保存データの有無: 手の履歴が1手以上あれば続きがある
   const hasSavedGame = gameState.moveHistory.moves.length > 0
 
+  // ハンデ選択画面
+  if (appState === 'handicap_select') {
+    return (
+      <HandicapSelectScreen
+        onSelect={startNewGame}
+        onBack={goToTitle}
+      />
+    )
+  }
+
   // パズル選択画面
   if (appState === 'puzzle_select') {
     return (
@@ -116,7 +128,7 @@ export default function Home() {
       <>
         <TitleScreen
           hasSavedGame={hasSavedGame}
-          onStartNew={startNewGame}
+          onStartNew={goToHandicapSelect}
           onResume={resumeGame}
           onOpenGuide={() => setIsGuideOpen(true)}
           onOpenPuzzle={goToPuzzleSelect}

@@ -89,6 +89,8 @@ export interface MoveHistory {
   currentIndex: number
 }
 
+export type HandicapLevel = 'none' | 'light' | 'medium' | 'heavy'
+
 export interface GameState {
   board: Board
   capturedPieces: CapturedPieces
@@ -101,6 +103,7 @@ export interface GameState {
   isCheck: boolean
   winner: Player | null
   gameOverReason: 'checkmate' | 'resign' | null
+  handicap: HandicapLevel
 }
 
 export interface AnimatingMoveInfo {

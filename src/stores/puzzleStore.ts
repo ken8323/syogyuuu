@@ -35,6 +35,7 @@ function createPuzzleGameState(puzzle: PuzzleDefinition): GameState {
     isCheck: false,
     winner: null,
     gameOverReason: null,
+    handicap: 'none',
   }
 }
 
@@ -87,6 +88,7 @@ const EMPTY_GAME_STATE: GameState = {
   isCheck: false,
   winner: null,
   gameOverReason: null,
+  handicap: 'none',
 }
 
 // ============================================================

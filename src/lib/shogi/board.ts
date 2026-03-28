@@ -1,4 +1,4 @@
-import type { Board, CapturedPieces, Piece, PieceType, Player, Position } from './types'
+import type { Board, CapturedPieces, HandicapLevel, Piece, PieceType, Player, Position } from './types'
 
 // ============================================================
 // 初期盤面配置
@@ -75,6 +75,23 @@ const INITIAL_BOARD_DATA: Board = [
 // 毎回ディープコピーを返すことで、呼び出し側が盤面データを汚染しない
 export function createInitialBoard(): Board {
   return structuredClone(INITIAL_BOARD_DATA)
+}
+
+// ハンデ駒落ちの対象マス: 後手（gote）の駒を取り除く位置
+// row=1: 後手の飛車[1][7]・角行[1][1] / row=0: 後手の香車[0][0],[0][8]
+const HANDICAP_REMOVE: Record<HandicapLevel, [number, number][]> = {
+  none:   [],
+  light:  [[1, 7]],
+  medium: [[1, 7], [1, 1]],
+  heavy:  [[1, 7], [1, 1], [0, 0], [0, 8]],
+}
+
+export function createHandicapBoard(level: HandicapLevel): Board {
+  const board = createInitialBoard()
+  for (const [r, c] of HANDICAP_REMOVE[level]) {
+    board[r][c] = null
+  }
+  return board
 }
 
 // ============================================================
