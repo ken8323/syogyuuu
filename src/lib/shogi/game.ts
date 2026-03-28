@@ -1,7 +1,7 @@
-import type { BoardMove, CapturedPieces, DropMove, GameState, Move, PieceType, Player, Position, PromotedPieceType } from './types'
+import type { BoardMove, CapturedPieces, DropMove, GameState, HandicapLevel, Move, PieceType, Player, Position, PromotedPieceType } from './types'
 import {
   addCapturedPiece,
-  createInitialBoard,
+  createHandicapBoard,
   createInitialCapturedPieces,
   getPieceAt,
   removePieceAt,
@@ -14,9 +14,9 @@ import { getDemotedType, getPromotedType } from './rules'
 // 初期化
 // ============================================================
 
-export function createInitialGameState(): GameState {
+export function createInitialGameState(handicap: HandicapLevel = 'none'): GameState {
   return {
-    board: createInitialBoard(),
+    board: createHandicapBoard(handicap),
     capturedPieces: createInitialCapturedPieces(),
     currentPlayer: 'sente',
     phase: 'idle',
@@ -27,6 +27,7 @@ export function createInitialGameState(): GameState {
     isCheck: false,
     winner: null,
     gameOverReason: null,
+    handicap,
   }
 }
 
