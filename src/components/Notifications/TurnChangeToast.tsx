@@ -19,39 +19,33 @@ export function TurnChangeToast({ player, onDismiss }: TurnChangeToastProps) {
   const isSente = player === 'sente'
   const bgColor = isSente ? 'bg-blue-500' : 'bg-red-500'
   const label = isSente ? 'あおチームのばんだよ！' : 'あかチームのばんだよ！'
-  // 180度回転すると文字の並び順が左右反転するため、先手は逆順に描画して読める向きに補正
-  const displayLabel = isSente ? label.split('').reverse().join('') : label
   const emoji = isSente ? '🔵' : '🔴'
 
-  // 先手（あおチーム）は画面下・180度回転（向かい合って遊ぶため）
-  // 後手（あかチーム）は画面上・通常向き
+  // 先手（あおチーム）: 画面下部・下側プレイヤー向けに 180° 回転
+  // 後手（あかチーム）: 画面上部・通常向き
   const positionClass = isSente ? 'bottom-6' : 'top-6'
-  const rotateStyle = isSente ? { rotate: 180 } : {}
   const initialY = isSente ? 20 : -20
-  const exitY = isSente ? 20 : -20
 
   return (
     <AnimatePresence>
       {player && (
+        // 外側: 位置・フェード・スライドアニメーション（x は motion value で中央揃え）
         <motion.div
-          className={`fixed left-1/2 ${positionClass} z-50 -translate-x-1/2 rounded-2xl ${bgColor} px-6 py-3 text-base font-bold text-white shadow-lg flex items-center gap-2`}
-          style={rotateStyle}
+          className={`fixed left-1/2 ${positionClass} z-50`}
+          style={{ x: '-50%' }}
           initial={{ opacity: 0, y: initialY }}
           animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: exitY }}
+          exit={{ opacity: 0, y: initialY }}
           transition={{ opacity: { duration: 0.25 }, y: { duration: 0.25 } }}
         >
-          {isSente ? (
-            <>
-              <span>{displayLabel}</span>
-              <span>{emoji}</span>
-            </>
-          ) : (
-            <>
-              <span>{emoji}</span>
-              <span>{displayLabel}</span>
-            </>
-          )}
+          {/* 内側: 見た目・回転（CSS transform で Framer Motion と競合しない） */}
+          <div
+            className={`rounded-2xl ${bgColor} px-6 py-3 text-base font-bold text-white shadow-lg flex items-center gap-2`}
+            style={isSente ? { transform: 'rotate(180deg)' } : undefined}
+          >
+            <span>{emoji}</span>
+            <span>{label}</span>
+          </div>
         </motion.div>
       )}
     </AnimatePresence>
