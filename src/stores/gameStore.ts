@@ -587,7 +587,7 @@ export const useGameStore = create<GameStore>()(
 
       resetGame: () => {
         set(state => ({
-          appState: 'playing',
+          appState: 'handicap_select',
           gameState: createInitialGameState(),
           ui: { ...INITIAL_UI_STATE, isMuted: state.ui.isMuted },
         }))
