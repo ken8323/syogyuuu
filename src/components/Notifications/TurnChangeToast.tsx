@@ -19,6 +19,8 @@ export function TurnChangeToast({ player, onDismiss }: TurnChangeToastProps) {
   const isSente = player === 'sente'
   const bgColor = isSente ? 'bg-blue-500' : 'bg-red-500'
   const label = isSente ? 'あおチームのばんだよ！' : 'あかチームのばんだよ！'
+  // 180度回転すると文字の並び順が左右反転するため、先手は逆順に描画して読める向きに補正
+  const displayLabel = isSente ? label.split('').reverse().join('') : label
   const emoji = isSente ? '🔵' : '🔴'
 
   // 先手（あおチーム）は画面下・180度回転（向かい合って遊ぶため）
@@ -41,13 +43,13 @@ export function TurnChangeToast({ player, onDismiss }: TurnChangeToastProps) {
         >
           {isSente ? (
             <>
-              <span>{label}</span>
+              <span>{displayLabel}</span>
               <span>{emoji}</span>
             </>
           ) : (
             <>
               <span>{emoji}</span>
-              <span>{label}</span>
+              <span>{displayLabel}</span>
             </>
           )}
         </motion.div>
