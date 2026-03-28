@@ -21,15 +21,14 @@ export function TurnChangeToast({ player, onDismiss }: TurnChangeToastProps) {
   const label = isSente ? 'あおチームのばんだよ！' : 'あかチームのばんだよ！'
   const emoji = isSente ? '🔵' : '🔴'
 
-  // 先手（あおチーム）: 画面下部・下側プレイヤー向けに 180° 回転
-  // 後手（あかチーム）: 画面上部・通常向き
+  // 先手（あおチーム）: iPad下側に座る → 画面下・回転なし（そのまま読める）
+  // 後手（あかチーム）: iPad上側に座る → 画面上・180°回転（逆向きに座るため）
   const positionClass = isSente ? 'bottom-6' : 'top-6'
   const initialY = isSente ? 20 : -20
 
   return (
     <AnimatePresence>
       {player && (
-        // 外側: 位置・フェード・スライドアニメーション（x は motion value で中央揃え）
         <motion.div
           className={`fixed left-1/2 ${positionClass} z-50`}
           style={{ x: '-50%' }}
@@ -38,10 +37,9 @@ export function TurnChangeToast({ player, onDismiss }: TurnChangeToastProps) {
           exit={{ opacity: 0, y: initialY }}
           transition={{ opacity: { duration: 0.25 }, y: { duration: 0.25 } }}
         >
-          {/* 内側: 見た目・回転（CSS transform で Framer Motion と競合しない） */}
           <div
             className={`rounded-2xl ${bgColor} px-6 py-3 text-base font-bold text-white shadow-lg flex items-center gap-2`}
-            style={isSente ? { transform: 'rotate(180deg)' } : undefined}
+            style={isSente ? undefined : { transform: 'rotate(180deg)' }}
           >
             <span>{emoji}</span>
             <span>{label}</span>
